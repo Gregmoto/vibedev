@@ -23,6 +23,7 @@ body {
     linear-gradient(180deg, #06070b 0%, #0c1018 100%);
   color: #f4f7fb;
   font-family: var(--font-body), sans-serif;
+  line-height: 1.5;
 }
 
 a {
@@ -146,5 +147,18 @@ a {
 
   .card-base {
     @apply surface bg-panel-mesh p-6 transition duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-glow;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

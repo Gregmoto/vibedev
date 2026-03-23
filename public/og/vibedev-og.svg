@@ -1,0 +1,12 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#06070B"/>
+  <circle cx="257" cy="83" r="252" fill="#79F2D0" fill-opacity="0.12"/>
+  <circle cx="959" cy="581" r="284" fill="#80A8FF" fill-opacity="0.12"/>
+  <rect x="72" y="72" width="1056" height="486" rx="32" fill="#10131B" stroke="#36405A"/>
+  <rect x="112" y="112" width="84" height="84" rx="24" fill="#79F2D0" fill-opacity="0.12" stroke="#79F2D0" stroke-opacity="0.4"/>
+  <text x="135" y="165" fill="#79F2D0" font-family="Arial, sans-serif" font-size="32" font-weight="700">VD</text>
+  <text x="112" y="270" fill="#F5F7FB" font-family="Arial, sans-serif" font-size="70" font-weight="700">VibeDev</text>
+  <text x="112" y="338" fill="#93A0B8" font-family="Arial, sans-serif" font-size="28">Appar, webbappar och AI-lösningar för företag som vill bygga snabbare.</text>
+  <rect x="112" y="405" width="266" height="54" rx="27" fill="#79F2D0"/>
+  <text x="158" y="439" fill="#06070B" font-family="Arial, sans-serif" font-size="22" font-weight="700">vibedev.se</text>
+</svg>
