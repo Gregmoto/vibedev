@@ -349,30 +349,41 @@ function mapDbPage(page: DbPage): PublicPage {
   };
 }
 
-async function safeDbRead<T>(read: () => Promise<T>, fallback: T) {
+async function safeDbRead<T>(read: () => Promise<T>) {
   if (!hasDatabaseUrl()) {
-    return fallback;
+    return {
+      data: null as T | null,
+      error: false,
+      enabled: false,
+    };
   }
 
   try {
-    return await read();
-  } catch {
-    return fallback;
+    return {
+      data: await read(),
+      error: false,
+      enabled: true,
+    };
+  } catch (error) {
+    console.error("[cms-public] Database read failed", error);
+    return {
+      data: null as T | null,
+      error: true,
+      enabled: true,
+    };
   }
 }
 
 export async function getPublishedBlogPosts(): Promise<PublicBlogPost[]> {
-  const databasePosts = await safeDbRead(
-    async () =>
-      db.blogPost.findMany({
-        where: { status: ContentStatus.PUBLISHED, noindex: false },
-        orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      }),
-    [],
+  const result = await safeDbRead(async () =>
+    db.blogPost.findMany({
+      where: { status: ContentStatus.PUBLISHED, noindex: false },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    }),
   );
 
-  if (databasePosts.length > 0) {
-    return databasePosts.map(mapDbBlogPost);
+  if (result.enabled) {
+    return (result.data ?? []).map(mapDbBlogPost);
   }
 
   return [...staticBlogPosts]
@@ -382,19 +393,21 @@ export async function getPublishedBlogPosts(): Promise<PublicBlogPost[]> {
 }
 
 export async function getPublishedBlogPostBySlug(slug: string): Promise<PublicBlogPost | null> {
-  const databasePost = await safeDbRead(
-    async () =>
-      db.blogPost.findFirst({
-        where: {
-          slug,
-          status: ContentStatus.PUBLISHED,
-          noindex: false,
-        },
-      }),
-    null,
+  const result = await safeDbRead(async () =>
+    db.blogPost.findFirst({
+      where: {
+        slug,
+        status: ContentStatus.PUBLISHED,
+        noindex: false,
+      },
+    }),
   );
 
-  return databasePost ? mapDbBlogPost(databasePost) : mapStaticBlogPost(slug);
+  if (result.enabled) {
+    return result.data ? mapDbBlogPost(result.data) : null;
+  }
+
+  return mapStaticBlogPost(slug);
 }
 
 export async function getRelatedPublicBlogPosts(current: PublicBlogPost, limit = 3) {
@@ -412,17 +425,15 @@ export async function getRelatedPublicBlogPosts(current: PublicBlogPost, limit =
 }
 
 export async function getPublishedPodcastEpisodes(): Promise<PublicPodcastEpisode[]> {
-  const databaseEpisodes = await safeDbRead(
-    async () =>
-      db.podcastEpisode.findMany({
-        where: { status: ContentStatus.PUBLISHED, noindex: false },
-        orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      }),
-    [],
+  const result = await safeDbRead(async () =>
+    db.podcastEpisode.findMany({
+      where: { status: ContentStatus.PUBLISHED, noindex: false },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    }),
   );
 
-  if (databaseEpisodes.length > 0) {
-    return databaseEpisodes.map(mapDbPodcastEpisode);
+  if (result.enabled) {
+    return (result.data ?? []).map(mapDbPodcastEpisode);
   }
 
   return [...staticPodcastEpisodes]
@@ -432,19 +443,21 @@ export async function getPublishedPodcastEpisodes(): Promise<PublicPodcastEpisod
 }
 
 export async function getPublishedPodcastEpisodeBySlug(slug: string): Promise<PublicPodcastEpisode | null> {
-  const databaseEpisode = await safeDbRead(
-    async () =>
-      db.podcastEpisode.findFirst({
-        where: {
-          slug,
-          status: ContentStatus.PUBLISHED,
-          noindex: false,
-        },
-      }),
-    null,
+  const result = await safeDbRead(async () =>
+    db.podcastEpisode.findFirst({
+      where: {
+        slug,
+        status: ContentStatus.PUBLISHED,
+        noindex: false,
+      },
+    }),
   );
 
-  return databaseEpisode ? mapDbPodcastEpisode(databaseEpisode) : mapStaticPodcastEpisode(slug);
+  if (result.enabled) {
+    return result.data ? mapDbPodcastEpisode(result.data) : null;
+  }
+
+  return mapStaticPodcastEpisode(slug);
 }
 
 export async function getRelatedPublicPodcastEpisodes(current: PublicPodcastEpisode, limit = 3) {
@@ -454,36 +467,36 @@ export async function getRelatedPublicPodcastEpisodes(current: PublicPodcastEpis
 }
 
 export async function getPublishedCaseStudies(): Promise<PublicCaseStudy[]> {
-  const databaseCases = await safeDbRead(
-    async () =>
-      db.caseStudy.findMany({
-        where: { status: ContentStatus.PUBLISHED, noindex: false },
-        orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      }),
-    [],
+  const result = await safeDbRead(async () =>
+    db.caseStudy.findMany({
+      where: { status: ContentStatus.PUBLISHED, noindex: false },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    }),
   );
 
-  if (databaseCases.length > 0) {
-    return databaseCases.map(mapDbCaseStudy);
+  if (result.enabled) {
+    return (result.data ?? []).map(mapDbCaseStudy);
   }
 
   return staticCaseStudies.map((item) => mapStaticCaseStudy(item.slug)).filter((item): item is PublicCaseStudy => Boolean(item));
 }
 
 export async function getPublishedCaseStudyBySlug(slug: string): Promise<PublicCaseStudy | null> {
-  const databaseCase = await safeDbRead(
-    async () =>
-      db.caseStudy.findFirst({
-        where: {
-          slug,
-          status: ContentStatus.PUBLISHED,
-          noindex: false,
-        },
-      }),
-    null,
+  const result = await safeDbRead(async () =>
+    db.caseStudy.findFirst({
+      where: {
+        slug,
+        status: ContentStatus.PUBLISHED,
+        noindex: false,
+      },
+    }),
   );
 
-  return databaseCase ? mapDbCaseStudy(databaseCase) : mapStaticCaseStudy(slug);
+  if (result.enabled) {
+    return result.data ? mapDbCaseStudy(result.data) : null;
+  }
+
+  return mapStaticCaseStudy(slug);
 }
 
 export async function getRelatedPublicCaseStudies(current: PublicCaseStudy, limit = 3) {
@@ -504,36 +517,32 @@ function routeToPageCandidates(routePath: string) {
 
 export async function getPublishedPageForRoute(routePath: string): Promise<PublicPage | null> {
   const candidates = routeToPageCandidates(routePath);
-  const databasePage = await safeDbRead(
-    async () =>
-      db.page.findFirst({
-        where: {
-          slug: { in: candidates },
-          status: ContentStatus.PUBLISHED,
-          noindex: false,
-        },
-        orderBy: { createdAt: "asc" },
-      }),
-    null,
+  const result = await safeDbRead(async () =>
+    db.page.findFirst({
+      where: {
+        slug: { in: candidates },
+        status: ContentStatus.PUBLISHED,
+        noindex: false,
+      },
+      orderBy: { createdAt: "asc" },
+    }),
   );
 
-  return databasePage ? mapDbPage(databasePage) : null;
+  return result.data ? mapDbPage(result.data) : null;
 }
 
 export async function getPublishedCustomPages(): Promise<PublicPage[]> {
-  const databasePages = await safeDbRead(
-    async () =>
-      db.page.findMany({
-        where: {
-          status: ContentStatus.PUBLISHED,
-          noindex: false,
-        },
-        orderBy: { createdAt: "asc" },
-      }),
-    [],
+  const result = await safeDbRead(async () =>
+    db.page.findMany({
+      where: {
+        status: ContentStatus.PUBLISHED,
+        noindex: false,
+      },
+      orderBy: { createdAt: "asc" },
+    }),
   );
 
-  return databasePages.map(mapDbPage).filter((page) => !standardPageSlugs.has(page.slug));
+  return (result.data ?? []).map(mapDbPage).filter((page) => !standardPageSlugs.has(page.slug));
 }
 
 export async function getPublishedCustomPageBySlug(slug: string): Promise<PublicPage | null> {

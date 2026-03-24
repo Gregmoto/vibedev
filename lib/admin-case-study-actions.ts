@@ -12,6 +12,7 @@ import {
   parseCommaSeparatedList,
   parseLineList,
   parsePublishedAt,
+  requireAdminAction,
 } from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
 
@@ -26,7 +27,7 @@ const caseStudySchema = z.object({
   process: z.string().min(10, "Process måste vara minst 10 tecken."),
   results: z.string().min(10, "Results måste vara minst 10 tecken."),
   techStack: z.string().optional(),
-  featuredImage: z.string().optional(),
+  featuredImage: optionalUrlSchema,
   status: z.nativeEnum(ContentStatus),
   publishedAt: z.string().optional(),
   seoTitle: z.string().optional(),
@@ -104,6 +105,8 @@ export async function createCaseStudyAction(
   _prevState: CaseStudyFormState,
   formData: FormData,
 ): Promise<CaseStudyFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Case study-CMS kräver en konfigurerad databas." };
   }
@@ -138,6 +141,8 @@ export async function updateCaseStudyAction(
   _prevState: CaseStudyFormState,
   formData: FormData,
 ): Promise<CaseStudyFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Case study-CMS kräver en konfigurerad databas." };
   }
@@ -170,6 +175,8 @@ export async function updateCaseStudyAction(
 }
 
 export async function deleteCaseStudyAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -189,6 +196,8 @@ export async function deleteCaseStudyAction(formData: FormData) {
 }
 
 export async function publishCaseStudyAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -211,6 +220,8 @@ export async function publishCaseStudyAction(formData: FormData) {
 }
 
 export async function unpublishCaseStudyAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }

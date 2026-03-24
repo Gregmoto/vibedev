@@ -3,7 +3,12 @@
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getFirstIssueMessage, normalizeEmpty } from "@/lib/admin-action-utils";
+import {
+  getFirstIssueMessage,
+  normalizeEmpty,
+  requireAdminAction,
+  validateGa4CustomScript,
+} from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
 import { parseSocialLinksInput } from "@/lib/site-settings";
 
@@ -20,7 +25,12 @@ const settingsSchema = z.object({
   ga4MeasurementId: z
     .string()
     .refine((value) => value === "" || /^G-[A-Z0-9]+$/i.test(value), "GA4 Measurement ID måste se ut som G-XXXXXXXXXX."),
-  ga4CustomScript: z.string().optional(),
+  ga4CustomScript: z
+    .string()
+    .refine(
+      (value) => value === "" || validateGa4CustomScript(value),
+      "Custom script måste vara ett begränsat GA4-script utan script-taggar eller godtycklig JavaScript-kod.",
+    ),
   googleSearchConsoleVerification: z.string().optional(),
 });
 
@@ -67,6 +77,8 @@ export async function saveSiteSettingsAction(
   _prevState: SettingsFormState,
   formData: FormData,
 ): Promise<SettingsFormState> {
+  await requireAdminAction();
+
   if (!process.env.DATABASE_URL?.trim()) {
     return {
       error: "DATABASE_URL saknas. Konfigurera databasen innan inställningarna kan sparas.",

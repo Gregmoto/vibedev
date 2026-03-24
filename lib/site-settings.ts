@@ -1,5 +1,6 @@
 import type { Prisma, SiteSettings } from "@prisma/client";
 import { db } from "@/lib/db";
+import { isSafeHttpUrl, validateGa4CustomScript } from "@/lib/admin-action-utils";
 
 export type SocialLink = {
   label: string;
@@ -106,7 +107,8 @@ export function parseSocialLinksInput(value: string): SocialLink[] {
         label: url ? label : "Länk",
         url: url ?? label,
       };
-    });
+    })
+    .filter((item) => isSafeHttpUrl(item.url));
 }
 
 export function readSocialLinks(value: Prisma.JsonValue | null | undefined): SocialLink[] {
@@ -123,7 +125,7 @@ export function readSocialLinks(value: Prisma.JsonValue | null | undefined): Soc
       const label = "label" in item && typeof item.label === "string" ? item.label.trim() : "";
       const url = "url" in item && typeof item.url === "string" ? item.url.trim() : "";
 
-      return label && url ? { label, url } : null;
+      return label && url && isSafeHttpUrl(url) ? { label, url } : null;
     })
     .filter((item): item is SocialLink => Boolean(item));
 
@@ -144,6 +146,11 @@ export function normalizeScriptContent(value?: string | null) {
 
   const trimmed = value.trim();
   const scriptMatch = trimmed.match(/<script\b[^>]*>([\s\S]*?)<\/script>/i);
+  const normalized = (scriptMatch?.[1] ?? trimmed).trim();
 
-  return (scriptMatch?.[1] ?? trimmed).trim() || null;
+  if (!normalized || !validateGa4CustomScript(normalized)) {
+    return null;
+  }
+
+  return normalized;
 }

@@ -103,6 +103,8 @@ export default async function PodcastEpisodePage({ params }: PodcastEpisodePageP
                     title={episode.title}
                     className="h-40 w-full rounded-2xl border border-white/10 bg-black/20"
                     loading="lazy"
+                    sandbox="allow-same-origin allow-scripts allow-popups"
+                    referrerPolicy="strict-origin-when-cross-origin"
                   />
                 </div>
               ) : (

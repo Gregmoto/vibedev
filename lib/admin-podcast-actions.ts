@@ -8,9 +8,11 @@ import {
   getFirstIssueMessage,
   hasDatabaseUrl,
   normalizeEmpty,
+  optionalEmbedUrlSchema,
   optionalUrlSchema,
   parseCommaSeparatedList,
   parsePublishedAt,
+  requireAdminAction,
 } from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
 
@@ -20,9 +22,9 @@ const podcastEpisodeSchema = z.object({
   description: z.string().min(10, "Beskrivning måste vara minst 10 tecken."),
   showNotes: z.string().min(10, "Show notes måste vara minst 10 tecken."),
   guestNames: z.string().optional(),
-  coverImage: z.string().optional(),
-  audioUrl: z.string().optional(),
-  embedUrl: z.string().optional(),
+  coverImage: optionalUrlSchema,
+  audioUrl: optionalUrlSchema,
+  embedUrl: optionalEmbedUrlSchema,
   status: z.nativeEnum(ContentStatus),
   publishedAt: z.string().optional(),
   seoTitle: z.string().optional(),
@@ -92,6 +94,8 @@ export async function createPodcastEpisodeAction(
   _prevState: PodcastFormState,
   formData: FormData,
 ): Promise<PodcastFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Podcast-CMS kräver en konfigurerad databas." };
   }
@@ -126,6 +130,8 @@ export async function updatePodcastEpisodeAction(
   _prevState: PodcastFormState,
   formData: FormData,
 ): Promise<PodcastFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Podcast-CMS kräver en konfigurerad databas." };
   }
@@ -158,6 +164,8 @@ export async function updatePodcastEpisodeAction(
 }
 
 export async function deletePodcastEpisodeAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -177,6 +185,8 @@ export async function deletePodcastEpisodeAction(formData: FormData) {
 }
 
 export async function publishPodcastEpisodeAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -199,6 +209,8 @@ export async function publishPodcastEpisodeAction(formData: FormData) {
 }
 
 export async function unpublishPodcastEpisodeAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }

@@ -9,6 +9,7 @@ import {
   hasDatabaseUrl,
   normalizeEmpty,
   optionalUrlSchema,
+  requireAdminAction,
 } from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
 
@@ -71,6 +72,8 @@ function refreshPagesAdmin() {
 }
 
 export async function createPageAction(_prevState: PageFormState, formData: FormData): Promise<PageFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Page editor kräver en konfigurerad databas." };
   }
@@ -101,6 +104,8 @@ export async function createPageAction(_prevState: PageFormState, formData: Form
 }
 
 export async function updatePageAction(pageId: string, _prevState: PageFormState, formData: FormData): Promise<PageFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Page editor kräver en konfigurerad databas." };
   }
@@ -133,6 +138,8 @@ export async function updatePageAction(pageId: string, _prevState: PageFormState
 }
 
 export async function deletePageAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -152,6 +159,8 @@ export async function deletePageAction(formData: FormData) {
 }
 
 export async function publishPageAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -173,6 +182,8 @@ export async function publishPageAction(formData: FormData) {
 }
 
 export async function unpublishPageAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }

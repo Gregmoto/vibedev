@@ -71,7 +71,7 @@ export function Footer({ settings }: FooterProps) {
                       key={`${link.label}-${link.url}`}
                       href={link.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="text-sm text-muted transition hover:text-text"
                     >
                       {link.label}

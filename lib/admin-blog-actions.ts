@@ -11,6 +11,7 @@ import {
   optionalUrlSchema,
   parseCommaSeparatedList,
   parsePublishedAt,
+  requireAdminAction,
 } from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
 
@@ -19,7 +20,7 @@ const blogPostSchema = z.object({
   slug: z.string().min(2, "Slug krävs.").regex(/^[a-z0-9-]+$/, "Använd endast små bokstäver, siffror och bindestreck."),
   excerpt: z.string().min(10, "Excerpt måste vara minst 10 tecken."),
   content: z.string().min(20, "Content måste vara minst 20 tecken."),
-  featuredImage: z.string().optional(),
+  featuredImage: optionalUrlSchema,
   author: z.string().optional(),
   category: z.string().min(2, "Kategori krävs."),
   tags: z.string().optional(),
@@ -97,6 +98,8 @@ function refreshBlogAdmin() {
 }
 
 export async function createBlogPostAction(_prevState: BlogFormState, formData: FormData): Promise<BlogFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Blogg-CMS kräver en konfigurerad databas." };
   }
@@ -131,6 +134,8 @@ export async function updateBlogPostAction(
   _prevState: BlogFormState,
   formData: FormData,
 ): Promise<BlogFormState> {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return { error: "DATABASE_URL saknas. Blogg-CMS kräver en konfigurerad databas." };
   }
@@ -163,6 +168,8 @@ export async function updateBlogPostAction(
 }
 
 export async function deleteBlogPostAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -182,6 +189,8 @@ export async function deleteBlogPostAction(formData: FormData) {
 }
 
 export async function publishBlogPostAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }
@@ -204,6 +213,8 @@ export async function publishBlogPostAction(formData: FormData) {
 }
 
 export async function unpublishBlogPostAction(formData: FormData) {
+  await requireAdminAction();
+
   if (!hasDatabaseUrl()) {
     return;
   }

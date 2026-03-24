@@ -69,10 +69,10 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               <Textarea
                 name="ga4CustomScript"
                 label="GA4 custom script"
-                placeholder="<script>...</script> eller bara JS-innehållet"
+                placeholder="window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} ..."
                 defaultValue={settings?.ga4CustomScript ?? ""}
                 className="min-h-[220px]"
-                hint="Om custom script är ifyllt används det före Measurement ID."
+                hint="Endast begränsad GA4/gtag-kod tillåts. Script-taggar och godtycklig JavaScript-blockeras."
               />
             </AdminFormSection>
 
