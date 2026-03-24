@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { adminNavigation } from "@/content/admin-navigation";
 import { cn } from "@/lib/utils";
 
+const ADMIN_VERSION = "2.1";
+
 export function AdminSidebar() {
   const pathname = usePathname();
 
@@ -13,6 +15,7 @@ export function AdminSidebar() {
       <aside className="surface-elevated hidden h-fit p-4 lg:block">
         <div className="mb-4 border-b border-white/5 px-3 pb-4">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-text">VibeDev Admin</p>
+          <p className="mt-2 text-xs font-medium uppercase tracking-[0.18em] text-brand">Version {ADMIN_VERSION}</p>
           <p className="mt-2 text-sm text-muted">Innehåll, SEO och webbplatsdata</p>
         </div>
         <nav className="grid gap-1" aria-label="Admin navigation">
