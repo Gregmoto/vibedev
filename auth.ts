@@ -14,7 +14,7 @@ const loginSchema = z.object({
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
   pages: {
     signIn: "/admin/login",
@@ -74,10 +74,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return isLoggedIn && isAdmin;
     },
-    session({ session, user }) {
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = (user as typeof user & { role?: UserRole }).role;
+      }
+
+      return token;
+    },
+    session({ session, token }) {
       if (session.user) {
-        session.user.id = user.id;
-        session.user.role = (user as typeof user & { role?: UserRole }).role;
+        session.user.id = typeof token.id === "string" ? token.id : "";
+        session.user.role = token.role as UserRole | undefined;
       }
 
       return session;
