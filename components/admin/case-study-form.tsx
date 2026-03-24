@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { ContentStatus, type CaseStudy, type Prisma } from "@prisma/client";
 import { AdminCheckboxField } from "@/components/admin/admin-checkbox-field";
+import { AdminDateTimeField } from "@/components/admin/admin-date-time-field";
 import { AdminFormFooter } from "@/components/admin/admin-form-footer";
 import { AdminFormLayout } from "@/components/admin/admin-form-layout";
 import { AdminFormSection } from "@/components/admin/admin-form-section";
@@ -96,9 +97,8 @@ export function CaseStudyForm({ caseStudy }: CaseStudyFormProps) {
                 <option value={ContentStatus.DRAFT}>Utkast</option>
                 <option value={ContentStatus.PUBLISHED}>Publicerad</option>
               </Select>
-              <Input
+              <AdminDateTimeField
                 name="publishedAt"
-                type="datetime-local"
                 label="Publiceringsdatum"
                 defaultValue={values?.publishedAt ?? (caseStudy?.publishedAt ? new Date(caseStudy.publishedAt).toISOString().slice(0, 16) : "")}
               />

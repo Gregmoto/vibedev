@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { ContentStatus, type PodcastEpisode, type Prisma } from "@prisma/client";
 import { AdminCheckboxField } from "@/components/admin/admin-checkbox-field";
+import { AdminDateTimeField } from "@/components/admin/admin-date-time-field";
 import { AdminFormFooter } from "@/components/admin/admin-form-footer";
 import { AdminFormLayout } from "@/components/admin/admin-form-layout";
 import { AdminFormSection } from "@/components/admin/admin-form-section";
@@ -92,9 +93,8 @@ export function PodcastEpisodeForm({ episode }: PodcastEpisodeFormProps) {
                 <option value={ContentStatus.DRAFT}>Utkast</option>
                 <option value={ContentStatus.PUBLISHED}>Publicerad</option>
               </Select>
-              <Input
+              <AdminDateTimeField
                 name="publishedAt"
-                type="datetime-local"
                 label="Datum"
                 defaultValue={values?.publishedAt ?? (episode?.publishedAt ? new Date(episode.publishedAt).toISOString().slice(0, 16) : "")}
               />
