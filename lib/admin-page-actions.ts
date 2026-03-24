@@ -139,8 +139,7 @@ export async function updatePageAction(pageId: string, _prevState: PageFormState
     });
 
     refreshPagesAdmin(parsed.data.slug);
-    revalidatePath(`/admin/pages/${pageId}`);
-    return { success: "Sidan uppdaterades." };
+    redirect(`/admin/pages/${pageId}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { error: "Sluggen används redan av en annan sida.", values: payload };

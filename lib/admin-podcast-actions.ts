@@ -165,8 +165,7 @@ export async function updatePodcastEpisodeAction(
     });
 
     refreshPodcastAdmin(parsed.data.slug);
-    revalidatePath(`/admin/podcast/${episodeId}`);
-    return { success: "Podcastavsnittet uppdaterades." };
+    redirect(`/admin/podcast/${episodeId}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { error: "Sluggen används redan av ett annat podcastavsnitt.", values: payload };

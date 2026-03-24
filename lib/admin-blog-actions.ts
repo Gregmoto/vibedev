@@ -169,8 +169,7 @@ export async function updateBlogPostAction(
     });
 
     refreshBlogAdmin(parsed.data.slug);
-    revalidatePath(`/admin/blog/${postId}`);
-    return { success: "Blogginlägget uppdaterades." };
+    redirect(`/admin/blog/${postId}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { error: "Sluggen används redan av ett annat blogginlägg.", values: payload };

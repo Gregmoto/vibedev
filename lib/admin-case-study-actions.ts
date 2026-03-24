@@ -176,8 +176,7 @@ export async function updateCaseStudyAction(
     });
 
     refreshCaseStudiesAdmin(parsed.data.slug);
-    revalidatePath(`/admin/case-studies/${caseStudyId}`);
-    return { success: "Case study uppdaterades." };
+    redirect(`/admin/case-studies/${caseStudyId}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { error: "Sluggen används redan av ett annat case.", values: payload };
