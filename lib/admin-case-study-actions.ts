@@ -227,6 +227,7 @@ export async function publishCaseStudyAction(formData: FormData) {
   });
 
   refreshCaseStudiesAdmin(updated.slug);
+  redirect("/admin/case-studies");
 }
 
 export async function unpublishCaseStudyAction(formData: FormData) {
@@ -251,4 +252,5 @@ export async function unpublishCaseStudyAction(formData: FormData) {
   });
 
   refreshCaseStudiesAdmin(updated.slug);
+  redirect("/admin/case-studies");
 }

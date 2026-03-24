@@ -189,6 +189,7 @@ export async function publishPageAction(formData: FormData) {
   });
 
   refreshPagesAdmin(updated.slug);
+  redirect("/admin/pages");
 }
 
 export async function unpublishPageAction(formData: FormData) {
@@ -213,4 +214,5 @@ export async function unpublishPageAction(formData: FormData) {
   });
 
   refreshPagesAdmin(updated.slug);
+  redirect("/admin/pages");
 }

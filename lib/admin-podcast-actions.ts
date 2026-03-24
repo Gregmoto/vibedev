@@ -216,6 +216,7 @@ export async function publishPodcastEpisodeAction(formData: FormData) {
   });
 
   refreshPodcastAdmin(updated.slug);
+  redirect("/admin/podcast");
 }
 
 export async function unpublishPodcastEpisodeAction(formData: FormData) {
@@ -240,4 +241,5 @@ export async function unpublishPodcastEpisodeAction(formData: FormData) {
   });
 
   refreshPodcastAdmin(updated.slug);
+  redirect("/admin/podcast");
 }

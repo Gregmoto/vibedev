@@ -220,6 +220,7 @@ export async function publishBlogPostAction(formData: FormData) {
   });
 
   refreshBlogAdmin(updated.slug);
+  redirect("/admin/blog");
 }
 
 export async function unpublishBlogPostAction(formData: FormData) {
@@ -244,4 +245,5 @@ export async function unpublishBlogPostAction(formData: FormData) {
   });
 
   refreshBlogAdmin(updated.slug);
+  redirect("/admin/blog");
 }
