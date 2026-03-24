@@ -66,9 +66,13 @@ function toData(parsed: z.infer<typeof pageSchema>): Prisma.PageUncheckedCreateI
   };
 }
 
-function refreshPagesAdmin() {
+function refreshPagesAdmin(slug?: string) {
   revalidatePath("/admin/pages");
+  revalidatePath("/");
   revalidatePath("/sitemap.xml");
+  if (slug) {
+    revalidatePath(slug.startsWith("/") ? slug : `/${slug}`);
+  }
 }
 
 export async function createPageAction(_prevState: PageFormState, formData: FormData): Promise<PageFormState> {
@@ -92,7 +96,7 @@ export async function createPageAction(_prevState: PageFormState, formData: Form
       data: toData(parsed.data),
     });
 
-    refreshPagesAdmin();
+    refreshPagesAdmin(page.slug);
     redirect(`/admin/pages/${page.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -125,7 +129,7 @@ export async function updatePageAction(pageId: string, _prevState: PageFormState
       data: toData(parsed.data),
     });
 
-    refreshPagesAdmin();
+    refreshPagesAdmin(parsed.data.slug);
     revalidatePath(`/admin/pages/${pageId}`);
     return { success: "Sidan uppdaterades." };
   } catch (error) {
@@ -150,11 +154,16 @@ export async function deletePageAction(formData: FormData) {
     return;
   }
 
+  const existing = await db.page.findUnique({
+    where: { id },
+    select: { slug: true },
+  });
+
   await db.page.delete({
     where: { id },
   });
 
-  refreshPagesAdmin();
+  refreshPagesAdmin(existing?.slug);
   redirect("/admin/pages");
 }
 
@@ -171,14 +180,15 @@ export async function publishPageAction(formData: FormData) {
     return;
   }
 
-  await db.page.update({
+  const updated = await db.page.update({
     where: { id },
     data: {
       status: ContentStatus.PUBLISHED,
     },
+    select: { slug: true },
   });
 
-  refreshPagesAdmin();
+  refreshPagesAdmin(updated.slug);
 }
 
 export async function unpublishPageAction(formData: FormData) {
@@ -194,12 +204,13 @@ export async function unpublishPageAction(formData: FormData) {
     return;
   }
 
-  await db.page.update({
+  const updated = await db.page.update({
     where: { id },
     data: {
       status: ContentStatus.DRAFT,
     },
+    select: { slug: true },
   });
 
-  refreshPagesAdmin();
+  refreshPagesAdmin(updated.slug);
 }

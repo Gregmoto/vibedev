@@ -16,6 +16,8 @@ import {
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 import { articleSchema } from "@/lib/schema";
 
+export const dynamic = "force-dynamic";
+
 type BlogArticlePageProps = {
   params: Promise<{ slug: string }>;
 };

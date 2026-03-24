@@ -95,10 +95,14 @@ function toData(parsed: z.infer<typeof caseStudySchema>): Prisma.CaseStudyUnchec
   };
 }
 
-function refreshCaseStudiesAdmin() {
+function refreshCaseStudiesAdmin(slug?: string) {
   revalidatePath("/admin/case-studies");
   revalidatePath("/case-studies");
+  revalidatePath("/");
   revalidatePath("/sitemap.xml");
+  if (slug) {
+    revalidatePath(`/case-studies/${slug}`);
+  }
 }
 
 export async function createCaseStudyAction(
@@ -125,7 +129,7 @@ export async function createCaseStudyAction(
       data: toData(parsed.data),
     });
 
-    refreshCaseStudiesAdmin();
+    refreshCaseStudiesAdmin(caseStudy.slug);
     redirect(`/admin/case-studies/${caseStudy.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -162,7 +166,7 @@ export async function updateCaseStudyAction(
       data: toData(parsed.data),
     });
 
-    refreshCaseStudiesAdmin();
+    refreshCaseStudiesAdmin(parsed.data.slug);
     revalidatePath(`/admin/case-studies/${caseStudyId}`);
     return { success: "Case study uppdaterades." };
   } catch (error) {
@@ -187,11 +191,16 @@ export async function deleteCaseStudyAction(formData: FormData) {
     return;
   }
 
+  const existing = await db.caseStudy.findUnique({
+    where: { id },
+    select: { slug: true },
+  });
+
   await db.caseStudy.delete({
     where: { id },
   });
 
-  refreshCaseStudiesAdmin();
+  refreshCaseStudiesAdmin(existing?.slug);
   redirect("/admin/case-studies");
 }
 
@@ -208,15 +217,16 @@ export async function publishCaseStudyAction(formData: FormData) {
     return;
   }
 
-  await db.caseStudy.update({
+  const updated = await db.caseStudy.update({
     where: { id },
     data: {
       status: ContentStatus.PUBLISHED,
       publishedAt: new Date(),
     },
+    select: { slug: true },
   });
 
-  refreshCaseStudiesAdmin();
+  refreshCaseStudiesAdmin(updated.slug);
 }
 
 export async function unpublishCaseStudyAction(formData: FormData) {
@@ -232,12 +242,13 @@ export async function unpublishCaseStudyAction(formData: FormData) {
     return;
   }
 
-  await db.caseStudy.update({
+  const updated = await db.caseStudy.update({
     where: { id },
     data: {
       status: ContentStatus.DRAFT,
     },
+    select: { slug: true },
   });
 
-  refreshCaseStudiesAdmin();
+  refreshCaseStudiesAdmin(updated.slug);
 }

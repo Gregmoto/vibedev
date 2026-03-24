@@ -91,10 +91,14 @@ function toData(parsed: z.infer<typeof blogPostSchema>): Prisma.BlogPostUnchecke
   };
 }
 
-function refreshBlogAdmin() {
+function refreshBlogAdmin(slug?: string) {
   revalidatePath("/admin/blog");
   revalidatePath("/blogg");
+  revalidatePath("/");
   revalidatePath("/sitemap.xml");
+  if (slug) {
+    revalidatePath(`/blogg/${slug}`);
+  }
 }
 
 export async function createBlogPostAction(_prevState: BlogFormState, formData: FormData): Promise<BlogFormState> {
@@ -118,7 +122,7 @@ export async function createBlogPostAction(_prevState: BlogFormState, formData: 
       data: toData(parsed.data),
     });
 
-    refreshBlogAdmin();
+    refreshBlogAdmin(post.slug);
     redirect(`/admin/blog/${post.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -155,7 +159,7 @@ export async function updateBlogPostAction(
       data: toData(parsed.data),
     });
 
-    refreshBlogAdmin();
+    refreshBlogAdmin(parsed.data.slug);
     revalidatePath(`/admin/blog/${postId}`);
     return { success: "Blogginlägget uppdaterades." };
   } catch (error) {
@@ -180,11 +184,16 @@ export async function deleteBlogPostAction(formData: FormData) {
     return;
   }
 
+  const existing = await db.blogPost.findUnique({
+    where: { id: postId },
+    select: { slug: true },
+  });
+
   await db.blogPost.delete({
     where: { id: postId },
   });
 
-  refreshBlogAdmin();
+  refreshBlogAdmin(existing?.slug);
   redirect("/admin/blog");
 }
 
@@ -201,15 +210,16 @@ export async function publishBlogPostAction(formData: FormData) {
     return;
   }
 
-  await db.blogPost.update({
+  const updated = await db.blogPost.update({
     where: { id: postId },
     data: {
       status: ContentStatus.PUBLISHED,
       publishedAt: new Date(),
     },
+    select: { slug: true },
   });
 
-  refreshBlogAdmin();
+  refreshBlogAdmin(updated.slug);
 }
 
 export async function unpublishBlogPostAction(formData: FormData) {
@@ -225,12 +235,13 @@ export async function unpublishBlogPostAction(formData: FormData) {
     return;
   }
 
-  await db.blogPost.update({
+  const updated = await db.blogPost.update({
     where: { id: postId },
     data: {
       status: ContentStatus.DRAFT,
     },
+    select: { slug: true },
   });
 
-  refreshBlogAdmin();
+  refreshBlogAdmin(updated.slug);
 }

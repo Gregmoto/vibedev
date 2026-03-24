@@ -84,10 +84,14 @@ function toData(parsed: z.infer<typeof podcastEpisodeSchema>): Prisma.PodcastEpi
   };
 }
 
-function refreshPodcastAdmin() {
+function refreshPodcastAdmin(slug?: string) {
   revalidatePath("/admin/podcast");
   revalidatePath("/podcast");
+  revalidatePath("/");
   revalidatePath("/sitemap.xml");
+  if (slug) {
+    revalidatePath(`/podcast/${slug}`);
+  }
 }
 
 export async function createPodcastEpisodeAction(
@@ -114,7 +118,7 @@ export async function createPodcastEpisodeAction(
       data: toData(parsed.data),
     });
 
-    refreshPodcastAdmin();
+    refreshPodcastAdmin(episode.slug);
     redirect(`/admin/podcast/${episode.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -151,7 +155,7 @@ export async function updatePodcastEpisodeAction(
       data: toData(parsed.data),
     });
 
-    refreshPodcastAdmin();
+    refreshPodcastAdmin(parsed.data.slug);
     revalidatePath(`/admin/podcast/${episodeId}`);
     return { success: "Podcastavsnittet uppdaterades." };
   } catch (error) {
@@ -176,11 +180,16 @@ export async function deletePodcastEpisodeAction(formData: FormData) {
     return;
   }
 
+  const existing = await db.podcastEpisode.findUnique({
+    where: { id },
+    select: { slug: true },
+  });
+
   await db.podcastEpisode.delete({
     where: { id },
   });
 
-  refreshPodcastAdmin();
+  refreshPodcastAdmin(existing?.slug);
   redirect("/admin/podcast");
 }
 
@@ -197,15 +206,16 @@ export async function publishPodcastEpisodeAction(formData: FormData) {
     return;
   }
 
-  await db.podcastEpisode.update({
+  const updated = await db.podcastEpisode.update({
     where: { id },
     data: {
       status: ContentStatus.PUBLISHED,
       publishedAt: new Date(),
     },
+    select: { slug: true },
   });
 
-  refreshPodcastAdmin();
+  refreshPodcastAdmin(updated.slug);
 }
 
 export async function unpublishPodcastEpisodeAction(formData: FormData) {
@@ -221,12 +231,13 @@ export async function unpublishPodcastEpisodeAction(formData: FormData) {
     return;
   }
 
-  await db.podcastEpisode.update({
+  const updated = await db.podcastEpisode.update({
     where: { id },
     data: {
       status: ContentStatus.DRAFT,
     },
+    select: { slug: true },
   });
 
-  refreshPodcastAdmin();
+  refreshPodcastAdmin(updated.slug);
 }

@@ -16,6 +16,8 @@ import {
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 import { podcastEpisodeSchema } from "@/lib/schema";
 
+export const dynamic = "force-dynamic";
+
 type PodcastEpisodePageProps = {
   params: Promise<{ slug: string }>;
 };

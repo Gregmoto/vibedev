@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { createMetadataForContent, getPublishedCustomPageBySlug, getPublishedCustomPages } from "@/lib/cms-public";
 
+export const dynamic = "force-dynamic";
+
 type CmsPageProps = {
   params: Promise<{ slug: string[] }>;
 };

@@ -14,6 +14,8 @@ import {
   getRelatedPublicCaseStudies,
 } from "@/lib/cms-public";
 
+export const dynamic = "force-dynamic";
+
 type CaseStudyPageProps = {
   params: Promise<{ slug: string }>;
 };
