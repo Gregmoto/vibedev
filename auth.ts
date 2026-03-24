@@ -33,17 +33,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const user = await db.user.findUnique({
-          where: { email: parsed.data.email },
-        });
+        let user;
+
+        try {
+          user = await db.user.findUnique({
+            where: { email: parsed.data.email },
+          });
+        } catch (error) {
+          console.error("[auth][credentials] User lookup failed", error);
+          throw error;
+        }
 
         if (!user?.passwordHash) {
+          console.warn("[auth][credentials] No user or password hash for email", parsed.data.email);
           return null;
         }
 
         const matches = await bcrypt.compare(parsed.data.password, user.passwordHash);
 
         if (!matches) {
+          console.warn("[auth][credentials] Password mismatch for email", parsed.data.email);
           return null;
         }
 
