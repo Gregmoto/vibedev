@@ -33,6 +33,7 @@ function getEditorContent(content: Prisma.JsonValue) {
 export function PodcastEpisodeForm({ episode }: PodcastEpisodeFormProps) {
   const boundAction = episode ? updatePodcastEpisodeAction.bind(null, episode.id) : createPodcastEpisodeAction;
   const [state, formAction, isPending] = useActionState(boundAction, initialState);
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-8" aria-busy={isPending}>
@@ -40,45 +41,45 @@ export function PodcastEpisodeForm({ episode }: PodcastEpisodeFormProps) {
         main={
           <div className="space-y-6">
             <AdminFormSection title="Avsnittsinnehåll" elevated>
-              <Input name="title" label="Titel" placeholder="Från idé till MVP utan att tappa fart" defaultValue={episode?.title ?? ""} required />
-              <Input name="slug" label="Slug" placeholder="fran-ide-till-mvp-utan-att-tappa-fart" defaultValue={episode?.slug ?? ""} required />
+              <Input name="title" label="Titel" placeholder="Från idé till MVP utan att tappa fart" defaultValue={values?.title ?? episode?.title ?? ""} required />
+              <Input name="slug" label="Slug" placeholder="fran-ide-till-mvp-utan-att-tappa-fart" defaultValue={values?.slug ?? episode?.slug ?? ""} required />
               <Textarea
                 name="description"
                 label="Beskrivning"
                 placeholder="Kort beskrivning av avsnittet."
-                defaultValue={episode?.description ?? ""}
+                defaultValue={values?.description ?? episode?.description ?? ""}
                 required
               />
               <Textarea
                 name="showNotes"
                 label="Show notes"
                 placeholder="Skriv show notes här. Enkel markdown eller vanlig text fungerar bra."
-                defaultValue={episode ? getEditorContent(episode.showNotes) : ""}
+                defaultValue={values?.showNotes ?? (episode ? getEditorContent(episode.showNotes) : "")}
                 className="min-h-[320px]"
                 required
               />
             </AdminFormSection>
 
             <AdminFormSection title="SEO" description="Tomma SEO-fält faller tillbaka till site settings.">
-              <Input name="seoTitle" label="SEO title" placeholder="SEO-optimerad titel" defaultValue={episode?.seoTitle ?? ""} />
+              <Input name="seoTitle" label="SEO title" placeholder="SEO-optimerad titel" defaultValue={values?.seoTitle ?? episode?.seoTitle ?? ""} />
               <Textarea
                 name="metaDescription"
                 label="Meta description"
                 placeholder="Kort beskrivning för sökresultat."
-                defaultValue={episode?.metaDescription ?? ""}
+                defaultValue={values?.metaDescription ?? episode?.metaDescription ?? ""}
               />
-              <Input name="ogTitle" label="Open Graph title" placeholder="Titel för social delning" defaultValue={episode?.ogTitle ?? ""} />
+              <Input name="ogTitle" label="Open Graph title" placeholder="Titel för social delning" defaultValue={values?.ogTitle ?? episode?.ogTitle ?? ""} />
               <Textarea
                 name="ogDescription"
                 label="Open Graph description"
                 placeholder="Beskrivning för delning i sociala medier."
-                defaultValue={episode?.ogDescription ?? ""}
+                defaultValue={values?.ogDescription ?? episode?.ogDescription ?? ""}
               />
-              <Input name="canonicalUrl" label="Canonical URL" placeholder="https://vibedev.se/podcast/..." defaultValue={episode?.canonicalUrl ?? ""} />
+              <Input name="canonicalUrl" label="Canonical URL" placeholder="https://vibedev.se/podcast/..." defaultValue={values?.canonicalUrl ?? episode?.canonicalUrl ?? ""} />
               <AdminCheckboxField
                 name="noindex"
                 label="Noindex"
-                defaultChecked={episode?.noindex ?? false}
+                defaultChecked={values ? values.noindex : (episode?.noindex ?? false)}
                 hint="Hindrar sökmotorer från att indexera avsnittet."
               />
             </AdminFormSection>
@@ -87,7 +88,7 @@ export function PodcastEpisodeForm({ episode }: PodcastEpisodeFormProps) {
         aside={
           <>
             <AdminFormSection title="Publicering" elevated>
-              <Select name="status" label="Status" defaultValue={episode?.status ?? ContentStatus.DRAFT}>
+              <Select name="status" label="Status" defaultValue={values?.status ?? episode?.status ?? ContentStatus.DRAFT}>
                 <option value={ContentStatus.DRAFT}>Utkast</option>
                 <option value={ContentStatus.PUBLISHED}>Publicerad</option>
               </Select>
@@ -95,15 +96,15 @@ export function PodcastEpisodeForm({ episode }: PodcastEpisodeFormProps) {
                 name="publishedAt"
                 type="datetime-local"
                 label="Datum"
-                defaultValue={episode?.publishedAt ? new Date(episode.publishedAt).toISOString().slice(0, 16) : ""}
+                defaultValue={values?.publishedAt ?? (episode?.publishedAt ? new Date(episode.publishedAt).toISOString().slice(0, 16) : "")}
               />
             </AdminFormSection>
 
             <AdminFormSection title="Avsnittsdata">
-              <Input name="guestNames" label="Gäster" placeholder="Erik Sand, Maja Lindqvist" defaultValue={episode?.guestNames.join(", ") ?? ""} />
-              <Input name="coverImage" label="Cover image" placeholder="https://..." defaultValue={episode?.coverImage ?? ""} />
-              <Input name="audioUrl" label="Audio URL" placeholder="https://..." defaultValue={episode?.audioUrl ?? ""} />
-              <Input name="embedUrl" label="Embed URL" placeholder="https://open.spotify.com/..." defaultValue={episode?.embedUrl ?? ""} />
+              <Input name="guestNames" label="Gäster" placeholder="Erik Sand, Maja Lindqvist" defaultValue={values?.guestNames ?? episode?.guestNames.join(", ") ?? ""} />
+              <Input name="coverImage" label="Cover image" placeholder="https://..." defaultValue={values?.coverImage ?? episode?.coverImage ?? ""} />
+              <Input name="audioUrl" label="Audio URL" placeholder="https://..." defaultValue={values?.audioUrl ?? episode?.audioUrl ?? ""} />
+              <Input name="embedUrl" label="Embed URL" placeholder="https://open.spotify.com/..." defaultValue={values?.embedUrl ?? episode?.embedUrl ?? ""} />
             </AdminFormSection>
 
             <AdminFormFooter

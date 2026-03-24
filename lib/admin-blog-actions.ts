@@ -37,6 +37,7 @@ const blogPostSchema = z.object({
 export type BlogFormState = {
   error?: string;
   success?: string;
+  values?: ReturnType<typeof toPayload>;
 };
 
 function parseCanonicalUrl(value: string) {
@@ -105,7 +106,10 @@ export async function createBlogPostAction(_prevState: BlogFormState, formData: 
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Blogg-CMS kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Blogg-CMS kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -114,6 +118,7 @@ export async function createBlogPostAction(_prevState: BlogFormState, formData: 
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte spara blogginlägget."),
+      values: payload,
     };
   }
 
@@ -126,10 +131,10 @@ export async function createBlogPostAction(_prevState: BlogFormState, formData: 
     redirect(`/admin/blog/${post.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av ett annat blogginlägg." };
+      return { error: "Sluggen används redan av ett annat blogginlägg.", values: payload };
     }
 
-    return { error: "Något gick fel när blogginlägget skapades." };
+    return { error: "Något gick fel när blogginlägget skapades.", values: payload };
   }
 }
 
@@ -141,7 +146,10 @@ export async function updateBlogPostAction(
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Blogg-CMS kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Blogg-CMS kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -150,6 +158,7 @@ export async function updateBlogPostAction(
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte uppdatera blogginlägget."),
+      values: payload,
     };
   }
 
@@ -164,10 +173,10 @@ export async function updateBlogPostAction(
     return { success: "Blogginlägget uppdaterades." };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av ett annat blogginlägg." };
+      return { error: "Sluggen används redan av ett annat blogginlägg.", values: payload };
     }
 
-    return { error: "Något gick fel när blogginlägget uppdaterades." };
+    return { error: "Något gick fel när blogginlägget uppdaterades.", values: payload };
   }
 }
 

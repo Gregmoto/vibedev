@@ -29,6 +29,7 @@ function getEditorContent(content: Prisma.JsonValue) {
 export function BlogPostForm({ post }: BlogPostFormProps) {
   const boundAction = post ? updateBlogPostAction.bind(null, post.id) : createBlogPostAction;
   const [state, formAction, isPending] = useActionState(boundAction, initialState);
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-8" aria-busy={isPending}>
@@ -36,45 +37,45 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
         main={
           <div className="space-y-6">
             <AdminFormSection title="Grundinnehåll" elevated>
-              <Input name="title" label="Titel" placeholder="Vad kostar det att bygga en app?" defaultValue={post?.title ?? ""} required />
-              <Input name="slug" label="Slug" placeholder="vad-kostar-det-att-bygga-en-app" defaultValue={post?.slug ?? ""} required />
+              <Input name="title" label="Titel" placeholder="Vad kostar det att bygga en app?" defaultValue={values?.title ?? post?.title ?? ""} required />
+              <Input name="slug" label="Slug" placeholder="vad-kostar-det-att-bygga-en-app" defaultValue={values?.slug ?? post?.slug ?? ""} required />
               <Textarea
                 name="excerpt"
                 label="Excerpt"
                 placeholder="Kort utdrag som används i bloggkort och metadata."
-                defaultValue={post?.excerpt ?? ""}
+                defaultValue={values?.excerpt ?? post?.excerpt ?? ""}
                 required
               />
               <Textarea
                 name="content"
                 label="Content"
                 placeholder="Skriv innehållet här. Markdown eller enkel text fungerar bra i första versionen."
-                defaultValue={post ? getEditorContent(post.content) : ""}
+                defaultValue={values?.content ?? (post ? getEditorContent(post.content) : "")}
                 className="min-h-[360px]"
                 required
               />
             </AdminFormSection>
 
             <AdminFormSection title="SEO" description="Om fälten lämnas tomma används standardvärden från site settings.">
-              <Input name="seoTitle" label="SEO title" placeholder="SEO-optimerad titel" defaultValue={post?.seoTitle ?? ""} />
+              <Input name="seoTitle" label="SEO title" placeholder="SEO-optimerad titel" defaultValue={values?.seoTitle ?? post?.seoTitle ?? ""} />
               <Textarea
                 name="metaDescription"
                 label="Meta description"
                 placeholder="Kort beskrivning för sökresultat."
-                defaultValue={post?.metaDescription ?? ""}
+                defaultValue={values?.metaDescription ?? post?.metaDescription ?? ""}
               />
-              <Input name="ogTitle" label="Open Graph title" placeholder="Titel för delning i sociala medier" defaultValue={post?.ogTitle ?? ""} />
+              <Input name="ogTitle" label="Open Graph title" placeholder="Titel för delning i sociala medier" defaultValue={values?.ogTitle ?? post?.ogTitle ?? ""} />
               <Textarea
                 name="ogDescription"
                 label="Open Graph description"
                 placeholder="Beskrivning för social delning."
-                defaultValue={post?.ogDescription ?? ""}
+                defaultValue={values?.ogDescription ?? post?.ogDescription ?? ""}
               />
-              <Input name="canonicalUrl" label="Canonical URL" placeholder="https://vibedev.se/blogg/..." defaultValue={post?.canonicalUrl ?? ""} />
+              <Input name="canonicalUrl" label="Canonical URL" placeholder="https://vibedev.se/blogg/..." defaultValue={values?.canonicalUrl ?? post?.canonicalUrl ?? ""} />
               <AdminCheckboxField
                 name="noindex"
                 label="Noindex"
-                defaultChecked={post?.noindex ?? false}
+                defaultChecked={values ? values.noindex : (post?.noindex ?? false)}
                 hint="Använd om sidan inte ska indexeras i sökmotorer."
               />
             </AdminFormSection>
@@ -83,7 +84,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
         aside={
           <>
             <AdminFormSection title="Publicering" elevated>
-              <Select name="status" label="Status" defaultValue={post?.status ?? ContentStatus.DRAFT}>
+              <Select name="status" label="Status" defaultValue={values?.status ?? post?.status ?? ContentStatus.DRAFT}>
                 <option value={ContentStatus.DRAFT}>Utkast</option>
                 <option value={ContentStatus.PUBLISHED}>Publicerad</option>
               </Select>
@@ -91,15 +92,15 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                 name="publishedAt"
                 type="datetime-local"
                 label="Publiceringsdatum"
-                defaultValue={post?.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : ""}
+                defaultValue={values?.publishedAt ?? (post?.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : "")}
               />
             </AdminFormSection>
 
             <AdminFormSection title="Metadata">
-              <Input name="featuredImage" label="Featured image" placeholder="https://..." defaultValue={post?.featuredImage ?? ""} />
-              <Input name="author" label="Författare" placeholder="VibeDev" defaultValue={post?.author ?? ""} />
-              <Input name="category" label="Kategori" placeholder="Apputveckling" defaultValue={post?.category ?? ""} required />
-              <Input name="tags" label="Taggar" placeholder="app, budget, strategi" defaultValue={post?.tags.join(", ") ?? ""} />
+              <Input name="featuredImage" label="Featured image" placeholder="https://..." defaultValue={values?.featuredImage ?? post?.featuredImage ?? ""} />
+              <Input name="author" label="Författare" placeholder="VibeDev" defaultValue={values?.author ?? post?.author ?? ""} />
+              <Input name="category" label="Kategori" placeholder="Apputveckling" defaultValue={values?.category ?? post?.category ?? ""} required />
+              <Input name="tags" label="Taggar" placeholder="app, budget, strategi" defaultValue={values?.tags ?? post?.tags.join(", ") ?? ""} />
             </AdminFormSection>
 
             <AdminFormFooter

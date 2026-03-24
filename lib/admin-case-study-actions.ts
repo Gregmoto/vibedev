@@ -41,6 +41,7 @@ const caseStudySchema = z.object({
 export type CaseStudyFormState = {
   error?: string;
   success?: string;
+  values?: ReturnType<typeof toPayload>;
 };
 
 function toPayload(formData: FormData) {
@@ -112,7 +113,10 @@ export async function createCaseStudyAction(
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Case study-CMS kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Case study-CMS kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -121,6 +125,7 @@ export async function createCaseStudyAction(
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte skapa case study."),
+      values: payload,
     };
   }
 
@@ -133,10 +138,10 @@ export async function createCaseStudyAction(
     redirect(`/admin/case-studies/${caseStudy.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av ett annat case." };
+      return { error: "Sluggen används redan av ett annat case.", values: payload };
     }
 
-    return { error: "Något gick fel när case study skapades." };
+    return { error: "Något gick fel när case study skapades.", values: payload };
   }
 }
 
@@ -148,7 +153,10 @@ export async function updateCaseStudyAction(
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Case study-CMS kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Case study-CMS kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -157,6 +165,7 @@ export async function updateCaseStudyAction(
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte uppdatera case study."),
+      values: payload,
     };
   }
 
@@ -171,10 +180,10 @@ export async function updateCaseStudyAction(
     return { success: "Case study uppdaterades." };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av ett annat case." };
+      return { error: "Sluggen används redan av ett annat case.", values: payload };
     }
 
-    return { error: "Något gick fel när case study uppdaterades." };
+    return { error: "Något gick fel när case study uppdaterades.", values: payload };
   }
 }
 

@@ -30,6 +30,7 @@ const pageSchema = z.object({
 export type PageFormState = {
   error?: string;
   success?: string;
+  values?: ReturnType<typeof toPayload>;
 };
 
 function toPayload(formData: FormData) {
@@ -79,7 +80,10 @@ export async function createPageAction(_prevState: PageFormState, formData: Form
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Page editor kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Page editor kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -88,6 +92,7 @@ export async function createPageAction(_prevState: PageFormState, formData: Form
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte skapa sidan."),
+      values: payload,
     };
   }
 
@@ -100,10 +105,10 @@ export async function createPageAction(_prevState: PageFormState, formData: Form
     redirect(`/admin/pages/${page.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av en annan sida." };
+      return { error: "Sluggen används redan av en annan sida.", values: payload };
     }
 
-    return { error: "Något gick fel när sidan skapades." };
+    return { error: "Något gick fel när sidan skapades.", values: payload };
   }
 }
 
@@ -111,7 +116,10 @@ export async function updatePageAction(pageId: string, _prevState: PageFormState
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Page editor kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Page editor kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -120,6 +128,7 @@ export async function updatePageAction(pageId: string, _prevState: PageFormState
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte uppdatera sidan."),
+      values: payload,
     };
   }
 
@@ -134,10 +143,10 @@ export async function updatePageAction(pageId: string, _prevState: PageFormState
     return { success: "Sidan uppdaterades." };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av en annan sida." };
+      return { error: "Sluggen används redan av en annan sida.", values: payload };
     }
 
-    return { error: "Något gick fel när sidan uppdaterades." };
+    return { error: "Något gick fel när sidan uppdaterades.", values: payload };
   }
 }
 

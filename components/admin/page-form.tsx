@@ -29,6 +29,7 @@ function getEditorContent(content: Prisma.JsonValue) {
 export function PageForm({ page }: PageFormProps) {
   const boundAction = page ? updatePageAction.bind(null, page.id) : createPageAction;
   const [state, formAction, isPending] = useActionState(boundAction, initialState);
+  const values = state.values;
 
   return (
     <form action={formAction} className="space-y-8" aria-busy={isPending}>
@@ -36,39 +37,39 @@ export function PageForm({ page }: PageFormProps) {
         main={
           <div className="space-y-6">
             <AdminFormSection title="Sidinnehåll" elevated>
-              <Input name="title" label="Title" placeholder="Startsida" defaultValue={page?.title ?? ""} required />
-              <Input name="slug" label="Slug" placeholder="/om-oss" defaultValue={page?.slug ?? ""} required />
-              <Textarea name="intro" label="Intro" placeholder="Kort introtext för sidan." defaultValue={page?.intro ?? ""} />
+              <Input name="title" label="Title" placeholder="Startsida" defaultValue={values?.title ?? page?.title ?? ""} required />
+              <Input name="slug" label="Slug" placeholder="/om-oss" defaultValue={values?.slug ?? page?.slug ?? ""} required />
+              <Textarea name="intro" label="Intro" placeholder="Kort introtext för sidan." defaultValue={values?.intro ?? page?.intro ?? ""} />
               <Textarea
                 name="content"
                 label="Content"
                 placeholder="Skriv innehållet här. Enkel markdown eller vanlig text fungerar bra."
-                defaultValue={page ? getEditorContent(page.content) : ""}
+                defaultValue={values?.content ?? (page ? getEditorContent(page.content) : "")}
                 className="min-h-[360px]"
                 required
               />
             </AdminFormSection>
 
             <AdminFormSection title="SEO" description="Om du lämnar fälten tomma används standard-SEO från site settings.">
-              <Input name="seoTitle" label="SEO title" placeholder="SEO-optimerad titel" defaultValue={page?.seoTitle ?? ""} />
+              <Input name="seoTitle" label="SEO title" placeholder="SEO-optimerad titel" defaultValue={values?.seoTitle ?? page?.seoTitle ?? ""} />
               <Textarea
                 name="metaDescription"
                 label="Meta description"
                 placeholder="Kort beskrivning för sökresultat."
-                defaultValue={page?.metaDescription ?? ""}
+                defaultValue={values?.metaDescription ?? page?.metaDescription ?? ""}
               />
-              <Input name="ogTitle" label="Open Graph title" placeholder="Titel för social delning" defaultValue={page?.ogTitle ?? ""} />
+              <Input name="ogTitle" label="Open Graph title" placeholder="Titel för social delning" defaultValue={values?.ogTitle ?? page?.ogTitle ?? ""} />
               <Textarea
                 name="ogDescription"
                 label="Open Graph description"
                 placeholder="Beskrivning för social delning."
-                defaultValue={page?.ogDescription ?? ""}
+                defaultValue={values?.ogDescription ?? page?.ogDescription ?? ""}
               />
-              <Input name="canonicalUrl" label="Canonical URL" placeholder="https://vibedev.se/..." defaultValue={page?.canonicalUrl ?? ""} />
+              <Input name="canonicalUrl" label="Canonical URL" placeholder="https://vibedev.se/..." defaultValue={values?.canonicalUrl ?? page?.canonicalUrl ?? ""} />
               <AdminCheckboxField
                 name="noindex"
                 label="Noindex"
-                defaultChecked={page?.noindex ?? false}
+                defaultChecked={values ? values.noindex : (page?.noindex ?? false)}
                 hint="Bra för interna, temporära eller kampanjspecifika sidor."
               />
             </AdminFormSection>
@@ -77,7 +78,7 @@ export function PageForm({ page }: PageFormProps) {
         aside={
           <>
             <AdminFormSection title="Status" elevated>
-              <Select name="status" label="Status" defaultValue={page?.status ?? ContentStatus.DRAFT}>
+              <Select name="status" label="Status" defaultValue={values?.status ?? page?.status ?? ContentStatus.DRAFT}>
                 <option value={ContentStatus.DRAFT}>Utkast</option>
                 <option value={ContentStatus.PUBLISHED}>Publicerad</option>
               </Select>

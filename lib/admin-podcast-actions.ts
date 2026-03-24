@@ -38,6 +38,7 @@ const podcastEpisodeSchema = z.object({
 export type PodcastFormState = {
   error?: string;
   success?: string;
+  values?: ReturnType<typeof toPayload>;
 };
 
 function toPayload(formData: FormData) {
@@ -101,7 +102,10 @@ export async function createPodcastEpisodeAction(
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Podcast-CMS kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Podcast-CMS kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -110,6 +114,7 @@ export async function createPodcastEpisodeAction(
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte skapa avsnittet."),
+      values: payload,
     };
   }
 
@@ -122,10 +127,10 @@ export async function createPodcastEpisodeAction(
     redirect(`/admin/podcast/${episode.id}`);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av ett annat podcastavsnitt." };
+      return { error: "Sluggen används redan av ett annat podcastavsnitt.", values: payload };
     }
 
-    return { error: "Något gick fel när podcastavsnittet skapades." };
+    return { error: "Något gick fel när podcastavsnittet skapades.", values: payload };
   }
 }
 
@@ -137,7 +142,10 @@ export async function updatePodcastEpisodeAction(
   await requireAdminAction();
 
   if (!hasDatabaseUrl()) {
-    return { error: "DATABASE_URL saknas. Podcast-CMS kräver en konfigurerad databas." };
+    return {
+      error: "DATABASE_URL saknas. Podcast-CMS kräver en konfigurerad databas.",
+      values: toPayload(formData),
+    };
   }
 
   const payload = toPayload(formData);
@@ -146,6 +154,7 @@ export async function updatePodcastEpisodeAction(
   if (!parsed.success) {
     return {
       error: getFirstIssueMessage(parsed.error, "Kunde inte uppdatera avsnittet."),
+      values: payload,
     };
   }
 
@@ -160,10 +169,10 @@ export async function updatePodcastEpisodeAction(
     return { success: "Podcastavsnittet uppdaterades." };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return { error: "Sluggen används redan av ett annat podcastavsnitt." };
+      return { error: "Sluggen används redan av ett annat podcastavsnitt.", values: payload };
     }
 
-    return { error: "Något gick fel när podcastavsnittet uppdaterades." };
+    return { error: "Något gick fel när podcastavsnittet uppdaterades.", values: payload };
   }
 }
 
