@@ -13,11 +13,13 @@ import {
   homeFaq,
   homeReasons,
   homeServices,
-  latestArticles,
-  podcastHighlights,
   testimonials,
 } from "@/content/home";
-import { createMetadataForStandardPage } from "@/lib/cms-public";
+import {
+  createMetadataForStandardPage,
+  getPublishedBlogPosts,
+  getPublishedPodcastEpisodes,
+} from "@/lib/cms-public";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
@@ -29,7 +31,12 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [latestArticles, podcastHighlights] = await Promise.all([
+    getPublishedBlogPosts(),
+    getPublishedPodcastEpisodes(),
+  ]);
+
   return (
     <>
       <Section size="hero" className="page-hero">
@@ -214,12 +221,12 @@ export default function HomePage() {
           actions={<LinkButton href="/blogg" variant="secondary">Till bloggen</LinkButton>}
         />
         <PatternGrid className="mt-10" columns="3">
-          {latestArticles.map((article) => (
+          {latestArticles.slice(0, 3).map((article) => (
             <Card key={article.title} variant="outlined" className="p-7">
               <Badge>{article.category}</Badge>
               <h3 className="heading-md mt-5 text-2xl">{article.title}</h3>
               <p className="body-md mt-3">{article.excerpt}</p>
-              <Link href={article.href} className="mt-6 inline-flex text-sm font-medium text-brand transition hover:text-text">
+              <Link href={`/blogg/${article.slug}`} className="mt-6 inline-flex text-sm font-medium text-brand transition hover:text-text">
                 Läs artikeln
               </Link>
             </Card>
@@ -238,12 +245,12 @@ export default function HomePage() {
             />
           </div>
           <div className="grid gap-6">
-            {podcastHighlights.map((episode) => (
+            {podcastHighlights.slice(0, 2).map((episode, index) => (
               <Card key={episode.title} className="p-7">
-                <p className="eyebrow">{episode.meta}</p>
+                <p className="eyebrow">Avsnitt {index + 1} · {new Date(episode.publishedAt).toLocaleDateString("sv-SE")}</p>
                 <h3 className="heading-md mt-4 text-2xl">{episode.title}</h3>
                 <p className="body-md mt-3">{episode.excerpt}</p>
-                <Link href={episode.href} className="mt-6 inline-flex text-sm font-medium text-brand transition hover:text-text">
+                <Link href={`/podcast/${episode.slug}`} className="mt-6 inline-flex text-sm font-medium text-brand transition hover:text-text">
                   Visa avsnitt
                 </Link>
               </Card>
