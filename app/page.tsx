@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LogoBar } from "@/components/home/logo-bar";
+import { TeamSection } from "@/components/home/team-section";
 import { Badge } from "@/components/ui/badge";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -102,6 +104,9 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Logo bar ─────────────────────────────────────────────────────────── */}
+      <LogoBar />
+
       <Section size="tight" id="sa-jobbar-vi">
         <SectionHeading
           eyebrow="Om VibeDev"
@@ -185,6 +190,9 @@ export default async function HomePage() {
           ))}
         </PatternGrid>
       </Section>
+
+      {/* ── Vi som bygger ────────────────────────────────────────────────────── */}
+      <TeamSection />
 
       <Section>
         <SectionHeading
