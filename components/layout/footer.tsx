@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoFull } from "@/components/brand/logo";
 import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { navigation } from "@/content/navigation";
@@ -35,13 +36,7 @@ export function Footer({ settings }: FooterProps) {
         <div className="grid gap-12 border-t border-line/50 pt-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand/20 bg-brand/10 text-sm font-semibold uppercase tracking-[0.2em] text-brand">
-                VD
-              </span>
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-text">{settings.siteName}</p>
-                <p className="text-xs text-muted">{settings.siteUrl.replace(/^https?:\/\//, "")}</p>
-              </div>
+              <LogoFull height={30} />
             </div>
             <p className="max-w-md text-sm leading-7 text-muted">
               {settings.footerText}

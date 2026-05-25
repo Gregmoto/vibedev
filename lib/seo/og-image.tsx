@@ -1,136 +1,162 @@
 /**
  * Shared OG-image generator used by every opengraph-image.tsx route file.
  *
- * next/og renders JSX server-side into a PNG via @resvg/resvg-js (edge-compatible).
- * Consumers re-export `runtime`, `contentType`, and `size`, then call createOGImage().
+ * Layout: gradient background (brand → sky) with V-mark + wordmark on the left
+ * and the page title/tagline on the right.
  */
 
 import { ImageResponse } from "next/og";
 
-export const ogRuntime    = "edge" as const;
+export const ogRuntime     = "edge" as const;
 export const ogContentType = "image/png";
 export const ogSize        = { width: 1200, height: 630 };
 
+/* ── V-mark path (same geometry as public/logo-mark.svg) ─────────────────────── */
+
+function VMark({ size = 72 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 44 44" fill="none">
+      <path d="M2 3 L13 3 L22 33 L31 3 L42 3 L22 43 Z" fill="white" />
+    </svg>
+  );
+}
+
+/* ── Main generator ──────────────────────────────────────────────────────────── */
+
 export function createOGImage(title: string, tagline?: string): ImageResponse {
-  const subtitle = tagline ?? "Apputveckling, AI & MVP · Stockholm";
-  const fontSize  = title.length > 55 ? 46 : title.length > 35 ? 54 : 62;
+  const subtitle  = tagline ?? "Apputveckling · AI · MVP — Stockholm";
+  const titleSize = title.length > 55 ? 44 : title.length > 38 ? 52 : 60;
 
   return new ImageResponse(
     (
       <div
         style={{
-          display:         "flex",
-          flexDirection:   "column",
-          width:           "100%",
-          height:          "100%",
-          backgroundColor: "#F8FAFC",
-          padding:         "64px 72px",
-          fontFamily:      "system-ui, -apple-system, sans-serif",
-          position:        "relative",
-          overflow:        "hidden",
+          display:        "flex",
+          width:          "100%",
+          height:         "100%",
+          position:       "relative",
+          overflow:       "hidden",
+          fontFamily:     "system-ui, -apple-system, sans-serif",
+          background:     "linear-gradient(135deg, #1D4ED8 0%, #2563EB 40%, #0EA5E9 100%)",
         }}
       >
-        {/* Decorative gradient orb — top-right */}
+        {/* ── Geometric decorations ──────────────────────────────────────── */}
+        {/* Large circle — top right */}
         <div
           style={{
             position:     "absolute",
-            right:        -80,
-            top:          -80,
-            width:        420,
-            height:       420,
+            right:        -120,
+            top:          -120,
+            width:        560,
+            height:       560,
             borderRadius: "50%",
-            background:   "radial-gradient(circle, rgba(37,99,235,0.10) 0%, transparent 70%)",
+            border:       "1.5px solid rgba(255,255,255,0.12)",
+            display:      "flex",
           }}
         />
-        {/* Decorative gradient orb — bottom-left */}
+        {/* Medium circle — bottom left */}
         <div
           style={{
             position:     "absolute",
-            left:         -60,
-            bottom:       -60,
-            width:        300,
-            height:       300,
+            left:         -80,
+            bottom:       -80,
+            width:        380,
+            height:       380,
             borderRadius: "50%",
-            background:   "radial-gradient(circle, rgba(37,99,235,0.06) 0%, transparent 70%)",
+            border:       "1.5px solid rgba(255,255,255,0.08)",
+            display:      "flex",
+          }}
+        />
+        {/* Small accent — top left */}
+        <div
+          style={{
+            position:     "absolute",
+            left:         260,
+            top:          40,
+            width:        120,
+            height:       120,
+            borderRadius: "50%",
+            border:       "1px solid rgba(255,255,255,0.07)",
+            display:      "flex",
           }}
         />
 
-        {/* Brand name */}
+        {/* ── Left panel: Logo ──────────────────────────────────────────── */}
         <div
           style={{
-            display:       "flex",
-            alignItems:    "center",
-            gap:           10,
+            display:        "flex",
+            flexDirection:  "column",
+            justifyContent: "center",
+            alignItems:     "flex-start",
+            width:          340,
+            padding:        "64px 48px 64px 64px",
+            borderRight:    "1px solid rgba(255,255,255,0.15)",
           }}
         >
+          <VMark size={80} />
           <div
             style={{
-              width:           8,
-              height:          28,
-              backgroundColor: "#2563EB",
-              borderRadius:    4,
-            }}
-          />
-          <span
-            style={{
-              fontSize:      24,
+              display:       "flex",
+              marginTop:     20,
+              fontSize:      42,
               fontWeight:    800,
-              color:         "#2563EB",
-              letterSpacing: "-0.5px",
+              color:         "white",
+              letterSpacing: "-1.5px",
+              lineHeight:    1,
             }}
           >
             VibeDev
-          </span>
-        </div>
-
-        {/* Main headline */}
-        <div
-          style={{
-            display:    "flex",
-            flex:       1,
-            alignItems: "center",
-          }}
-        >
-          <h1
+          </div>
+          <div
             style={{
-              fontSize,
-              fontWeight:    800,
-              color:         "#0F172A",
-              lineHeight:    1.1,
-              maxWidth:      900,
-              margin:        0,
-              letterSpacing: "-1.5px",
+              display:       "flex",
+              marginTop:     12,
+              fontSize:      14,
+              color:         "rgba(255,255,255,0.6)",
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
             }}
           >
-            {title}
-          </h1>
+            vibedev.se
+          </div>
         </div>
 
-        {/* Bottom row */}
+        {/* ── Right panel: Title + tagline ──────────────────────────────── */}
         <div
           style={{
-            display:    "flex",
-            alignItems: "center",
-            gap:        14,
+            display:        "flex",
+            flexDirection:  "column",
+            justifyContent: "center",
+            flex:           1,
+            padding:        "64px 72px",
           }}
         >
           <div
             style={{
-              width:           4,
-              height:          32,
-              backgroundColor: "#2563EB",
-              borderRadius:    3,
+              display:       "flex",
+              fontSize:      titleSize,
+              fontWeight:    800,
+              color:         "white",
+              lineHeight:    1.12,
+              letterSpacing: "-1.5px",
+              maxWidth:      740,
             }}
-          />
-          <span
+          >
+            {title}
+          </div>
+          <div
             style={{
-              fontSize:   19,
-              color:      "#64748B",
-              fontWeight: 500,
+              display:       "flex",
+              marginTop:     24,
+              fontSize:      22,
+              color:         "rgba(255,255,255,0.75)",
+              lineHeight:    1.5,
+              maxWidth:      640,
+              letterSpacing: "-0.2px",
             }}
           >
             {subtitle}
-          </span>
+          </div>
         </div>
       </div>
     ),

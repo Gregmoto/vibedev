@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         />
         {/* Dynamic global scripts from database-backed settings */}
         <AnalyticsScripts settings={settings} />
-        <Navbar siteName={settings.siteName} />
+        <Navbar />
         <main id="main-content">{children}</main>
         <Footer settings={settings} />
         <StickyCta />

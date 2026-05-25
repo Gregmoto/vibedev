@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" fill="none" role="img" aria-label="VibeDev">
+  <defs>
+    <linearGradient id="vd-g" x1="2" y1="3" x2="42" y2="43" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+  <path d="M2 3 L13 3 L22 33 L31 3 L42 3 L22 43 Z" fill="url(#vd-g)"/>
+</svg>

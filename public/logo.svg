@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 44" fill="none" role="img" aria-label="VibeDev">
+  <defs>
+    <linearGradient id="vd-g" x1="2" y1="3" x2="42" y2="43" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+  <!-- V mark -->
+  <path d="M2 3 L13 3 L22 33 L31 3 L42 3 L22 43 Z" fill="url(#vd-g)"/>
+  <!-- Wordmark: "Vibe" dark, "Dev" brand -->
+  <text x="56" y="31" font-family="'Space Grotesk', system-ui, -apple-system, sans-serif" font-weight="700" font-size="26" letter-spacing="-0.5">
+    <tspan fill="#0F172A">Vibe</tspan><tspan fill="#2563EB">Dev</tspan>
+  </text>
+</svg>
