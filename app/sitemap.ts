@@ -29,6 +29,9 @@ const routes = [
   "/boka-mote",
   "/resurser",
   "/vibecoding",
+  "/integritetspolicy",
+  "/cookies",
+  "/villkor",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
