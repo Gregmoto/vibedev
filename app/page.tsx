@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LogoBar } from "@/components/home/logo-bar";
+import { PackagesSection } from "@/components/home/packages-section";
 import { TeamSection } from "@/components/home/team-section";
 import { Badge } from "@/components/ui/badge";
 import { Button, LinkButton } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
   homeCases,
   homeFaq,
   homeReasons,
-  homeServices,
   testimonials,
 } from "@/content/home";
 import {
@@ -147,33 +147,8 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section>
-        <SectionHeading
-          eyebrow="Tjänster"
-          title="Det vi bygger för företag som vill röra sig snabbare."
-          description="Från första MVP till vidareutvecklade plattformar och AI-funktioner. Vi hjälper er där produkten möter affären."
-          actions={<LinkButton href="/tjanster" variant="secondary">Alla tjänster</LinkButton>}
-        />
-        <PatternGrid className="mt-10" columns="4">
-          {homeServices.map((service) => (
-            <Card key={service.title} className="p-7">
-              <h3 className="heading-md text-2xl">{service.title}</h3>
-              <p className="body-md mt-3">{service.description}</p>
-              <ul className="mt-5 space-y-3">
-                {service.points.map((point) => (
-                  <li key={point} className="flex gap-3 text-sm text-muted">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-brand" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link href={service.href} className="mt-6 inline-flex text-sm font-medium text-brand transition hover:text-text">
-                Läs mer
-              </Link>
-            </Card>
-          ))}
-        </PatternGrid>
-      </Section>
+      {/* ── Paket / tre sätt att starta ──────────────────────────────────────── */}
+      <PackagesSection />
 
       <Section>
         <SectionHeading
