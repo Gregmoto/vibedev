@@ -24,6 +24,7 @@ import {
 } from "@/lib/cms-public";
 import { getFAQSchema } from "@/lib/seo/jsonld";
 import { siteConfig } from "@/lib/metadata";
+import { LeadMagnet } from "@/components/conversion/lead-magnet";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
@@ -296,6 +297,11 @@ export default async function HomePage() {
           </div>
           <FaqAccordion items={homeFaq} />
         </div>
+      </Section>
+
+      {/* ── Lead magnet ─────────────────────────────────────────────────────── */}
+      <Section>
+        <LeadMagnet />
       </Section>
 
       <Section>

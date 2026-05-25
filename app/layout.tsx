@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { StickyCta } from "@/components/layout/sticky-cta";
+import { StickyMobileCta } from "@/components/conversion/sticky-mobile-cta";
 import { createMetadata } from "@/lib/metadata";
 import { websiteSchema } from "@/lib/schema";
 import { getLocalBusinessSchema, getOrganizationSchema } from "@/lib/seo/jsonld";
@@ -80,6 +81,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <main id="main-content">{children}</main>
         <Footer settings={settings} />
         <StickyCta />
+        <StickyMobileCta />
       </body>
     </html>
   );

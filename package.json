@@ -19,6 +19,7 @@
     "@react-email/components": "^1.0.12",
     "@react-email/render": "^2.0.8",
     "bcryptjs": "^2.4.3",
+    "lucide-react": "^1.16.0",
     "next": "latest",
     "next-auth": "^5.0.0-beta.25",
     "react": "latest",

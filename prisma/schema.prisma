@@ -198,3 +198,14 @@ model ContactSubmission {
   @@index([status])
   @@index([type])
 }
+
+model LeadMagnetSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   // "vibecoding-guide"
+  confirmed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([source])
+}
