@@ -1,73 +1,100 @@
-/**
- * Logo bar — social proof strip displayed directly after the hero.
- *
- * TODO: Ersätt med riktiga SVG-loggor i public/logos/ — placeholders
- *       genererade med klientnamn och unika accent-färger.
- */
+import Link from "next/link";
 
-type LogoClient = {
-  name: string;
-  /** Accent colour used for the text wordmark before grayscale is applied. */
-  color: string;
-  badge?: string;
+type Client = {
+  name:      string;
+  slug:      string;
+  color:     string;
+  tagline:   string;
+  upcoming?: boolean;
 };
 
-const clients: LogoClient[] = [
-  { name: "CMS Online",   color: "#0066CC" },
-  { name: "Bookiz",       color: "#E8601C" },
-  { name: "Mittbrottmål", color: "#1B4F72" },
-  { name: "Min Odling",   color: "#1E8449" },
-  { name: "Endoo",        color: "#7D3C98", badge: "kommande" },
-  // TODO: lägg till sjätte logo
+const clients: Client[] = [
+  {
+    name:    "CMS Online",
+    slug:    "cms-online",
+    color:   "#0066CC",
+    tagline: "E-handel & SaaS",
+  },
+  {
+    name:    "Bookiz",
+    slug:    "bookiz",
+    color:   "#E8601C",
+    tagline: "Community & Bok",
+  },
+  {
+    name:    "Mittbrottmål",
+    slug:    "mittbrottmal",
+    color:   "#1B4F72",
+    tagline: "Legal Tech",
+  },
+  {
+    name:    "Min Odling",
+    slug:    "min-odling",
+    color:   "#1E8449",
+    tagline: "Community & Odling",
+  },
+  {
+    name:     "Endoo",
+    slug:     "endoo",
+    color:    "#7D3C98",
+    tagline:  "SaaS & Ekonomi",
+    upcoming: true,
+  },
 ];
-
-function Wordmark({ name, color }: { name: string; color: string }) {
-  return (
-    <span
-      className="whitespace-nowrap text-xs font-bold tracking-tight sm:text-sm"
-      style={{ color }}
-    >
-      {name}
-    </span>
-  );
-}
 
 export function LogoBar() {
   return (
-    <section aria-label="Utvalda klienter" className="bg-[#F4F5F8]">
-      <div className="container-shell py-12 sm:py-16">
+    <section aria-label="Projekt vi byggt" className="border-y border-line/60 bg-[#F8F9FB]">
+      <div className="container-shell py-10 sm:py-12">
 
-        {/* Label */}
-        <p className="mb-10 text-center text-[10px] font-semibold uppercase tracking-[0.3em] text-muted/60">
-          Bolag och projekt vi byggt för
-        </p>
+        {/* Label row */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-muted/70">
+            Projekt vi byggt
+          </p>
+          <Link
+            href="/case-studies"
+            className="text-xs font-medium text-muted transition hover:text-brand"
+          >
+            Se alla case studies →
+          </Link>
+        </div>
 
-        {/* Logo grid — 3 cols mobile → 6 cols desktop */}
-        <div className="grid grid-cols-3 gap-x-6 gap-y-8 sm:gap-x-8 lg:grid-cols-6">
-
+        {/* Project tiles */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {clients.map((client) => (
-            <div key={client.name} className="flex flex-col items-center gap-2.5">
-              {/* Wordmark: grayscaled + dimmed by default, full colour on hover */}
-              <div className="flex h-10 items-center justify-center grayscale opacity-60 transition duration-300 hover:grayscale-0 hover:opacity-100">
-                <Wordmark name={client.name} color={client.color} />
+            <Link
+              key={client.slug}
+              href={`/case-studies/${client.slug}`}
+              className="group relative flex flex-col gap-2 rounded-xl border border-line bg-bg px-4 py-3.5 transition duration-200 hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-panel"
+            >
+              {/* Accent dot + name */}
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full transition duration-200"
+                  style={{ backgroundColor: client.color }}
+                  aria-hidden="true"
+                />
+                <span className="text-sm font-semibold text-text transition group-hover:text-brand">
+                  {client.name}
+                </span>
               </div>
 
-              {client.badge ? (
-                <span className="rounded-full border border-line bg-panel px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-muted">
-                  {client.badge}
+              {/* Tagline */}
+              <span className="text-[11px] leading-tight text-muted">
+                {client.tagline}
+              </span>
+
+              {/* Upcoming badge */}
+              {client.upcoming && (
+                <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-700">
+                  Kommande
                 </span>
-              ) : null}
-            </div>
+              )}
+            </Link>
           ))}
-
-          {/* TODO: lägg till sjätte logo */}
-          <div className="flex flex-col items-center justify-center opacity-30">
-            <div className="flex h-10 w-full max-w-[100px] items-center justify-center rounded-lg border border-dashed border-lineStrong">
-              <span className="text-xs text-muted">+</span>
-            </div>
-          </div>
-
         </div>
+
       </div>
     </section>
   );
