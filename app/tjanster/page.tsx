@@ -8,19 +8,34 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { serviceIntro, services } from "@/content/services";
 import { createMetadataForStandardPage } from "@/lib/cms-public";
+import { getBreadcrumbSchema, getServiceSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/tjanster",
-    fallbackTitle: "Tjänster",
-    fallbackDescription: "Tjänster inom apputveckling, webbappar, AI och produktutveckling.",
-    keywords: ["tjänster", "apputveckling", "webbapputveckling", "ai-lösningar", "produktstrategi"],
+    fallbackTitle: "Tjänster — Apputveckling, webbappar & AI-lösningar | VibeDev",
+    fallbackDescription:
+      "Vi bygger appar, webbappar, AI-funktioner och MVP:er. Tre tydliga sätt att starta: AI Sprint, MVP-utveckling och Produktpartnerskap. Få offert.",
+    keywords: ["apputveckling", "webbapputveckling", "ai-lösningar", "mvp-utveckling", "produktstrategi", "ui ux design"],
   });
 }
 
 export default function ServicesPage() {
+  const schemas = [
+    getBreadcrumbSchema([
+      { name: "Hem",      url: siteConfig.url },
+      { name: "Tjänster", url: `${siteConfig.url}/tjanster` },
+    ]),
+    ...services.map((s) => getServiceSchema(s)),
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
+      />
       <PageHeader
         eyebrow="Tjänster"
         title="Utveckling och produktstöd för företag som vill bygga rätt från början."

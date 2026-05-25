@@ -8,23 +8,34 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { createMetadataForStandardPage, getPublishedCaseStudies } from "@/lib/cms-public";
+import { getBreadcrumbSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/case-studies",
-    fallbackTitle: "Case studies",
-    fallbackDescription: "Exempel på digitala produkter, MVP:er och plattformar byggda av VibeDev.",
-    keywords: ["case studies", "mvp", "apputveckling", "webbapp", "ai"],
+    fallbackTitle: "Case studies — Plattformar och produkter vi byggt | VibeDev",
+    fallbackDescription:
+      "Konkreta exempel: CMS Online, Bookiz, Mittbrottmål, Min Odling. Se hur strategi, design och utveckling skapar riktiga produkter.",
+    keywords: ["case studies", "produktexempel", "mvp", "apputveckling", "webbapp", "ai-lösning"],
   });
 }
 
 export default async function CaseStudiesPage() {
   const caseStudies = await getPublishedCaseStudies();
+  const breadcrumb  = getBreadcrumbSchema([
+    { name: "Hem",           url: siteConfig.url },
+    { name: "Case studies",  url: `${siteConfig.url}/case-studies` },
+  ]);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <PageHeader
         eyebrow="Case studies"
         title="Så omsätter vi produktidéer till tydliga affärsresultat."

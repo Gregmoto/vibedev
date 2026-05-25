@@ -8,19 +8,34 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { createMetadataForStandardPage } from "@/lib/cms-public";
+import { getBreadcrumbSchema, getFAQSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/kontakt",
-    fallbackTitle: "Kontakt",
-    fallbackDescription: "Kontakta VibeDev för nya digitala satsningar, appar, AI-lösningar och webbprojekt.",
-    keywords: ["kontakt", "offert", "apputveckling", "webbprojekt", "ai"],
+    fallbackTitle: "Kontakta VibeDev — Begär offert eller boka samtal",
+    fallbackDescription:
+      "Berätta vad ni vill bygga, så återkommer vi inom 24 timmar med ett tydligt nästa steg. Telefon, e-post eller bokningskalender.",
+    keywords: ["kontakt vibedev", "begär offert", "apputveckling offert", "boka samtal", "webbprojekt"],
   });
 }
 
 export default function ContactPage() {
+  const schemas = [
+    getFAQSchema(contactFaq.map((f) => ({ q: f.question, a: f.answer }))),
+    getBreadcrumbSchema([
+      { name: "Hem",     url: siteConfig.url },
+      { name: "Kontakt", url: `${siteConfig.url}/kontakt` },
+    ]),
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
+      />
       <PageHeader
         eyebrow="Kontakt"
         title="Berätta vad ni vill bygga, så visar vi bästa vägen framåt."

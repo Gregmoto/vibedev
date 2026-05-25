@@ -7,6 +7,11 @@ import {
 } from "@/lib/cms-public";
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 
+const staticPriority: Record<string, number> = {
+  "":           1.0,
+  "/tjanster":  0.9,
+};
+
 const routes = [
   "",
   "/tjanster",
@@ -31,14 +36,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = routes.map((route) => ({
     url: `${settings.siteUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: route === "" ? 1 : 0.8,
+    changeFrequency: "monthly" as const,
+    priority: staticPriority[route] ?? 0.7,
   }));
 
   const articleRoutes = blogPosts.map((post) => ({
     url: `${settings.siteUrl}/blogg/${post.slug}`,
     lastModified: new Date(post.updatedAt || post.publishedAt),
-    changeFrequency: "monthly" as const,
+    changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 

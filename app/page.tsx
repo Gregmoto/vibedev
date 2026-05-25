@@ -22,14 +22,16 @@ import {
   getPublishedBlogPosts,
   getPublishedPodcastEpisodes,
 } from "@/lib/cms-public";
+import { getFAQSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/",
-    fallbackTitle: "VibeDev",
+    fallbackTitle: "Apputveckling, AI & MVP i Stockholm | VibeDev",
     fallbackDescription:
-      "VibeDev bygger appar, webbappar och AI-lösningar för företag som vill skapa moderna digitala produkter med tydligt affärsvärde.",
-    keywords: ["VibeDev", "apputveckling", "webbappar", "ai-lösningar", "mvp"],
+      "Seniort produktteam i Stockholm som bygger appar, webbappar och AI-lösningar — enklare, snabbare och utan onödig byråtröghet. Boka kostnadsfritt strategisamtal.",
+    keywords: ["apputveckling stockholm", "webbapp", "ai-lösningar", "mvp", "produktutveckling", "VibeDev"],
   });
 }
 
@@ -39,8 +41,14 @@ export default async function HomePage() {
     getPublishedPodcastEpisodes(),
   ]);
 
+  const faqSchema = getFAQSchema(homeFaq.map((f) => ({ q: f.question, a: f.answer })));
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-bg to-[#EFF6FF]">
         {/* Decorative blur orbs — rendered via CSS so no layout shift */}

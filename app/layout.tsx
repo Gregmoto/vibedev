@@ -5,7 +5,8 @@ import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { StickyCta } from "@/components/layout/sticky-cta";
 import { createMetadata } from "@/lib/metadata";
-import { organizationSchema, websiteSchema } from "@/lib/schema";
+import { websiteSchema } from "@/lib/schema";
+import { getLocalBusinessSchema, getOrganizationSchema } from "@/lib/seo/jsonld";
 import {
   getResolvedSiteSettings,
   parseSearchConsoleVerification,
@@ -58,14 +59,17 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify([
-              organizationSchema({
+              getOrganizationSchema({
                 siteName: settings.siteName,
-                siteUrl: settings.siteUrl,
-                email: settings.contactEmail || undefined,
+                siteUrl:  settings.siteUrl,
+              }),
+              getLocalBusinessSchema({
+                siteName: settings.siteName,
+                siteUrl:  settings.siteUrl,
               }),
               websiteSchema({
                 siteName: settings.siteName,
-                siteUrl: settings.siteUrl,
+                siteUrl:  settings.siteUrl,
               }),
             ]),
           }}

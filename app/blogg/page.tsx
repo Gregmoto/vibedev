@@ -7,25 +7,36 @@ import { PatternGrid } from "@/components/ui/pattern-grid";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { createMetadataForStandardPage, getPublishedBlogPosts } from "@/lib/cms-public";
+import { getBreadcrumbSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/blogg",
-    fallbackTitle: "Blogg",
-    fallbackDescription: "Artiklar om apputveckling, MVP, AI och modern produktutveckling.",
-    keywords: ["blogg", "apputveckling", "mvp", "ai", "vibecoding"],
+    fallbackTitle: "Blogg — Vibecoding, AI och modern produktutveckling | VibeDev",
+    fallbackDescription:
+      "Artiklar om vibecoding, AI i produkter, MVP-utveckling och hur moderna team bygger digitala produkter snabbare.",
+    keywords: ["vibecoding", "ai produktutveckling", "mvp blogg", "digital produktutveckling", "apputveckling artiklar"],
   });
 }
 
 export default async function BlogPage() {
-  const posts = await getPublishedBlogPosts();
+  const posts      = await getPublishedBlogPosts();
   const categories = Array.from(new Set(posts.map((post) => post.category)));
-  const tags = Array.from(new Set(posts.flatMap((post) => post.tags))).sort();
+  const tags       = Array.from(new Set(posts.flatMap((post) => post.tags))).sort();
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Hem",   url: siteConfig.url },
+    { name: "Blogg", url: `${siteConfig.url}/blogg` },
+  ]);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <PageHeader
         eyebrow="Blogg"
         title="Artiklar för team som bygger appar, webbappar och AI-produkter."

@@ -6,19 +6,31 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { createMetadataForStandardPage } from "@/lib/cms-public";
+import { getBreadcrumbSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/om-oss",
-    fallbackTitle: "Om oss",
-    fallbackDescription: "Lär känna VibeDev och hur vi jobbar med moderna digitala produkter.",
-    keywords: ["om oss", "vibedev", "produktteam", "design", "utveckling"],
+    fallbackTitle: "Om VibeDev — Seniort utvecklarteam i Stockholm",
+    fallbackDescription:
+      "Fyra erfarna utvecklare som tröttnade på att kod skulle vara dyrt och komplicerat. Lär känna oss och hur vi jobbar.",
+    keywords: ["om vibedev", "produktteam stockholm", "senior utvecklare", "design och utveckling"],
   });
 }
 
 export default function AboutPage() {
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Hem",    url: siteConfig.url },
+    { name: "Om oss", url: `${siteConfig.url}/om-oss` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <PageHeader
         eyebrow="Om VibeDev"
         title="Ett modernt produktteam för bolag som vill bygga med mer skärpa."

@@ -6,23 +6,34 @@ import { PatternGrid } from "@/components/ui/pattern-grid";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { createMetadataForStandardPage, getPublishedPodcastEpisodes } from "@/lib/cms-public";
+import { getBreadcrumbSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/podcast",
-    fallbackTitle: "Podcast",
-    fallbackDescription: "Podcast om vibecoding, produktbygge, AI och digital tillväxt.",
-    keywords: ["podcast", "ai", "vibecoding", "produktutveckling"],
+    fallbackTitle: "Podcast — Samtal om vibecoding, AI och produktbygge | VibeDev",
+    fallbackDescription:
+      "Vibecoding-podden för founders, produktägare och utvecklare som vill bygga snabbare och smartare.",
+    keywords: ["vibecoding podcast", "ai podcast svenska", "produktutveckling podcast", "startup podcast"],
   });
 }
 
 export default async function PodcastPage() {
-  const episodes = await getPublishedPodcastEpisodes();
+  const episodes   = await getPublishedPodcastEpisodes();
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Hem",     url: siteConfig.url },
+    { name: "Podcast", url: `${siteConfig.url}/podcast` },
+  ]);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <PageHeader
         eyebrow="Podcast"
         title="Samtal om vibecoding, produktutveckling, AI och digital tillväxt."

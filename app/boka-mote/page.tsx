@@ -5,14 +5,16 @@ import { CalEmbed } from "@/components/booking/cal-embed";
 import { LinkButton } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { createMetadataForStandardPage } from "@/lib/cms-public";
+import { getBreadcrumbSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/boka-mote",
-    fallbackTitle: "Boka kostnadsfritt strategisamtal — VibeDev",
+    fallbackTitle: "Boka kostnadsfritt strategisamtal | VibeDev",
     fallbackDescription:
-      "Boka ett 20 minuter strategisamtal med VibeDev. Gratis, utan förbindelser — vi går igenom ert nuläge och vad som är smartast att bygga först.",
-    keywords: ["boka möte", "strategisamtal", "gratis konsultation", "mvp", "apputveckling"],
+      "20 minuter med en senior utvecklare. Vi går igenom ert nuläge, målbild och föreslår ett konkret nästa steg — utan säljpitchar.",
+    keywords: ["boka strategisamtal", "gratis konsultation", "apputveckling rådgivning", "mvp rådgivning"],
   });
 }
 
@@ -54,8 +56,17 @@ const INCLUDES = [
 ];
 
 export default function BookMeetingPage() {
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Hem",       url: siteConfig.url },
+    { name: "Boka möte", url: `${siteConfig.url}/boka-mote` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section className="page-hero border-b border-line/50">
         <div className="container-shell py-16 sm:py-24">

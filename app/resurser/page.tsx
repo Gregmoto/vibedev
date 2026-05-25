@@ -7,19 +7,31 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { resources } from "@/content/resources";
 import { createMetadataForStandardPage } from "@/lib/cms-public";
+import { getBreadcrumbSchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/resurser",
-    fallbackTitle: "Resurser",
-    fallbackDescription: "Gratis guider, checklistor och material för företag som bygger digitala produkter.",
-    keywords: ["resurser", "checklistor", "guider", "mvp", "produktutveckling"],
+    fallbackTitle: "Gratis resurser — Guider, mallar och checklistor | VibeDev",
+    fallbackDescription:
+      "Praktiska resurser för founders och produktteam: MVP-checklista, AI-guide, kravspec-mall och mer.",
+    keywords: ["mvp checklista", "ai guide", "kravspec mall", "produktutveckling resurser", "gratis guider"],
   });
 }
 
 export default function ResourcesPage() {
+  const breadcrumb = getBreadcrumbSchema([
+    { name: "Hem",     url: siteConfig.url },
+    { name: "Resurser", url: `${siteConfig.url}/resurser` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <PageHeader
         eyebrow="Resurser"
         title="Guider, checklistor och material för team som bygger digitala produkter."

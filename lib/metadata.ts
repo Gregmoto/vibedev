@@ -79,20 +79,11 @@ export function createDynamicMetadata(input: {
       locale: "sv_SE",
       type: input.type ?? "website",
       ...(input.type === "article" && input.publishedTime ? { publishedTime: input.publishedTime } : {}),
-      images: [
-        {
-          url: defaultOgImage,
-          width: 1200,
-          height: 630,
-          alt: `${toSiteTitle(ogTitle, baseSiteName)} Open Graph`,
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       title: toSiteTitle(ogTitle, baseSiteName),
       description: ogDescription,
-      images: [defaultOgImage],
     },
   } satisfies Metadata;
 }
