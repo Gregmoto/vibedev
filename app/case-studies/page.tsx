@@ -57,7 +57,7 @@ export default async function CaseStudiesPage() {
           {caseStudies.map((item, index) => (
             <Card key={item.slug} className="overflow-hidden p-0" variant={index % 2 === 0 ? "elevated" : "default"}>
               <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="border-b border-white/5 p-8 lg:border-b-0 lg:border-r">
+                <div className="border-b border-line/50 p-8 lg:border-b-0 lg:border-r">
                   <div className="flex flex-wrap items-center gap-3">
                     <Badge tone={index % 3 === 0 ? "brand" : index % 3 === 1 ? "accent" : "success"}>
                       {item.industry}
@@ -108,7 +108,7 @@ export default async function CaseStudiesPage() {
                     <p className="text-sm font-semibold uppercase tracking-[0.2em] text-text">Teknikstack</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {item.techStack.map((tech) => (
-                        <span key={tech} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+                        <span key={tech} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
                           {tech}
                         </span>
                       ))}

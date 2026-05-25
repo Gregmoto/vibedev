@@ -59,7 +59,7 @@ export default async function HomePage() {
                   Se våra tjänster
                 </LinkButton>
               </div>
-              <div className="grid gap-4 border-t border-white/10 pt-6 sm:grid-cols-3">
+              <div className="grid gap-4 border-t border-line pt-6 sm:grid-cols-3">
                 <div>
                   <p className="text-2xl font-semibold text-text">50+</p>
                   <p className="text-sm text-muted">Produktspår, lanseringar och förbättringar</p>
@@ -290,7 +290,7 @@ export default async function HomePage() {
           {testimonials.map((testimonial) => (
             <Card key={testimonial.name} className="p-7">
               <p className="text-base leading-8 text-text">“{testimonial.quote}”</p>
-              <div className="mt-6 border-t border-white/10 pt-5">
+              <div className="mt-6 border-t border-line pt-5">
                 <p className="font-semibold text-text">{testimonial.name}</p>
                 <p className="text-sm text-muted">{testimonial.role}</p>
               </div>

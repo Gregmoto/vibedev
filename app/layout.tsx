@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const bodyFont = Manrope({
+const bodyFont = Inter({
   subsets: ["latin"],
   variable: "--font-body",
 });

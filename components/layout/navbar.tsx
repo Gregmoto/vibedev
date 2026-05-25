@@ -21,7 +21,7 @@ export function Navbar({ siteName = "VibeDev" }: NavbarProps) {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-bg/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-line/50 bg-bg/80 backdrop-blur-xl">
       <Container>
         <div className="flex min-h-[4.75rem] items-center justify-between gap-4 py-4">
           <Link href="/" className="group flex items-center gap-3">
@@ -45,7 +45,7 @@ export function Navbar({ siteName = "VibeDev" }: NavbarProps) {
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "rounded-full px-4 py-2 text-sm font-medium transition",
-                    isActive ? "bg-white/[0.06] text-text" : "text-muted hover:bg-white/[0.04] hover:text-text",
+                    isActive ? "bg-brand/10 text-brand" : "text-muted hover:bg-line/30 hover:text-text",
                   )}
                 >
                   {item.label}
@@ -85,7 +85,7 @@ export function Navbar({ siteName = "VibeDev" }: NavbarProps) {
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "rounded-2xl px-4 py-3 text-sm font-medium transition",
-                    isActive ? "bg-white/[0.07] text-text" : "text-muted hover:bg-white/[0.04] hover:text-text",
+                    isActive ? "bg-brand/10 text-brand" : "text-muted hover:bg-line/30 hover:text-text",
                   )}
                 >
                   {item.label}

@@ -22,7 +22,7 @@ export function BlogCard({ post }: BlogCardProps) {
       <p className="body-md mt-3">{post.excerpt}</p>
       <div className="mt-5 flex flex-wrap gap-2">
         {post.tags.map((tag) => (
-          <span key={tag} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          <span key={tag} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
             #{tag}
           </span>
         ))}

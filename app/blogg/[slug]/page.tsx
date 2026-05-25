@@ -111,11 +111,11 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             ))}
           </div>
 
-          <div className="mt-10 border-t border-white/10 pt-8">
+          <div className="mt-10 border-t border-line pt-8">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-text">Taggar</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {post.tags.map((tag) => (
-                <span key={tag} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+                <span key={tag} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
                   #{tag}
                 </span>
               ))}

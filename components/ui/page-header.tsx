@@ -21,7 +21,7 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <header className={cn("page-hero border-b border-white/5", className)}>
+    <header className={cn("page-hero border-b border-line/50", className)}>
       <Container className="pb-12 pt-20 sm:pb-16 sm:pt-28">
         <div className="surface-elevated max-w-4xl space-y-6 px-6 py-10 sm:px-10 sm:py-12">
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}

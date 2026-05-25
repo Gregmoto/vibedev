@@ -96,14 +96,14 @@ export default async function PodcastEpisodePage({ params }: PodcastEpisodePageP
         <div className="space-y-6">
           <div className="surface p-6 sm:p-8">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-text">Lyssna</p>
-            <div className="mt-5 rounded-3xl border border-dashed border-lineStrong bg-white/[0.03] p-8">
+            <div className="mt-5 rounded-3xl border border-dashed border-lineStrong bg-bg p-8">
               {episode.embedUrl ? (
                 <div className="space-y-4">
                   <p className="font-semibold text-text">Inbäddad spelare</p>
                   <iframe
                     src={episode.embedUrl}
                     title={episode.title}
-                    className="h-40 w-full rounded-2xl border border-white/10 bg-black/20"
+                    className="h-40 w-full rounded-2xl border border-line bg-bg"
                     loading="lazy"
                     sandbox="allow-same-origin allow-scripts allow-popups"
                     referrerPolicy="strict-origin-when-cross-origin"

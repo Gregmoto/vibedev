@@ -64,7 +64,7 @@ export default async function BlogPage() {
             <p className="mt-8 text-sm font-semibold uppercase tracking-[0.2em] text-text">Populära taggar</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {tags.map((tag) => (
-                <span key={tag} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+                <span key={tag} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
                   #{tag}
                 </span>
               ))}

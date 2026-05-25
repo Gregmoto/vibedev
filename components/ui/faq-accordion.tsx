@@ -32,7 +32,7 @@ export function FaqAccordion({ items, className }: FaqAccordionProps) {
               <span className="text-base font-semibold text-text sm:text-lg">{item.question}</span>
               <span
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-lg text-muted transition",
+                  "flex h-8 w-8 items-center justify-center rounded-full border border-line text-lg text-muted transition",
                   isOpen && "rotate-45 border-brand/30 text-brand",
                 )}
               >

@@ -25,7 +25,7 @@ export function PodcastCard({ episode }: PodcastCardProps) {
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {episode.guests.map((guest) => (
-          <span key={guest.name} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          <span key={guest.name} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
             {guest.name}
           </span>
         ))}

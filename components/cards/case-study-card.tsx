@@ -17,7 +17,7 @@ export function CaseStudyCard({ item }: CaseStudyCardProps) {
       <p className="body-md mt-3">{item.summary}</p>
       <div className="mt-5 flex flex-wrap gap-2">
         {item.techStack.slice(0, 3).map((tech) => (
-          <span key={tech} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+          <span key={tech} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
             {tech}
           </span>
         ))}

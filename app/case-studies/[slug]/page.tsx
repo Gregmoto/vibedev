@@ -75,7 +75,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           <p className="body-lg mt-5 max-w-3xl">{caseStudy.summary}</p>
           <div className="mt-8 flex flex-wrap gap-2">
             {caseStudy.techStack.map((tech) => (
-              <span key={tech} className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted">
+              <span key={tech} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
                 {tech}
               </span>
             ))}

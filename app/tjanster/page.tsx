@@ -62,7 +62,7 @@ export default function ServicesPage() {
               variant={index % 2 === 0 ? "elevated" : "default"}
             >
               <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
-                <div className="border-b border-white/5 p-8 lg:border-b-0 lg:border-r">
+                <div className="border-b border-line/50 p-8 lg:border-b-0 lg:border-r">
                   <Badge tone={index % 3 === 0 ? "brand" : index % 3 === 1 ? "accent" : "success"}>
                     {service.title}
                   </Badge>

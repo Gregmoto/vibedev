@@ -11,7 +11,7 @@ type FooterProps = {
 
 export function Footer({ settings }: FooterProps) {
   return (
-    <footer className="border-t border-white/5 bg-black/10">
+    <footer className="border-t border-line bg-bg">
       <Container className="section-tight">
         <div className="surface-elevated mb-8 grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-4">
@@ -32,7 +32,7 @@ export function Footer({ settings }: FooterProps) {
           </div>
         </div>
 
-        <div className="grid gap-12 border-t border-white/5 pt-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
+        <div className="grid gap-12 border-t border-line/50 pt-10 md:grid-cols-[1.2fr_0.8fr_0.8fr]">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand/20 bg-brand/10 text-sm font-semibold uppercase tracking-[0.2em] text-brand">

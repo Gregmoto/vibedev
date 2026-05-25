@@ -15,7 +15,7 @@ export default function NotFound() {
           <Link href="/" className="rounded-full bg-text px-6 py-3 text-sm font-medium text-bg">
             Till startsidan
           </Link>
-          <Link href="/tjanster" className="rounded-full border border-white/10 px-6 py-3 text-sm font-medium text-text">
+          <Link href="/tjanster" className="rounded-full border border-line px-6 py-3 text-sm font-medium text-text">
             Se tjänster
           </Link>
         </div>

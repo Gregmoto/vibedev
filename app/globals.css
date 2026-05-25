@@ -2,14 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens ────────────────────────────────────────────────────────── */
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+
+  /* Light palette */
+  --color-bg:           250 250 250;   /* #FAFAFA */
+  --color-panel:        255 255 255;   /* #FFFFFF */
+  --color-panelElevated:255 255 255;   /* #FFFFFF */
+  --color-line:         226 232 240;   /* #E2E8F0 */
+  --color-lineStrong:   203 213 225;   /* #CBD5E1 */
+  --color-text:         15  23  42;    /* #0F172A */
+  --color-muted:        100 116 139;   /* #64748B */
+  --color-brand:        37  99  235;   /* #2563EB */
+  --color-brandDeep:    219 234 254;   /* #DBEAFE */
+  --color-accent:       14  165 233;   /* #0EA5E9 */
+  --color-accentDeep:   224 242 254;   /* #E0F2FE */
+  --color-success:      16  185 129;   /* #10B981 */
+  --color-warning:      245 158 11;    /* #F59E0B */
+  --color-danger:       239 68  68;    /* #EF4444 */
+
+  /* Layout */
   --radius-xs: 0.625rem;
   --radius-sm: 0.875rem;
   --radius-md: 1.125rem;
   --radius-lg: 1.75rem;
   --space-section: clamp(4rem, 8vw, 7.5rem);
 }
+
+/* Admin area keeps the original dark palette */
+.admin-scope {
+  color-scheme: dark;
+
+  --color-bg:           6   7   11;   /* #06070b */
+  --color-panel:        16  19  27;   /* #10131b */
+  --color-panelElevated:21  26  36;   /* #151a24 */
+  --color-line:         35  41  58;   /* #23293a */
+  --color-lineStrong:   54  64  90;   /* #36405a */
+  --color-text:         245 247 251;  /* #f5f7fb */
+  --color-muted:        147 160 184;  /* #93a0b8 */
+  --color-brand:        121 242 208;  /* #79f2d0 */
+  --color-brandDeep:    13  64  55;   /* #0d4037 */
+  --color-accent:       128 168 255;  /* #80a8ff */
+  --color-accentDeep:   24  42  82;   /* #182a52 */
+  --color-success:      85  214 167;  /* #55d6a7 */
+  --color-warning:      255 203 112;  /* #ffcb70 */
+  --color-danger:       239 68  68;   /* #EF4444 */
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
 
 html {
   scroll-behavior: smooth;
@@ -18,10 +60,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top, rgba(121, 242, 208, 0.08), transparent 28%),
-    linear-gradient(180deg, #06070b 0%, #0c1018 100%);
-  color: #f4f7fb;
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
   font-family: var(--font-body), sans-serif;
   line-height: 1.5;
 }
@@ -36,9 +76,16 @@ a {
 }
 
 ::selection {
-  background: rgba(124, 246, 211, 0.28);
-  color: #f4f7fb;
+  background: rgba(37, 99, 235, 0.15);
+  color: rgb(var(--color-text));
 }
+
+.admin-scope ::selection {
+  background: rgba(121, 242, 208, 0.25);
+  color: rgb(var(--color-text));
+}
+
+/* ── Layout helpers ───────────────────────────────────────────────────────── */
 
 .container-shell {
   @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
@@ -49,7 +96,7 @@ a {
 }
 
 .surface-elevated {
-  @apply rounded-3xl border border-lineStrong bg-panelElevated shadow-glow backdrop-blur;
+  @apply rounded-3xl border border-lineStrong bg-panelElevated shadow-panel backdrop-blur;
 }
 
 .page-hero {
@@ -63,6 +110,8 @@ a {
 .section-tight {
   @apply py-16 sm:py-20;
 }
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
 
 .eyebrow {
   @apply text-xs font-semibold uppercase tracking-[0.28em] text-brand;
@@ -88,6 +137,8 @@ a {
   @apply text-sm leading-7 text-muted sm:text-base;
 }
 
+/* ── Grid helpers ─────────────────────────────────────────────────────────── */
+
 .grid-auto-cards {
   @apply grid gap-6 md:grid-cols-2 xl:grid-cols-3;
 }
@@ -96,6 +147,8 @@ a {
   @apply grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)];
 }
 
+/* ── Interactions ─────────────────────────────────────────────────────────── */
+
 .interactive-outline {
   @apply outline-none ring-0 transition duration-200 focus-visible:border-brand/60 focus-visible:ring-4 focus-visible:ring-brand/15;
 }
@@ -103,6 +156,8 @@ a {
 .text-balance {
   text-wrap: balance;
 }
+
+/* ── Base layer overrides ─────────────────────────────────────────────────── */
 
 @layer base {
   h1,
@@ -120,35 +175,45 @@ a {
   }
 }
 
+/* ── Component layer ──────────────────────────────────────────────────────── */
+
 @layer components {
   .button-reset {
     @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-medium transition duration-200 interactive-outline disabled:pointer-events-none disabled:opacity-50;
   }
 
+  /* Primary: solid brand fill, white text, lift + shadow on hover */
   .button-primary {
-    @apply button-reset border-brand/40 bg-brand px-5 py-3 text-bg hover:-translate-y-0.5 hover:bg-[#91f5da];
+    @apply button-reset border-transparent bg-brand px-5 py-3 text-bg shadow-sm hover:-translate-y-0.5 hover:shadow-md;
   }
 
+  /* Secondary: outline style, brand hover fill */
   .button-secondary {
-    @apply button-reset border-lineStrong bg-white/[0.03] px-5 py-3 text-text hover:border-brand/35 hover:bg-brand/10 hover:text-brand;
+    @apply button-reset border-lineStrong bg-transparent px-5 py-3 text-text hover:-translate-y-0.5 hover:border-brand/40 hover:bg-brand/10 hover:text-brand;
   }
 
+  /* Ghost: no border, subtle hover tint */
   .button-ghost {
-    @apply button-reset border-transparent bg-transparent px-4 py-2 text-muted hover:bg-white/[0.04] hover:text-text;
+    @apply button-reset border-transparent bg-transparent px-4 py-2 text-muted hover:bg-line/30 hover:text-text;
   }
 
+  /* Form fields */
   .field-base {
-    @apply interactive-outline w-full rounded-2xl border border-line bg-white/[0.03] px-4 py-3 text-sm text-text placeholder:text-muted/70 hover:border-lineStrong;
+    @apply interactive-outline w-full rounded-2xl border border-line bg-panel px-4 py-3 text-sm text-text placeholder:text-muted/60 hover:border-lineStrong;
   }
 
+  /* Badge shell */
   .badge-base {
     @apply inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold tracking-[0.18em] uppercase;
   }
 
+  /* Default card */
   .card-base {
     @apply surface bg-panel-mesh p-6 transition duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-glow;
   }
 }
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   html {

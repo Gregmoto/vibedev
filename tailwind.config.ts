@@ -10,22 +10,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#06070b",
-        panel: "#10131b",
-        panelElevated: "#151a24",
-        line: "#23293a",
-        lineStrong: "#36405a",
-        text: "#f5f7fb",
-        muted: "#93a0b8",
-        brand: "#79f2d0",
-        brandDeep: "#0d4037",
-        accent: "#80a8ff",
-        accentDeep: "#182a52",
-        success: "#55d6a7",
-        warning: "#ffcb70",
+        // All tokens are CSS-variable-backed so .admin-scope can override to dark palette
+        bg:           "rgb(var(--color-bg)           / <alpha-value>)",
+        panel:        "rgb(var(--color-panel)         / <alpha-value>)",
+        panelElevated:"rgb(var(--color-panelElevated) / <alpha-value>)",
+        line:         "rgb(var(--color-line)          / <alpha-value>)",
+        lineStrong:   "rgb(var(--color-lineStrong)    / <alpha-value>)",
+        text:         "rgb(var(--color-text)          / <alpha-value>)",
+        muted:        "rgb(var(--color-muted)         / <alpha-value>)",
+        brand:        "rgb(var(--color-brand)         / <alpha-value>)",
+        brandDeep:    "rgb(var(--color-brandDeep)     / <alpha-value>)",
+        accent:       "rgb(var(--color-accent)        / <alpha-value>)",
+        accentDeep:   "rgb(var(--color-accentDeep)    / <alpha-value>)",
+        success:      "rgb(var(--color-success)       / <alpha-value>)",
+        warning:      "rgb(var(--color-warning)       / <alpha-value>)",
+        danger:       "rgb(var(--color-danger)        / <alpha-value>)",
       },
       fontFamily: {
-        sans: ["var(--font-body)", "sans-serif"],
+        sans:    ["var(--font-body)", "sans-serif"],
         display: ["var(--font-display)", "sans-serif"],
       },
       spacing: {
@@ -34,20 +36,25 @@ const config: Config = {
         30: "7.5rem",
       },
       boxShadow: {
-        glow: "0 24px 80px rgba(128, 168, 255, 0.16)",
-        panel: "0 18px 40px rgba(5, 8, 15, 0.36)",
-        focus: "0 0 0 4px rgba(121, 242, 208, 0.16)",
+        // Light-theme shadows (subtle, using dark ink on light surfaces)
+        panel:   "0 1px 3px rgba(15,23,42,0.06), 0 12px 24px -8px rgba(15,23,42,0.08)",
+        glow:    "0 0 0 4px rgba(37,99,235,0.12)",
+        focus:   "0 0 0 4px rgba(37,99,235,0.18)",
+        "lg-card":"0 4px 6px rgba(15,23,42,0.05), 0 20px 40px -12px rgba(15,23,42,0.15)",
       },
       borderRadius: {
-        lg2: "1rem",
-        xl2: "1.25rem",
-        "3xl": "1.75rem",
+        lg2:  "1rem",
+        xl2:  "1.25rem",
+        "3xl":"1.75rem",
       },
       backgroundImage: {
+        // Very subtle light-theme gradients
         "hero-grid":
-          "radial-gradient(circle at top, rgba(121, 242, 208, 0.18), transparent 32%), radial-gradient(circle at 20% 20%, rgba(128, 168, 255, 0.14), transparent 22%)",
+          "radial-gradient(circle at 30% 20%, rgba(37,99,235,0.07), transparent 50%), " +
+          "radial-gradient(circle at 80% 80%, rgba(14,165,233,0.05), transparent 40%)",
         "panel-mesh":
-          "linear-gradient(135deg, rgba(121, 242, 208, 0.07), transparent 36%), linear-gradient(315deg, rgba(128, 168, 255, 0.08), transparent 42%)",
+          "linear-gradient(135deg, rgba(37,99,235,0.04), transparent 50%), " +
+          "linear-gradient(315deg, rgba(14,165,233,0.03), transparent 50%)",
       },
     },
   },

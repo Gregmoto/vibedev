@@ -10,7 +10,7 @@ type BadgeProps = {
 const toneClasses = {
   brand: "badge-base border-brand/25 bg-brand/10 text-brand",
   accent: "badge-base border-accent/25 bg-accent/10 text-accent",
-  neutral: "badge-base border-white/10 bg-white/[0.04] text-muted",
+  neutral: "badge-base border-line bg-bg text-muted",
   success: "badge-base border-success/25 bg-success/10 text-success",
 };
 
