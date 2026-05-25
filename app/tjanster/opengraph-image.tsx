@@ -1,3 +1,5 @@
-import { createOGImage, ogContentType, ogRuntime, ogSize } from "@/lib/seo/og-image";
-export const runtime = ogRuntime; export const contentType = ogContentType; export const size = ogSize;
+import { createOGImage } from "@/lib/seo/og-image";
+export const runtime = "edge";
+export const contentType = "image/png";
+export const size = { width: 1200, height: 630 };
 export default function OGImage() { return createOGImage("Tjänster — Apputveckling, webbappar & AI-lösningar"); }
