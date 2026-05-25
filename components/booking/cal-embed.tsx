@@ -23,9 +23,10 @@ const PAKET_NOTES: Record<string, string> = {
 };
 
 /* ── Env vars (resolved once at module load) ─────────────────────────────── */
+/* Defaults are safe to hard-code — Cal.com usernames are public by design.  */
 
-const CAL_USERNAME   = process.env.NEXT_PUBLIC_CAL_USERNAME   ?? "";
-const CAL_EVENT_SLUG = process.env.NEXT_PUBLIC_CAL_EVENT_SLUG ?? "strategisamtal";
+const CAL_USERNAME   = process.env.NEXT_PUBLIC_CAL_USERNAME   || "vibedev";
+const CAL_EVENT_SLUG = process.env.NEXT_PUBLIC_CAL_EVENT_SLUG || "30min";
 
 /* ── Skeleton ────────────────────────────────────────────────────────────── */
 
