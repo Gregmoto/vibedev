@@ -4,6 +4,7 @@ import { Sparkles, Users, Zap } from "lucide-react";
 import { LogoBar } from "@/components/home/logo-bar";
 import { PackagesSection } from "@/components/home/packages-section";
 import { TeamSection } from "@/components/home/team-section";
+import { ProjectShowcase } from "@/components/sections/project-showcase";
 import { Badge } from "@/components/ui/badge";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,7 +14,6 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import {
   freeResources,
-  homeCases,
   homeFaq,
   homeReasons,
   testimonials,
@@ -244,27 +244,8 @@ export default async function HomePage() {
       {/* ── Vi som bygger ────────────────────────────────────────────────────── */}
       <TeamSection />
 
-      <Section>
-        <SectionHeading
-          eyebrow="Case studies"
-          title="Plattformar och produkter vi byggt."
-          description="Riktiga projekt där strategi, design och utveckling skapade fungerande produkter — inte presentationer."
-          actions={<LinkButton href="/case-studies" variant="secondary">Se alla case →</LinkButton>}
-        />
-        <PatternGrid className="mt-10" columns="3">
-          {homeCases.map((item) => (
-            <Card key={item.title} className="p-7">
-              <Badge tone="accent">Resultat: {item.result}</Badge>
-              <h3 className="heading-md mt-5 text-2xl">{item.title}</h3>
-              <p className="body-md mt-3">{item.summary}</p>
-              <p className="mt-5 text-sm text-muted">{item.tech}</p>
-              <Link href={item.href} className="mt-6 inline-flex text-sm font-medium text-brand transition hover:text-text">
-                Se case
-              </Link>
-            </Card>
-          ))}
-        </PatternGrid>
-      </Section>
+      {/* ── Project showcase ─────────────────────────────────────────────── */}
+      <ProjectShowcase />
 
       <Section>
         <SectionHeading
