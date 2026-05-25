@@ -72,7 +72,6 @@ export function Footer({ settings }: FooterProps) {
                   {settings.phone}
                 </a>
               ) : null}
-              {settings.address ? <p>{settings.address}</p> : null}
             </div>
           </div>
         </div>
