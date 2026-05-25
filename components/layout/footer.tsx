@@ -3,7 +3,7 @@ import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { navigation } from "@/content/navigation";
 import type { ResolvedSiteSettings } from "@/lib/site-settings";
-import { CONTACT, COMPANY } from "@/lib/config/contact";
+import { CONTACT } from "@/lib/config/contact";
 
 type FooterProps = {
   settings: ResolvedSiteSettings;
@@ -73,35 +73,10 @@ export function Footer({ settings }: FooterProps) {
                 </a>
               ) : null}
               {settings.address ? <p>{settings.address}</p> : null}
-              {settings.socialLinks.length > 0 ? (
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {settings.socialLinks.map((link) => (
-                    <Link
-                      key={`${link.label}-${link.url}`}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-muted transition hover:text-text"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              ) : null}
-              <Link href="/kontakt" className="text-brand transition hover:text-text">
-                Skicka förfrågan
-              </Link>
             </div>
           </div>
         </div>
 
-        {/* Företagsinfo */}
-        <div className="mt-8 border-t border-white/5 pt-6 text-xs text-muted/60">
-          <p>
-            {COMPANY.legalName} &nbsp;·&nbsp; Org.nr {COMPANY.orgNumber}
-            {COMPANY.fSkatt ? " · F-skatt godkänd" : null}
-          </p>
-        </div>
       </Container>
     </footer>
   );
