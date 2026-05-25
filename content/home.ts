@@ -27,20 +27,24 @@ export const homeServices = [
 
 export const homeReasons = [
   {
-    title: "Senior nivå från start",
-    description: "Ni slipper juniora experiment och får ett team som tänker produkt, teknik och affär samtidigt.",
+    title: "Seniort team — inga juniora experiment",
+    description:
+      "Ni får utvecklare med många års erfarenhet från första dagen. Inget inlärningsgap, inga onödiga vändor.",
   },
   {
-    title: "Snabbt utan slarv",
-    description: "Vi jobbar snabbt, men med en teknisk grund som håller för vidareutveckling och riktiga användare.",
+    title: "Fast pris på fast scope",
+    description:
+      "Vi sätter pris efter scope, inte timmar. Ni vet vad det kostar innan vi börjar — inga räkningar som rusar iväg.",
   },
   {
-    title: "Tydlig kommunikation",
-    description: "Ni får raka rekommendationer, klara prioriteringar och en process som är enkel att följa.",
+    title: "Demo varje vecka",
+    description:
+      "Ni ser produkten växa fram i realtid. Inga 3-månaders blackoutperioder med \"vi bygger\".",
   },
   {
-    title: "Fokus på resultat",
-    description: "Vi bygger inte features för sakens skull. Allt utgår från användarnytta, affärsmål och momentum.",
+    title: "Ni äger koden från dag ett",
+    description:
+      "Allt levereras i ert GitHub. Ingen inlåsning, inga dolda beroenden. Vill ni byta partner senare? Det går.",
   },
 ];
 
@@ -107,12 +111,12 @@ export const podcastHighlights = [
 export const freeResources = [
   {
     title: "MVP-checklistan för founders",
-    description: "En rak guide till vad som ska vara med före design, utveckling och lansering.",
+    description: "En rak guide till vad som ska vara med innan ni börjar designa och bygga.",
     href: "/resurser",
   },
   {
     title: "Guide: När passar AI i en digital produkt?",
-    description: "Få en enkel modell för att avgöra om AI skapar verkligt värde i just ert case.",
+    description: "Få en enkel modell för att avgöra om AI verkligen tillför värde i just ert case.",
     href: "/resurser",
   },
   {
@@ -147,21 +151,36 @@ export const homeFaq = [
   {
     question: "Vilka företag passar VibeDev för?",
     answer:
-      "Vi jobbar främst med startups, små och medelstora företag samt team som bygger nya digitala produkter, interna verktyg eller AI-funktioner.",
+      "Vi jobbar främst med founders, startups, scaleups och små till medelstora bolag som ska bygga en ny digital produkt, en MVP eller integrera AI i en befintlig lösning. Bolag som värdesätter fart, tydlighet och att jobba med ett seniort team.",
   },
   {
     question: "Kan ni hjälpa till från idéstadiet?",
     answer:
-      "Ja. Vi hjälper ofta till med scope, prioritering, tekniska vägval, UX och roadmap innan utvecklingen startar.",
+      "Ja. Många av våra bästa projekt har börjat med \"vi har en idé men vet inte var vi ska börja\". Vi hjälper er definiera scope, validera idén och bygga första versionen.",
   },
   {
     question: "Bygger ni både design och utveckling?",
     answer:
-      "Ja. Vår styrka är kombinationen av produktstrategi, design och teknisk implementation i samma process.",
+      "Ja, allt i samma team. Vi tror att design och utveckling tappar momentum när de ligger hos olika leverantörer — så vi har bägge under samma tak.",
   },
   {
     question: "Hur snabbt kan ett projekt komma igång?",
     answer:
-      "Mindre förstudier och MVP-spår kan ofta starta snabbt. Tidslinjen beror på omfattning, men vi optimerar alltid för snabb klarhet i första fasen.",
+      "Typiskt 2–4 veckor efter signerat avtal. Vid hög belastning kan det bli 6 veckor — vi säger alltid det rakt på första samtalet så ni kan planera.",
+  },
+  {
+    question: "Vad kostar ett projekt?",
+    answer:
+      "Det beror helt på scope. Vi sätter alltid pris efter avstämning av era behov, så ni vet exakt vad ni betalar innan vi börjar. Boka ett samtal eller skicka en förfrågan så återkommer vi med konkret offert inom 24 timmar.",
+  },
+  {
+    question: "Skriver ni avtal och NDA?",
+    answer:
+      "Ja. Vi signar NDA innan vi diskuterar detaljer om ni vill. Standardavtal eller ert eget — vi är flexibla.",
+  },
+  {
+    question: "Vem äger koden?",
+    answer:
+      "Ni. Allt levereras i ert eget GitHub eller GitLab från första dagen. Inga inlåsningar.",
   },
 ];
