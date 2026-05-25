@@ -39,75 +39,70 @@ export default async function HomePage() {
 
   return (
     <>
-      <Section size="hero" className="page-hero">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-          <div className="surface-elevated overflow-hidden px-6 py-16 sm:px-10">
-            <div className="max-w-3xl space-y-6">
-              <Badge tone="brand">Digital produktstudio för bolag i rörelse</Badge>
-              <h1 className="heading-xl max-w-4xl text-balance">
-                Vi bygger appar, webbappar och AI-lösningar som driver verklig tillväxt.
-              </h1>
-              <p className="body-lg max-w-2xl">
-                VibeDev hjälper företag att gå från idé till lanserad produkt med stark design, snabb utveckling
-                och tekniska beslut som håller över tid.
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <LinkButton href="/boka-mote" size="lg">
-                  Boka möte
-                </LinkButton>
-                <LinkButton href="/tjanster" variant="secondary" size="lg">
-                  Se våra tjänster
-                </LinkButton>
-              </div>
-              <div className="grid gap-4 border-t border-line pt-6 sm:grid-cols-3">
-                <div>
-                  <p className="text-2xl font-semibold text-text">50+</p>
-                  <p className="text-sm text-muted">Produktspår, lanseringar och förbättringar</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-text">Snabbt</p>
-                  <p className="text-sm text-muted">Fokus på fart utan att bygga in teknisk skuld</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-text">Seniort</p>
-                  <p className="text-sm text-muted">Strategi, UX och utveckling i samma team</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-bg to-[#EFF6FF]">
+        {/* Decorative blur orbs — rendered via CSS so no layout shift */}
+        <div
+          className="pointer-events-none absolute -left-48 -top-36 h-[680px] w-[680px] rounded-full bg-brand/10 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-36 -right-48 h-[680px] w-[680px] rounded-full bg-brand/10 blur-3xl"
+          aria-hidden="true"
+        />
 
-          <div className="grid gap-6">
-            <Card variant="elevated" className="bg-panel-mesh p-8">
-              <p className="eyebrow">Vad vi hjälper er med</p>
-              <ul className="mt-6 space-y-4">
-                {[
-                  "Lansera en ny app eller webbapp",
-                  "Bygga en MVP med rätt scope",
-                  "Integrera AI i befintlig produkt",
-                  "Förbättra konvertering och användarupplevelse",
-                ].map((item) => (
-                  <li key={item} className="flex gap-3 text-sm text-muted sm:text-base">
-                    <span className="mt-2 h-2 w-2 rounded-full bg-brand" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-            <Card className="p-8">
-              <p className="eyebrow">För team som behöver mer än bara kod</p>
-              <p className="mt-4 text-lg font-semibold text-text">
-                Vi tänker produkt, varumärke och affär samtidigt som vi bygger.
-              </p>
-              <p className="body-md mt-3">
-                Det gör att ni får en lösning som inte bara fungerar tekniskt, utan också är enklare att sälja,
-                lansera och vidareutveckla.
-              </p>
-            </Card>
+        <div className="container-shell relative px-4 pb-16 pt-20 sm:px-6 sm:pb-24 sm:pt-[7.5rem] lg:px-8">
+          <div className="mx-auto max-w-[920px] text-center">
+
+            {/* Pre-title badge */}
+            <div className="mb-6 inline-flex items-center rounded-full bg-brandDeep px-4 py-1.5">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-brand">
+                För founders och produktteam i Norden
+              </span>
+            </div>
+
+            {/* H1 */}
+            <h1 className="text-balance font-display text-[2.25rem] font-bold leading-[1.08] tracking-[-0.02em] text-text sm:text-[2.75rem] lg:text-[4rem]">
+              Lansera en app, webbapp eller AI-funktion&nbsp;— utan byråtröghet.
+            </h1>
+
+            {/* Subtitle */}
+            <p className="mx-auto mt-6 max-w-[640px] text-[1.0625rem] leading-[1.75] text-muted sm:text-lg">
+              VibeDev är ett seniort produktteam i Stockholm. Vi tar er från idé till lanserad produkt
+              med strategi, design och utveckling&nbsp;— allt i samma team. Snabbare, enklare och utan
+              onödig komplexitet.
+            </p>
+
+            {/* CTA row */}
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <LinkButton href="/boka-mote" size="lg">
+                Boka kostnadsfritt strategisamtal&nbsp;→
+              </LinkButton>
+              <Link
+                href="/tjanster"
+                className="group inline-flex items-center gap-1.5 text-base font-medium text-muted transition duration-200 hover:text-text"
+              >
+                Se hur vi jobbar
+                <span
+                  aria-hidden="true"
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </Link>
+            </div>
+
+            {/* Trust row */}
+            <p className="mt-8 text-sm text-muted/70">
+              Svar inom 24 timmar&nbsp;·&nbsp;Inga säljpitchar&nbsp;·&nbsp;Fast pris på fast scope
+            </p>
+
+            {/* TODO: Lägg till antal levererade projekt när siffran är bekräftad */}
           </div>
         </div>
-      </Section>
+      </section>
 
-      <Section size="tight">
+      <Section size="tight" id="sa-jobbar-vi">
         <SectionHeading
           eyebrow="Om VibeDev"
           title="Vi är partnern för företag som vill bygga snabbt, smart och med rätt teknisk nivå från dag ett."
