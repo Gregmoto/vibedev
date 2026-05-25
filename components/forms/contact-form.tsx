@@ -20,7 +20,7 @@ function SubmitButton() {
           Skickar...
         </span>
       ) : (
-        "Skicka förfrågan"
+        "Skicka förfrågan →"
       )}
     </Button>
   );
@@ -165,8 +165,8 @@ export function ContactForm() {
         <Textarea
           name="message"
           label="Vad vill ni ha hjälp med?"
-          placeholder="Beskriv kort ert projekt, nuläge och vad ni vill uppnå."
-          hint="Ju tydligare ni är, desto snabbare kan vi ge ett relevant nästa steg."
+          placeholder="Beskriv kort er idé, projekt eller utmaning. Ju tydligare, desto snabbare kan vi ge ett relevant svar."
+          hint="Ni behöver inte ha allt klart — en riktning räcker."
           className={cn(state.errors?.message && "border-red-500 focus:ring-red-500")}
           aria-invalid={!!state.errors?.message}
         />

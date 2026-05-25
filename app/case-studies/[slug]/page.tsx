@@ -13,6 +13,8 @@ import {
   getPublishedCaseStudyBySlug,
   getRelatedPublicCaseStudies,
 } from "@/lib/cms-public";
+import { getBreadcrumbSchema, getCaseStudySchema } from "@/lib/seo/jsonld";
+import { siteConfig } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -60,8 +62,28 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
   const relatedCases = await getRelatedPublicCaseStudies(caseStudy);
 
+  const schemas = [
+    getBreadcrumbSchema([
+      { name: "Hem",          url: siteConfig.url },
+      { name: "Case studies", url: `${siteConfig.url}/case-studies` },
+      { name: caseStudy.projectName, url: `${siteConfig.url}/case-studies/${caseStudy.slug}` },
+    ]),
+    getCaseStudySchema({
+      slug:        caseStudy.slug,
+      projectName: caseStudy.projectName,
+      summary:     caseStudy.summary,
+      industry:    caseStudy.industry,
+      techStack:   caseStudy.techStack,
+      publishedAt: caseStudy.publishedAt,
+    }),
+  ];
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas) }}
+      />
       <Section size="hero" className="page-hero">
         <div className="surface-elevated max-w-5xl px-6 py-12 sm:px-10">
           <div className="flex flex-wrap items-center gap-3">
@@ -97,15 +119,15 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             </section>
 
             <section className="space-y-5">
-              <h2 className="heading-md text-3xl">Process</h2>
-              {caseStudy.process.map((step, index) => (
-                <div key={step} className="flex gap-4">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand/25 bg-brand/10 text-sm font-semibold text-brand">
-                    {index + 1}
-                  </span>
-                  <p className="body-md">{step}</p>
-                </div>
-              ))}
+              <h2 className="heading-md text-3xl">Vad vi byggde</h2>
+              <ul className="space-y-3">
+                {caseStudy.process.map((step) => (
+                  <li key={step} className="flex gap-3 text-sm text-muted sm:text-base">
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand" />
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ul>
             </section>
 
             <section className="space-y-4">

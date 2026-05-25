@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Badge } from "@/components/ui/badge";
-import { LinkButton } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { ResourceDownloadModal } from "@/components/conversion/resource-download-modal";
+import { NewsletterSignup } from "@/components/conversion/newsletter-signup";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -20,6 +19,22 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
+/* ── PDF icon ────────────────────────────────────────────────────────────── */
+
+function IconPdf({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
+    </svg>
+  );
+}
+
+/* ── Page ────────────────────────────────────────────────────────────────── */
+
 export default function ResourcesPage() {
   const breadcrumb = getBreadcrumbSchema([
     { name: "Hem",     url: siteConfig.url },
@@ -32,34 +47,76 @@ export default function ResourcesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <PageHeader
-        eyebrow="Resurser"
-        title="Guider, checklistor och material för team som bygger digitala produkter."
-        description="Här samlar vi praktiska resurser som hjälper er att planera, prioritera och bygga smartare."
+        eyebrow="GRATIS RESURSER"
+        title="Praktiska guider för team som vill bygga med mer klarhet."
+        description="Allt vi delar här är skrivet av oss som faktiskt bygger produkter — inte av marketing. Ladda ned, använd, dela vidare."
       />
+
+      {/* ── Resource grid ─────────────────────────────────────────────────── */}
       <Section size="tight">
         <SectionHeading
-          eyebrow="Gratis material"
-          title="Resurser som hjälper er fatta bättre beslut innan ni bygger."
-          description="Materialet är skrivet för founders, produktägare och team som vill gå in i utveckling med tydligare prioritering och mindre osäkerhet."
-          actions={<LinkButton href="/boka-mote" variant="secondary">Behöver ni mer stöd?</LinkButton>}
+          eyebrow="GUIDER & CHECKLISTOR"
+          title="Tre resurser — inga formulär, bara innehåll."
+          description="Ange din e-post och få PDF:en direkt i inboxen. Vi skickar inga säljmail."
+          className="mb-10"
         />
-        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+        <div className="grid gap-6 md:grid-cols-3">
           {resources.map((resource) => (
-            <Card key={resource.title} className="p-7">
-              <Badge tone="accent">{resource.format}</Badge>
-              <h2 className="heading-md mt-5 text-2xl">{resource.title}</h2>
-              <p className="body-md mt-3">{resource.description}</p>
-              <div className="mt-6 flex gap-3">
-                <LinkButton href="/kontakt" size="sm">
-                  Be om material
-                </LinkButton>
-                <LinkButton href="/blogg" variant="secondary" size="sm">
-                  Läs bloggen
-                </LinkButton>
+            <article
+              key={resource.source}
+              className="flex flex-col overflow-hidden rounded-2xl border border-line bg-bg shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+            >
+              {/* Card header — format + page count */}
+              <div className="border-b border-line/60 bg-brand/5 px-7 py-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10">
+                    <IconPdf className="h-5 w-5 text-brand" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+                      {resource.format}
+                    </p>
+                    <p className="text-xs text-muted">{resource.pageCount} sidor</p>
+                  </div>
+                </div>
               </div>
-            </Card>
+
+              {/* Card body */}
+              <div className="flex flex-1 flex-col p-7">
+                <h2 className="font-display text-xl font-bold tracking-tight text-text">
+                  {resource.title}
+                </h2>
+                <p className="mt-3 flex-1 text-sm leading-6 text-muted">
+                  {resource.description}
+                </p>
+
+                {/* CTA — triggers modal */}
+                <div className="mt-8">
+                  <ResourceDownloadModal resource={resource} />
+                </div>
+              </div>
+            </article>
           ))}
+        </div>
+      </Section>
+
+      {/* ── Newsletter section ─────────────────────────────────────────────── */}
+      <Section>
+        <div className="mx-auto max-w-xl text-center">
+          <SectionHeading
+            eyebrow="NYHETSBREV"
+            title="Få nya guider direkt i inboxen."
+            description="Vi skickar ett mejl ungefär en gång i månaden — alltid med en konkret guide eller insikt, aldrig säljpitchar."
+            align="center"
+            className="mb-8"
+          />
+          <div className="mx-auto max-w-sm">
+            <NewsletterSignup />
+          </div>
         </div>
       </Section>
     </>

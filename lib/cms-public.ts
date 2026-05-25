@@ -199,7 +199,7 @@ function mapStaticPodcastEpisode(slug: string): PublicPodcastEpisode | null {
     showNotes: episode.showNotes,
     summary: episode.summary,
     updatedAt: episode.publishedAt,
-    embedUrl: null,
+    embedUrl: episode.embedUrl ?? null,
     audioUrl: null,
     coverImage: null,
     seo: {},

@@ -120,6 +120,40 @@ export function getServiceSchema(
   };
 }
 
+/* ── CreativeWork (Case Study) ───────────────────────────────────────────── */
+
+export function getCaseStudySchema(
+  item: {
+    slug: string;
+    projectName: string;
+    summary: string;
+    industry: string;
+    techStack?: string[];
+    publishedAt?: string;
+  },
+  ctx?: SiteContext,
+) {
+  const url = resolvedUrl(ctx);
+
+  return {
+    "@context": "https://schema.org",
+    "@type":    "CreativeWork",
+    name:        item.projectName,
+    description: item.summary,
+    url:         `${url}/case-studies/${item.slug}`,
+    genre:       item.industry,
+    author: {
+      "@type": "Organization",
+      name:    resolvedName(ctx),
+      url,
+    },
+    ...(item.publishedAt ? { datePublished: item.publishedAt } : {}),
+    ...(item.techStack?.length
+      ? { keywords: item.techStack.join(", ") }
+      : {}),
+  };
+}
+
 /* ── BreadcrumbList ──────────────────────────────────────────────────────── */
 
 export function getBreadcrumbSchema(items: { name: string; url: string }[]) {

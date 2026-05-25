@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import type { CaseStudy } from "@/content/cases";
+import type { PublicCaseStudy } from "@/lib/cms-public";
 
 type CaseStudyCardProps = {
-  item: CaseStudy;
+  item: PublicCaseStudy;
 };
 
 export function CaseStudyCard({ item }: CaseStudyCardProps) {

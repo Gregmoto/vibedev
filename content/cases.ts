@@ -2,10 +2,17 @@ export type CaseStudy = {
   slug: string;
   projectName: string;
   industry: string;
+  /** "published" = live product, "ongoing" = active build */
+  status: "published" | "ongoing";
+  /** External product URL — opens in new tab */
+  websiteUrl?: string;
+  /** Short tagline shown on listing cards */
   summary: string;
   customerProblem: string;
   solution: string;
+  /** "Vad vi byggde" — deliverable bullet list */
   process: string[];
+  /** Single-item array: the headline result (or current status for ongoing) */
   results: string[];
   techStack: string[];
   cta: {
@@ -16,81 +23,143 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
-    slug: "nordfin-onboarding-plattform",
-    projectName: "Nordfin Onboarding Platform",
-    industry: "Fintech",
+    slug: "cms-online",
+    projectName: "CMS Online",
+    industry: "E-handel / SaaS",
+    status: "published",
+    websiteUrl: "https://cmsonline.se",
     summary:
-      "En ny digital onboardingupplevelse för ett fintechbolag som behövde få fler registrerade användare att bli aktiva kunder snabbare.",
+      "Komplett CMS för e-handel med integrationer mot Fortnox, Shopify och Starweb.",
     customerProblem:
-      "Kunden hade ett splittrat onboardingflöde där nya användare tappade fart mellan registrering, verifiering och första aktiva användning. Det påverkade både konvertering, intern supportbelastning och teamets möjlighet att växa effektivt.",
+      "E-handlare hanterade ordrar, lager och bokföring i många olika system. Manuell sync, dubbla inmatningar och fel i lager skapade dagligen friktion.",
     solution:
-      "Vi designade om hela onboardingresan och byggde en ny webbapp med tydligare steg, smartare informationsstruktur och bättre återkoppling för användaren i varje kritisk del av flödet.",
+      "Vi byggde en samlad CMS-plattform som kopplar ihop hela e-handelskedjan — från order till leverans till bokföring — i ett och samma system med en inloggning.",
     process: [
-      "Vi började med att analysera var användarna föll av och vilka steg som skapade mest osäkerhet i onboardingprocessen.",
-      "Därefter tog vi fram ett nytt UX-upplägg, prioriterade kärnflödena och definierade en teknisk struktur som gick att lansera snabbt utan att låsa framtida utveckling.",
-      "Efter release arbetade vi vidare med mätning, mindre förbättringar och optimeringar baserat på verkligt användarbeteende.",
+      "CMS-plattform med koppling till Fortnox (bokföring + fakturor)",
+      "Lagerhantering med synkronisering mot flera lagerorter",
+      "Integration mot Shopify och Starweb som butiks-grund",
+      "Orderhantering för DHL, Schenker och Postnord (frakthandling)",
+      "SMS- och mailutskick direkt från plattformen",
+      "Returhantering och kreditflöden",
     ],
     results: [
-      "42 % högre andel användare som slutförde onboarding första veckan",
-      "28 % färre supportärenden kopplade till verifiering och kontoaktivering",
-      "Tydligare intern process för fortsatt optimering av konvertering",
+      "En enda plattform där handlare hanterar hela kedjan från order till leverans till bokföring.",
     ],
-    techStack: ["Next.js", "TypeScript", "Designsystem", "API-integrationer", "Analysinstrumentering"],
+    techStack: ["Next.js", "TypeScript", "Prisma", "Fortnox API", "Shopify Admin API"],
     cta: {
       label: "Boka möte om liknande projekt",
       href: "/boka-mote",
     },
   },
   {
-    slug: "careflow-ai-support",
-    projectName: "Careflow AI Support",
-    industry: "SaaS / Kundservice",
+    slug: "bookiz",
+    projectName: "Bookiz",
+    industry: "Community / Bok",
+    status: "published",
+    websiteUrl: "https://bookiz.se",
     summary:
-      "Ett AI-stöd för supportteam som behövde kortare svarstider, bättre kunskapsåteranvändning och jämnare kvalitet i kunddialogen.",
+      "Sveriges community för bokälskare, författare och förlag.",
     customerProblem:
-      "Kundens supportteam hanterade stora mängder ärenden manuellt. Svar blev ojämna, kunskap fastnade hos enskilda personer och ledtiderna började påverka både kundnöjdhet och intern effektivitet.",
+      "Det fanns inget bra svenskt community för bokläsare där de kunde organisera sina bibliotek, hitta nya böcker och engagera sig i bokklubbar — samtidigt som författare och förlag kunde nå läsare direkt.",
     solution:
-      "Vi tog fram en AI-funktion som sammanfattar ärenden, föreslår svar och hämtar relevant information från befintlig kunskapsbas. Funktionen byggdes direkt i arbetsflödet för att skapa värde utan att ändra teamets arbetssätt i onödan.",
+      "Vi byggde en komplett community-plattform med tre distinkta användartyper och funktioner för bibliotek, bokklubbar, recensioner och direktkontakt med förlag och författare.",
     process: [
-      "Först definierade vi vilka typer av ärenden som gav störst effekt att förbättra och hur teamet arbetade i praktiken.",
-      "Sedan designade vi ett AI-stöd med mänsklig kontroll, tydliga fallback-flöden och en gränssnittslösning som gjorde rekommendationerna enkla att förstå och använda.",
-      "Efter lansering följde vi upp träffsäkerhet, användning och effekt på svarstid för att iterera lösningen stegvis.",
+      "Användarkonton med personliga bibliotek",
+      "Bokklubbar — skapa, gå med, diskutera",
+      "Recensions- och betygssystem",
+      "Separata konton för författare och förlag med egna profiler",
+      "Sök och upptäcktsflöden för nya boktips",
     ],
     results: [
-      "37 % kortare genomsnittlig svarstid",
-      "Högre intern kvalitet i återanvändning av kunskap",
-      "Bättre förutsättningar att skala supporten utan att växa teamet i samma takt",
+      "En komplett community-plattform där tre olika användartyper (läsare, författare, förlag) hittar varandra naturligt.",
     ],
-    techStack: ["Next.js", "TypeScript", "LLM-integration", "Intern kunskapsbas", "Adminverktyg"],
+    techStack: ["Next.js", "PostgreSQL", "Tailwind", "Community-features", "Notifieringar"],
     cta: {
-      label: "Prata AI-lösningar med oss",
-      href: "/kontakt",
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
     },
   },
   {
-    slug: "buildlane-marketplace-mvp",
-    projectName: "Buildlane Marketplace MVP",
-    industry: "Marketplace / Startup",
+    slug: "mittbrottmal",
+    projectName: "Mittbrottmål",
+    industry: "Legal Tech",
+    status: "published",
+    websiteUrl: "https://mittbrottmal.se",
     summary:
-      "En första marknadsversion för ett founder-team som behövde validera affärsidé, få ut produkten snabbt och nå sina första betalande kunder.",
+      "Verktyg som hjälper privatpersoner förstå sitt brottmål — utan att ersätta advokaten.",
     customerProblem:
-      "Teamet hade en stark idé men saknade tydlig prioritering för vad som faktiskt behövde byggas för att nå marknaden. Risken var att fastna i för mycket scope, lång ledtid och försenad validering.",
+      "Privatpersoner som hamnar i brottmål förstår sällan processen, rättigheterna eller vad som väntar. Advokatbesök är dyra och rådgivning svår att hitta.",
     solution:
-      "Vi hjälpte kunden att definiera en fokuserad MVP, tog fram design för kärnflöden och byggde första versionen med betalflöde, användarkonton och adminstöd för att teamet snabbt skulle kunna lansera och lära sig från marknaden.",
+      "Vi byggde ett guideverktyg med anonyma, strukturerade flöden som förklarar brottmålsprocessen på enkel svenska och tydliggör när juridisk hjälp faktiskt behövs.",
     process: [
-      "Vi började med att kapa ner produktidén till den minsta version som fortfarande kunde skapa verklig användarnytta och betalningsvilja.",
-      "Därefter tog vi fram design, teknisk struktur och en tydlig leveransplan för att hålla tempo utan att tappa kvalitet i de centrala flödena.",
-      "Efter lansering stöttade vi teamet i att tolka användarbeteende, förbättra onboarding och prioritera nästa iteration.",
+      "Guidade flöden där användaren går igenom sitt eget ärende steg för steg",
+      "Tips och förklaringar på enkel svenska",
+      "Tydliga signaler om när advokat krävs (ersätter INTE juridisk rådgivning)",
+      "Anonymt och säkert flöde",
     ],
     results: [
-      "Lansering på 8 veckor från start till första version",
-      "Första betalande kunder inom 30 dagar efter release",
-      "Tydligare roadmap för vilka funktioner som faktiskt skulle byggas härnäst",
+      "En lågtröskel-tjänst som demokratiserar juridisk grundförståelse.",
     ],
-    techStack: ["Next.js", "TypeScript", "Prisma", "Stripe", "Produktdesign"],
+    techStack: ["Next.js", "Tailwind", "Strukturerad innehållsmotor"],
     cta: {
-      label: "Starta en MVP med VibeDev",
+      label: "Boka möte om liknande projekt",
       href: "/boka-mote",
+    },
+  },
+  {
+    slug: "min-odling",
+    projectName: "Min Odling",
+    industry: "Community / Hortikultur",
+    status: "published",
+    websiteUrl: "https://minodling.se",
+    summary:
+      "Community och verktyg för odlare — från balkonglåda till växthus.",
+    customerProblem:
+      "Hobbyodlare i Sverige saknade en samlad digital plats för att hantera sin odling, identifiera växter och samverka med andra odlare.",
+    solution:
+      "Vi byggde en kombinerad community- och verktygsapp med växtidentifiering via AI, personlig odlingskalender och socialt flöde.",
+    process: [
+      "Användarkonton och sociala feeds",
+      "Inbyggd växtidentifikation (foto → art)",
+      "Personlig odlingskalender baserad på zon och växter",
+      "Diskussionsforum och tips",
+      "Bibliotek över växter och odlingstekniker",
+    ],
+    results: [
+      "En odlings-app som faktiskt används året runt — inte bara vid sådd.",
+    ],
+    techStack: ["Next.js", "React Native", "AI-bildigenkänning", "PostgreSQL"],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
+    slug: "endoo",
+    projectName: "Endoo",
+    industry: "SaaS / Ekonomi",
+    status: "ongoing",
+    websiteUrl: "https://endoo.se",
+    summary:
+      "Komplett SaaS för fakturering, order, inköp och bokföring — i en plattform.",
+    customerProblem:
+      "Små och medelstora bolag splittrar ekonomin över 4–6 olika system: ett för faktura, ett för bokföring, ett för order, ett för inköp. Dubbla inmatningar, onödig integrationsfriktion och dyra licenskostnader.",
+    solution:
+      "Vi bygger en komplett ekonomiplattform med allt i en inloggning och en databas — utan integrationsfriktion, utan dubbelarbete.",
+    process: [
+      "Komplett fakturering med svenska standardregler",
+      "Orderhantering kopplat till fakturor",
+      "Inköp och leverantörsfakturor",
+      "Full bokföring (BAS-kontoplan)",
+      "Allt i samma plattform — en inloggning, en databas",
+    ],
+    results: [
+      "Aktiv utveckling. Beta planerad till Q3 2026.",
+    ],
+    techStack: ["Next.js", "Prisma", "PostgreSQL", "TypeScript"],
+    cta: {
+      label: "Läs mer om Endoo",
+      href: "https://endoo.se",
     },
   },
 ];

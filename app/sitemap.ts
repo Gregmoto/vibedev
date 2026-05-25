@@ -8,8 +8,14 @@ import {
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 
 const staticPriority: Record<string, number> = {
-  "":           1.0,
-  "/tjanster":  0.9,
+  "":              1.0,
+  "/tjanster":     0.9,
+  "/vibecoding":   0.8,
+};
+
+/* Article-level priority overrides (keyed by /blogg/<slug>) */
+const articlePriority: Record<string, number> = {
+  "/blogg/ai-i-din-produkt": 0.8,
 };
 
 const routes = [
@@ -22,6 +28,7 @@ const routes = [
   "/kontakt",
   "/boka-mote",
   "/resurser",
+  "/vibecoding",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -40,12 +47,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: staticPriority[route] ?? 0.7,
   }));
 
-  const articleRoutes = blogPosts.map((post) => ({
-    url: `${settings.siteUrl}/blogg/${post.slug}`,
-    lastModified: new Date(post.updatedAt || post.publishedAt),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
+  const articleRoutes = blogPosts.map((post) => {
+    const path = `/blogg/${post.slug}`;
+    return {
+      url: `${settings.siteUrl}${path}`,
+      lastModified: new Date(post.updatedAt || post.publishedAt),
+      changeFrequency: "weekly" as const,
+      priority: articlePriority[path] ?? 0.7,
+    };
+  });
 
   const episodeRoutes = podcastEpisodes.map((episode) => ({
     url: `${settings.siteUrl}/podcast/${episode.slug}`,

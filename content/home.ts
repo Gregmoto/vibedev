@@ -50,25 +50,25 @@ export const homeReasons = [
 
 export const homeCases = [
   {
-    title: "Fintech-plattform för snabbare onboarding",
-    summary: "Ett växande bolag behövde minska tiden från sign-up till aktiv kund. Vi designade om flödet och byggde en ny onboarding-app.",
-    result: "42 % högre aktivering första veckan",
-    tech: "Next.js, TypeScript, API-integrationer",
-    href: "/case-studies",
+    title: "CMS Online — E-handelssystem med full integration",
+    summary: "Vi byggde en samlad plattform som kopplar Fortnox, Shopify och Starweb. Handlare hanterar nu hela kedjan — order, lager, frakt och bokföring — på ett ställe.",
+    result: "En plattform, hela kedjan",
+    tech: "Next.js · TypeScript · Fortnox API · Shopify Admin API",
+    href: "/case-studies/cms-online",
   },
   {
-    title: "AI-stöd för kundservice i SaaS-bolag",
-    summary: "Vi byggde en AI-funktion som sammanfattar ärenden, föreslår svar och hjälper supportteam att skala utan mer friktion.",
-    result: "37 % kortare svarstid",
-    tech: "LLM-integration, intern kunskapsbas, admingränssnitt",
-    href: "/case-studies",
+    title: "Bookiz — Community för bokälskare",
+    summary: "Sveriges community för läsare, författare och förlag. Tre olika användartyper med personliga bibliotek, bokklubbar och direktkontakt med förlag.",
+    result: "Lanserad community med tre användartyper",
+    tech: "Next.js · PostgreSQL · Community-features",
+    href: "/case-studies/bookiz",
   },
   {
-    title: "MVP för ny marketplace på 8 veckor",
-    summary: "Founder-teamet behövde validera en affärsidé snabbt. Vi tog fram scope, design, byggde första versionen och stöttade lanseringen.",
-    result: "Första betalande kunder inom 30 dagar",
-    tech: "Next.js, Prisma, Stripe, produktdesign",
-    href: "/case-studies",
+    title: "Min Odling — App för hobbyodlare",
+    summary: "Community- och verktygsapp med AI-växtidentifiering, personlig odlingskalender och socialt flöde. Används aktivt hela året.",
+    result: "Aktiv användning året runt",
+    tech: "Next.js · React Native · AI-bildigenkänning",
+    href: "/case-studies/min-odling",
   },
 ];
 

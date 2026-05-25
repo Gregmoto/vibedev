@@ -1,11 +1,11 @@
 export const serviceIntro = {
   title: "Tjänster som hjälper er bygga rätt produkt snabbare.",
   description:
-    "Vi hjälper företag att definiera, designa och bygga digitala produkter som går att lansera, sälja och vidareutveckla med självförtroende.",
+    "Oavsett om ni ska lansera en ny app, bygga ut en befintlig produkt eller integrera AI i verksamheten — vi har hanterat det förut. Senior kompetens, tydliga leveranser och ett team som förstår skillnaden på hype och effekt.",
   points: [
-    "Senior utveckling, design och strategiskt stöd i samma team",
-    "Fokus på affärsvärde, användarupplevelse och teknisk hållbarhet",
-    "Tydliga processer som minskar onödigt scope och osäkerhet",
+    "Senior kompetens från dag ett — inga juniora experiment",
+    "Design och utveckling i samma team, utan friktion",
+    "Fokus på affärsvärde, inte bara teknisk leverans",
   ],
 };
 
@@ -13,14 +13,16 @@ export const services = [
   {
     slug: "apputveckling",
     title: "Apputveckling",
+    subtitle: "iOS och Android",
     pitch:
       "Vi bygger mobilappar som känns snabba, genomtänkta och redo för riktiga användare, inte bara för demo eller pitch.",
     problem:
-      "Många företag fastnar i appar som blir för tunga att utveckla, för otydliga i användningen eller för svåra att skala när produkten väl börjar få traction.",
+      "Många team lägger månader på en app som inte matchar användarbehoven eller som blir för kostsam att förvalta. Det uppstår när tekniken väljs för tidigt och flödena inte är tillräckligt genomtänkta.",
     deliverables: [
-      "Produktupplägg för iOS och Android",
-      "Nyckelflöden för onboarding, konto, betalning och notiser",
-      "Teknisk grund för fortsatt utveckling och releasearbete",
+      "Appstruktur och flödesdesign för iOS och Android",
+      "Onboarding, konto, betalning och notiser",
+      "Teknisk grund för drift och vidare releasearbete",
+      "Fokus på retention, tydlighet och faktisk användning",
     ],
     process: [
       "Vi börjar med att definiera målgrupp, affärsmål och vilka användarflöden som är kritiska.",
@@ -35,14 +37,16 @@ export const services = [
   {
     slug: "webbapputveckling",
     title: "Webbapputveckling",
+    subtitle: "SaaS, portaler och interna verktyg",
     pitch:
       "Vi utvecklar moderna webbappar för SaaS, kundportaler, interna system och digitala tjänster där användarupplevelse och affärslogik måste fungera tillsammans.",
     problem:
-      "Företag behöver ofta bygga komplex funktionalitet snabbt, men riskerar att hamna i lösningar som känns långsamma, svårförvaltade eller dåliga att växa vidare på.",
+      "Webbappar som ser bra ut i prototypen kan snabbt bli tunga och svårförvaltade om arkitekturen inte hänger ihop. Vi bygger rätt från start — skalbart, snabbt och enkelt att vidareutveckla.",
     deliverables: [
       "Skalbar webbapp med tydlig informationsarkitektur",
       "Dashboard, adminflöden och affärskritiska processer",
-      "Prestandafokuserad frontend och stabil backendstruktur",
+      "Prestandafokuserad frontend med stabil backendstruktur",
+      "Byggt för att vidareutvecklas utan teknisk skuld",
     ],
     process: [
       "Vi kartlägger affärsflöden, användartyper och vilka delar som måste fungera först.",
@@ -57,14 +61,16 @@ export const services = [
   {
     slug: "ai-losningar",
     title: "AI-lösningar",
+    subtitle: "Automatisering och praktisk AI",
     pitch:
       "Vi hjälper företag att bygga AI-funktioner som faktiskt löser problem i riktiga arbetsflöden, inte bara ser imponerande ut i en presentation.",
     problem:
-      "Många AI-satsningar blir otydliga eftersom teamet inte har en konkret use case, rätt data eller en tydlig plan för hur funktionen ska skapa värde för användare och verksamhet.",
+      "De flesta AI-projekt fastnar i hype — features som imponerar i demo men som inte skapar faktisk effekt i vardagen. Vi fokuserar på use cases med tydlig ROI och bygger dem på ett sätt som går att förvalta.",
     deliverables: [
       "AI-funktioner för support, analys, innehåll eller automatisering",
-      "Integrering med befintliga system och interna dataflöden",
-      "Trygg implementation med fokus på kvalitet, kontroll och användbarhet",
+      "Integration med befintliga system och interna dataflöden",
+      "Admingränssnitt och kunskapsbaser för löpande drift",
+      "Trygg implementation med fokus på kontroll och tillförlitlighet",
     ],
     process: [
       "Vi identifierar var AI kan skapa störst effekt i er produkt eller verksamhet.",
@@ -79,14 +85,16 @@ export const services = [
   {
     slug: "mvp-utveckling",
     title: "MVP-utveckling",
+    subtitle: "Från idé till lansering",
     pitch:
       "För team som behöver komma ut snabbt med rätt första version och undvika att lägga månader på funktioner som ännu inte behöver finnas.",
     problem:
-      "Det vanligaste misstaget i tidiga produktprojekt är att bygga för brett, för sent och utan tydlig koppling till marknadsvalidering eller försäljning.",
+      "Det vanligaste misstaget är att bygga för mycket för tidigt. Månader läggs på features ingen behöver nu och produkten når aldrig marknaden i rätt tid. Vi hjälper er skopa rätt och leverera det viktigaste först.",
     deliverables: [
-      "Scopead första version med tydliga prioriteringar",
-      "Produkt- och teknikplan för lansering",
+      "Scopad första version med tydliga prioriteringar",
+      "Produkt- och teknikplan inför lansering",
       "MVP som går att testa, sälja och vidareutveckla",
+      "Stöd med roadmap och nästa produktsteg efter lansering",
     ],
     process: [
       "Vi börjar med att kapa bort allt som inte behövs för att lära oss något viktigt eller komma till marknaden.",
@@ -101,13 +109,15 @@ export const services = [
   {
     slug: "ui-ux-design",
     title: "UI/UX-design",
+    subtitle: "Gränssnitt som konverterar",
     pitch:
       "Vi designar digitala produkter som känns moderna, begripliga och förtroendeingivande från första klick till sista steg i flödet.",
     problem:
-      "När designen inte håller ihop tappar produkter både konvertering, tydlighet och upplevd kvalitet, även om tekniken i grunden är bra.",
+      "Otydliga flöden, inkonsekvent design och dålig mobilupplevelse kostar konverteringar och trovärdighet — även om tekniken i grunden är bra. Design som inte håller ihop syns direkt och påverkar affären.",
     deliverables: [
       "Designsystem och komponentlogik",
       "Wireframes, skärmdesign och användarflöden",
+      "Prototyper och design-handoff för utveckling",
       "Förbättrad konvertering och tydligare produktupplevelse",
     ],
     process: [
@@ -123,13 +133,15 @@ export const services = [
   {
     slug: "teknisk-radgivning",
     title: "Teknisk rådgivning",
+    subtitle: "Rätt beslut, mindre osäkerhet",
     pitch:
       "När ni behöver fatta rätt tekniska beslut snabbare hjälper vi er att välja väg med mindre osäkerhet och bättre konsekvenser över tid.",
     problem:
-      "Många team brottas med frågor om arkitektur, stack, integrationer, skalbarhet och hur man bygger rätt utan att överinvestera tidigt.",
+      "Tekniska vägval tidigt kan bli dyra misstag senare. Stack, arkitektur, integrationer — varje beslut har konsekvenser som inte alltid är uppenbara i stunden, och fel val binder upp er i månader.",
     deliverables: [
       "Teknisk bedömning av nuläge och vägval",
       "Rekommendationer för arkitektur, stack och prioritering",
+      "Tydliga riskbedömningar och alternativa vägar",
       "Stöd inför upphandling, rekrytering eller intern utveckling",
     ],
     process: [
@@ -145,14 +157,16 @@ export const services = [
   {
     slug: "produktstrategi",
     title: "Produktstrategi",
+    subtitle: "Prioritering och riktning",
     pitch:
       "Vi hjälper er prioritera vad som ska byggas, varför det spelar roll och hur produkten bör utvecklas för att stötta affären.",
     problem:
-      "När produktbeslut tas utan tydlig riktning blir roadmapen reaktiv, utvecklingen dyr och resultatet svårare att sälja internt eller externt.",
+      "Utan tydlig produktriktning blir roadmapen reaktiv, besluten godtyckliga och det svårt att motivera vad som ska byggas härnäst — internt som externt.",
     deliverables: [
       "Roadmap och prioriteringsstöd",
       "Produktupplägg kopplat till affärsmål och användarbehov",
       "Tydligare beslutsunderlag för nästa produktfas",
+      "Workshop och strukturerat arbete med hela produktteamet",
     ],
     process: [
       "Vi börjar med att förstå marknad, målgrupp, affär och nuläge.",

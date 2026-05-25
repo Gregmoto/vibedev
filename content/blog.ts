@@ -17,6 +17,180 @@ export type BlogPost = {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "ai-i-din-produkt",
+    title: "AI i din digitala produkt — när det tillför värde och när det inte gör det",
+    excerpt:
+      "Fem frågor att ställa innan ni implementerar AI, konkreta use cases och hur ni undviker den kostsamma demoeffekten.",
+    description:
+      "En praktisk guide för founders och produktteam: när AI faktiskt tillför värde i en digital produkt, hur ni undviker demoeffekten och en beslutsmodell för att välja rätt.",
+    category: "AI",
+    tags: ["ai", "produktutveckling", "beslutsmodell", "ai-features"],
+    readingTime: "12 min läsning",
+    publishedAt: "2026-02-01",
+    author: "VibeDev",
+    heroLabel: "Guide",
+    content: [
+      {
+        heading: "Vad menas egentligen med AI i en digital produkt?",
+        paragraphs: [
+          "AI i produkten kan betyda hundra olika saker. Det är viktigt att specificera vad man menar, annars bygger man fel sak — eller köper in ett lager som aldrig levererar det man hoppades på.",
+        ],
+      },
+      {
+        heading: "Den kostsamma demoeffekten",
+        paragraphs: [
+          "Det finns ett fenomen vi kallar demoeffekten: en AI-funktion som i demo är imponerande men i produktion fallerar på 20–40 % av fallen.",
+        ],
+      },
+      {
+        heading: "Fem frågor att ställa innan ni implementerar AI",
+        paragraphs: [
+          "En enkel beslutsmodell med fem frågor för att avgöra om AI är rätt för en specifik funktion.",
+        ],
+      },
+    ],
+  },
+  /* ── Planerade poster (stubs — innehåll ej klart) ───────────────────────── */
+  {
+    slug: "cursor-vs-claude-code-2026",
+    title: "Cursor vs Claude Code 2026 — vad vi använder och varför",
+    excerpt:
+      "En ärlig jämförelse av de två kraftfullaste AI-kodarverktygen just nu — baserad på verkliga projekt, inte benchmark-tester.",
+    description:
+      "Vi jämför Cursor och Claude Code i praktiken: styrkor, svagheter, när vi väljer vilket och hur de kombineras i ett produktteam.",
+    category: "Vibecoding",
+    tags: ["vibecoding", "cursor", "claude code", "ai-verktyg"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-03-01",
+    author: "VibeDev",
+    heroLabel: "Jämförelse",
+    content: [
+      {
+        heading: "Cursor och Claude Code — två olika filosofier",
+        paragraphs: [
+          "Cursor är en IDE-fork av VS Code med djup AI-integration. Claude Code är ett terminal-baserat agentic-verktyg som opererar på kodbas-nivå. De adresserar olika behov och de bästa teamen använder båda.",
+          "Den här artikeln är under produktion — kom tillbaka snart.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "sa-skar-du-scope-pa-en-mvp",
+    title: "Så skär du scope på en MVP utan att slänga bort idén",
+    excerpt:
+      "20 % av funktionerna levererar 80 % av värdet. Men vilka 20 %? En praktisk metod för att hitta rätt och bygga det viktigaste först.",
+    description:
+      "En guide till hur founders och produktteam prioriterar rätt funktioner i ett MVP och undviker den vanligaste fällan — att bygga för mycket.",
+    category: "MVP-utveckling",
+    tags: ["mvp", "scope", "prioritering", "produktstrategi"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-03-08",
+    author: "VibeDev",
+    heroLabel: "Guide",
+    content: [
+      {
+        heading: "De flesta MVP:er är för stora",
+        paragraphs: [
+          "Scope creep börjar inte med dåliga intentioner — det börjar med osäkerhet. När man inte vet vilka funktioner som är kritiska lägger man in alla.",
+          "Den här artikeln är under produktion — kom tillbaka snart.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "fortnox-integration-e-handel",
+    title: "Fortnox-integration i e-handel — så undviker du de vanliga fällorna",
+    excerpt:
+      "Fortnox API är kraftfullt men har sina egenheter. Här är de vanligaste felen vi sett och hur du undviker dem.",
+    description:
+      "En teknisk guide för team som integrerar Fortnox i e-handelssystem — baserad på erfarenheter från CMS Online och andra projekt.",
+    category: "Tekniska val",
+    tags: ["fortnox", "integration", "e-handel", "api"],
+    readingTime: "9 min läsning",
+    publishedAt: "2026-03-15",
+    author: "VibeDev",
+    heroLabel: "Tekniskt",
+    content: [
+      {
+        heading: "Fortnox API — kraftfullt men inte alltid intuitivt",
+        paragraphs: [
+          "Vi har byggt Fortnox-integrationer i flera e-handelsprojekt och stöter på samma mönster av problem gång på gång.",
+          "Den här artikeln är under produktion — kom tillbaka snart.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "react-native-eller-native-beslutsguide-2026",
+    title: "React Native eller native? Vår beslutsguide 2026",
+    excerpt:
+      "Ska ni bygga med React Native, Swift/Kotlin eller något annat? En rak guide baserad på vad vi faktiskt rekommenderar och varför.",
+    description:
+      "VibeDev:s beslutsmodell för mobilutveckling 2026 — när React Native är rätt val och när native är värt kostnaden.",
+    category: "Tekniska val",
+    tags: ["react native", "ios", "android", "mobilutveckling"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-03-22",
+    author: "VibeDev",
+    heroLabel: "Beslutsguide",
+    content: [
+      {
+        heading: "Valet är mer nyanserat än det verkar",
+        paragraphs: [
+          "React Native har mognat enormt de senaste åren. Men det finns fortfarande situationer där native är det rätta valet.",
+          "Den här artikeln är under produktion — kom tillbaka snart.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "sakra-dina-llm-anrop",
+    title: "Säkra dina LLM-anrop — guide för svenska bolag",
+    excerpt:
+      "Prompt injection, dataläckage och överdrivet breda behörigheter är de vanligaste säkerhetsfelen vi ser i LLM-integrationer.",
+    description:
+      "En praktisk säkerhetsguide för svenska bolag som integrerar LLM:er i sina produkter — vad som kan gå fel och hur man skyddar sig.",
+    category: "Tekniska val",
+    tags: ["säkerhet", "llm", "ai", "prompt injection"],
+    readingTime: "10 min läsning",
+    publishedAt: "2026-03-29",
+    author: "VibeDev",
+    heroLabel: "Säkerhet",
+    content: [
+      {
+        heading: "LLM-säkerhet är produktsäkerhet",
+        paragraphs: [
+          "Säkerhetsproblem i LLM-integrationer är inte teoretiska — de är välkände angreppsytor som aktivt utnyttjas.",
+          "Den här artikeln är under produktion — kom tillbaka snart.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "fast-pris-vs-timpris",
+    title: "Hur vi tar betalt: fast pris vs timpris (och varför vi valde det vi valde)",
+    excerpt:
+      "De flesta byråer tar betalt per timme. Vi gör inte det. Här förklarar vi varför — och vad det faktiskt innebär för er som kund.",
+    description:
+      "VibeDev förklarar sin prismodell, varför fast pris på fast scope fungerar bättre för kunder och vilka avvägningar som finns.",
+    category: "Produktstrategi",
+    tags: ["pris", "affärsmodell", "upphandling", "budget"],
+    readingTime: "6 min läsning",
+    publishedAt: "2026-04-05",
+    author: "VibeDev",
+    heroLabel: "Perspektiv",
+    content: [
+      {
+        heading: "Timprissättning skapar fel incitament",
+        paragraphs: [
+          "Med timpris tjänar byrån mer ju längre projektet tar. Det är inte en bra grund för ett partnerskap.",
+          "Den här artikeln är under produktion — kom tillbaka snart.",
+        ],
+      },
+    ],
+  },
+  /* ── Publicerade poster ──────────────────────────────────────────────────── */
+  {
     slug: "vad-kostar-det-att-bygga-en-app",
     title: "Vad kostar det att bygga en app?",
     excerpt:

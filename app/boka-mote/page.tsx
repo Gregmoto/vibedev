@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     routePath: "/boka-mote",
     fallbackTitle: "Boka kostnadsfritt strategisamtal | VibeDev",
     fallbackDescription:
-      "20 minuter med en senior utvecklare. Vi går igenom ert nuläge, målbild och föreslår ett konkret nästa steg — utan säljpitchar.",
+      "30 minuter med en senior utvecklare. Vi går igenom ert nuläge, målbild och föreslår ett konkret nästa steg — utan säljpitchar.",
     keywords: ["boka strategisamtal", "gratis konsultation", "apputveckling rådgivning", "mvp rådgivning"],
   });
 }
@@ -48,7 +48,7 @@ function CalSuspenseFallback() {
 /* ── Page ────────────────────────────────────────────────────────────────── */
 
 const INCLUDES = [
-  "20 min fokuserat samtal med en senior utvecklare",
+  "30 min fokuserat samtal med en senior utvecklare",
   "Vi kartlägger ert nuläge och era mål",
   "Ärlig bedömning om vi är rätt partner — eller om någon annan passar bättre",
   "Skriftligt nästa-steg-förslag inom 24 timmar efter samtalet",
@@ -73,7 +73,7 @@ export default function BookMeetingPage() {
           <div className="max-w-3xl">
             <p className="eyebrow">Boka samtal</p>
             <h1 className="heading-xl mt-4 max-w-2xl text-balance">
-              20 minuter som kan spara er månader.
+              30 minuter som kan spara er månader.
             </h1>
             <p className="body-lg mt-5 max-w-2xl">
               Ett kostnadsfritt samtal där vi går igenom ert nuläge, målbild och vad som är

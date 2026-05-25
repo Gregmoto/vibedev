@@ -12,21 +12,43 @@ import {
 } from "@react-email/components";
 
 export type LeadMagnetConfirmationProps = {
-  email:   string;
-  pdfUrl?: string;
+  email:               string;
+  pdfUrl?:             string;
+  resourceTitle?:      string;
+  resourceDescription?: string;
+  isNewsletter?:       boolean;
 };
 
+/* TODO: Replace placeholder PDF URLs with real hosted files once available */
 const DEFAULT_PDF_URL =
-  "https://vibedev.se/guides/vibecoding-guide-2026.pdf"; // TODO: ersätt med riktig PDF-URL
+  "https://vibedev.se/resources/vibecoding-guide-2026.pdf";
+const DEFAULT_TITLE       = "Vibecoding-guiden 2026";
+const DEFAULT_DESCRIPTION =
+  "Så bygger moderna team snabbare med AI i kodflödet.";
 
 export function LeadMagnetConfirmation({
   email,
-  pdfUrl = DEFAULT_PDF_URL,
+  pdfUrl             = DEFAULT_PDF_URL,
+  resourceTitle      = DEFAULT_TITLE,
+  resourceDescription = DEFAULT_DESCRIPTION,
+  isNewsletter       = false,
 }: LeadMagnetConfirmationProps) {
+  const previewText = isNewsletter
+    ? "Välkommen — du är nu med i VibeDev-nyhetsbrevet"
+    : `Din resurs är här — ${resourceTitle}`;
+
+  const headingText = isNewsletter
+    ? "Välkommen till VibeDev! 👋"
+    : "Tack! Din resurs är på väg. 🎉";
+
+  const bodyText = isNewsletter
+    ? "Du är nu med i VibeDev-nyhetsbrevet. Vi skickar ungefär en gång i månaden — alltid med en konkret guide eller insikt, aldrig säljpitchar."
+    : `Du får nu tillgång till **${resourceTitle}**. ${resourceDescription} Klicka på knappen nedan för att ladda ner PDF:en direkt.`;
+
   return (
     <Html lang="sv">
       <Head />
-      <Preview>Din guide är här — Vibecoding 2026</Preview>
+      <Preview>{previewText}</Preview>
       <Body style={body}>
         <Container style={container}>
           {/* Header */}
@@ -37,26 +59,29 @@ export function LeadMagnetConfirmation({
           {/* Content */}
           <Section style={content}>
             <Heading as="h2" style={h2}>
-              Tack! Guiden är på väg. 🎉
+              {headingText}
             </Heading>
 
             <Text style={paragraph}>
-              Du får nu tillgång till <strong>Vibecoding — så bygger moderna
-              team snabbare 2026</strong>. Klicka på knappen nedan för att
-              ladda ner PDF:en direkt.
+              {isNewsletter
+                ? bodyText
+                : `Du får nu tillgång till ${resourceTitle}. ${resourceDescription}`}
             </Text>
 
-            <Section style={buttonSection}>
-              <Button href={pdfUrl} style={ctaButton}>
-                Ladda ner guiden →
-              </Button>
-            </Section>
+            {!isNewsletter && pdfUrl && (
+              <Section style={buttonSection}>
+                <Button href={pdfUrl} style={ctaButton}>
+                  Ladda ner PDF:en →
+                </Button>
+              </Section>
+            )}
 
-            <Text style={paragraph}>
-              I guiden hittar du erfarenheter från 4 utvecklare och 10+
-              projekt: hur vi använder AI i kodflödet, vilka verktyg vi
-              väljer och hur vi skär scope för att leverera på halva tiden.
-            </Text>
+            {isNewsletter && (
+              <Text style={paragraph}>
+                Håll utkik — nästa guide är på väg. Har du frågor eller idéer
+                på vad vi ska skriva om? Svara på det här mailet.
+              </Text>
+            )}
 
             <Hr style={divider} />
 
@@ -88,7 +113,7 @@ export function LeadMagnetConfirmation({
   );
 }
 
-/* ── Styles ────────────────────────────────────────────────────────────────── */
+/* ── Styles ─────────────────────────────────────────────────────────────────── */
 
 const body: React.CSSProperties = {
   backgroundColor: "#F5F7FB",
