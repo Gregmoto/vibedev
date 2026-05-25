@@ -3,6 +3,7 @@ import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { navigation } from "@/content/navigation";
 import type { ResolvedSiteSettings } from "@/lib/site-settings";
+import { CONTACT, COMPANY } from "@/lib/config/contact";
 
 type FooterProps = {
   settings: ResolvedSiteSettings;
@@ -61,8 +62,16 @@ export function Footer({ settings }: FooterProps) {
           <div>
             <p className="mb-4 text-sm font-semibold text-text">Kontakt</p>
             <div className="space-y-3 text-sm text-muted">
-              {settings.contactEmail ? <p>{settings.contactEmail}</p> : null}
-              {settings.phone ? <p>{settings.phone}</p> : null}
+              {settings.contactEmail ? (
+                <a href={CONTACT.emailHref} className="block transition hover:text-text">
+                  {settings.contactEmail}
+                </a>
+              ) : null}
+              {settings.phone ? (
+                <a href={CONTACT.phoneHref} className="block transition hover:text-text">
+                  {settings.phone}
+                </a>
+              ) : null}
               {settings.address ? <p>{settings.address}</p> : null}
               {settings.socialLinks.length > 0 ? (
                 <div className="flex flex-wrap gap-3 pt-1">
@@ -84,6 +93,14 @@ export function Footer({ settings }: FooterProps) {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Företagsinfo */}
+        <div className="mt-8 border-t border-white/5 pt-6 text-xs text-muted/60">
+          <p>
+            {COMPANY.legalName} &nbsp;·&nbsp; Org.nr {COMPANY.orgNumber}
+            {COMPANY.fSkatt ? " · F-skatt godkänd" : null}
+          </p>
         </div>
       </Container>
     </footer>

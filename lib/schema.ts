@@ -1,4 +1,5 @@
 import { siteConfig } from "@/lib/metadata";
+import { CONTACT } from "@/lib/config/contact";
 
 type SchemaContext = {
   siteName?: string;
@@ -12,7 +13,7 @@ export function organizationSchema(context?: SchemaContext) {
     "@type": "Organization",
     name: context?.siteName || siteConfig.name,
     url: context?.siteUrl || siteConfig.url,
-    email: context?.email || "hello@vibedev.se",
+    email: context?.email || CONTACT.email,
     address: {
       "@type": "PostalAddress",
       addressLocality: "Stockholm",

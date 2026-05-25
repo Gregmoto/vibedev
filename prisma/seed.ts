@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { ContentStatus, UserRole } from "@prisma/client";
 import { db } from "../lib/db";
+import { CONTACT } from "../lib/config/contact";
 
 // ── Admin-användare ───────────────────────────────────────────────────────────
 async function seedAdmin() {
@@ -265,7 +266,7 @@ async function seedSettings() {
       data: {
         siteName: "VibeDev",
         siteUrl: "https://vibedev.se",
-        contactEmail: "hello@vibedev.se",
+        contactEmail: CONTACT.email,
         footerText: "© 2025 VibeDev. Alla rättigheter förbehållna.",
         socialLinks: {
           linkedin: "https://linkedin.com/company/vibedev",

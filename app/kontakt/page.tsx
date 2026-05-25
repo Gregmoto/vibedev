@@ -47,7 +47,16 @@ export default function ContactPage() {
                 {contactDetails.map((item) => (
                   <div key={item.label}>
                     <p className="text-xs uppercase tracking-[0.18em] text-muted">{item.label}</p>
-                    <p className="mt-1 text-sm font-medium text-text">{item.value}</p>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="mt-1 block text-sm font-medium text-text transition hover:text-brand"
+                      >
+                        {item.value}
+                      </a>
+                    ) : (
+                      <p className="mt-1 text-sm font-medium text-text">{item.value}</p>
+                    )}
                   </div>
                 ))}
               </div>

@@ -9,6 +9,7 @@ import { BookingConfirmation } from "@/lib/email/templates/booking-confirmation"
 import { BookingNotification } from "@/lib/email/templates/booking-notification";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
+import { CONTACT } from "@/lib/config/contact";
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 const bookingSchema = z.object({
@@ -102,7 +103,7 @@ export async function submitBookingForm(
   }
 
   const data = parsed.data;
-  const to = process.env.CONTACT_EMAIL_TO ?? "hello@vibedev.se";
+  const to = process.env.CONTACT_EMAIL_TO ?? CONTACT.email;
   const from = process.env.CONTACT_EMAIL_FROM ?? "onboarding@resend.dev";
 
   // Spara i databasen

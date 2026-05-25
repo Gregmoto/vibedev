@@ -1,6 +1,7 @@
 import type { Prisma, SiteSettings } from "@prisma/client";
 import { db } from "@/lib/db";
 import { isSafeHttpUrl, validateGa4CustomScript } from "@/lib/admin-action-utils";
+import { CONTACT } from "@/lib/config/contact";
 
 export type SocialLink = {
   label: string;
@@ -25,14 +26,14 @@ export type ResolvedSiteSettings = {
 export const defaultSiteSettings: ResolvedSiteSettings = {
   siteName: "VibeDev",
   siteUrl: "https://vibedev.se",
-  contactEmail: "hello@vibedev.se",
-  phone: "+46 70 123 45 67",
-  address: "Stockholm, Sverige",
+  contactEmail: CONTACT.email,
+  phone: CONTACT.phone,
+  address: `${CONTACT.address.city}, ${CONTACT.address.country}`,
   footerText:
     "Moderna digitala produkter för bolag som vill växa snabbare med bättre teknik, tydligare produktbeslut och starkare användarupplevelser.",
   socialLinks: [
-    { label: "LinkedIn", url: "https://www.linkedin.com" },
-    { label: "Instagram", url: "https://www.instagram.com" },
+    { label: "LinkedIn", url: CONTACT.social.linkedin },
+    { label: "Instagram", url: CONTACT.social.instagram },
   ],
   defaultSeoTitle: "VibeDev",
   defaultMetaDescription:

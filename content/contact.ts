@@ -1,3 +1,5 @@
+import { CONTACT } from "@/lib/config/contact";
+
 export const contactFaq = [
   {
     question: "Vad händer efter att vi skickat in formuläret?",
@@ -19,14 +21,17 @@ export const contactFaq = [
 export const contactDetails = [
   {
     label: "E-post",
-    value: "hello@vibedev.se",
+    value: CONTACT.email,
+    href: CONTACT.emailHref,
   },
   {
     label: "Telefon",
-    value: "+46 70 123 45 67",
+    value: CONTACT.phone,
+    href: CONTACT.phoneHref,
   },
   {
     label: "Plats",
-    value: "Stockholm, Sverige",
+    value: `${CONTACT.address.city}, ${CONTACT.address.country}`,
+    href: null,
   },
-];
+] as const;
