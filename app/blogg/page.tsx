@@ -29,6 +29,7 @@ const CATEGORIES = [
   { label: "MVP-utveckling",    slug: "mvp-utveckling" },
   { label: "Tekniska val",      slug: "tekniska-val" },
   { label: "Produktstrategi",   slug: "produktstrategi" },
+  { label: "Integrationer",     slug: "integrationer" },
 ];
 
 /* Map from URL slug to possible category values in blog data */
@@ -38,6 +39,7 @@ const CATEGORY_MAP: Record<string, string[]> = {
   "mvp-utveckling": ["MVP", "MVP-utveckling"],
   "tekniska-val":   ["Produktval", "Tekniska val"],
   "produktstrategi":["Produktstrategi"],
+  "integrationer":  ["Integrationer"],
 };
 
 /* ── Page ────────────────────────────────────────────────────────────────────── */
