@@ -374,6 +374,16 @@ async function safeDbRead<T>(read: () => Promise<T>) {
   }
 }
 
+function getStaticBlogPosts(): PublicBlogPost[] {
+  return [...staticBlogPosts]
+    .map((post) => mapStaticBlogPost(post.slug))
+    .filter((post): post is PublicBlogPost => Boolean(post));
+}
+
+function sortByPublishedDesc(posts: PublicBlogPost[]): PublicBlogPost[] {
+  return posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}
+
 export async function getPublishedBlogPosts(): Promise<PublicBlogPost[]> {
   const result = await safeDbRead(async () =>
     db.blogPost.findMany({
@@ -382,14 +392,19 @@ export async function getPublishedBlogPosts(): Promise<PublicBlogPost[]> {
     }),
   );
 
+  const staticPosts = getStaticBlogPosts();
+
   if (result.enabled) {
-    return (result.data ?? []).map(mapDbBlogPost);
+    // Merge DB posts with static posts. DB takes precedence on slug collisions
+    // so CMS edits override the bundled content, but static articles always show.
+    const dbPosts = (result.data ?? []).map(mapDbBlogPost);
+    const dbSlugs = new Set(dbPosts.map((post) => post.slug));
+    const merged = [...dbPosts, ...staticPosts.filter((post) => !dbSlugs.has(post.slug))];
+
+    return sortByPublishedDesc(merged);
   }
 
-  return [...staticBlogPosts]
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-    .map((post) => mapStaticBlogPost(post.slug))
-    .filter((post): post is PublicBlogPost => Boolean(post));
+  return sortByPublishedDesc(staticPosts);
 }
 
 export async function getPublishedBlogPostBySlug(slug: string): Promise<PublicBlogPost | null> {
@@ -404,7 +419,8 @@ export async function getPublishedBlogPostBySlug(slug: string): Promise<PublicBl
   );
 
   if (result.enabled) {
-    return result.data ? mapDbBlogPost(result.data) : null;
+    // Fall back to bundled static content when the slug isn't in the database.
+    return result.data ? mapDbBlogPost(result.data) : mapStaticBlogPost(slug);
   }
 
   return mapStaticBlogPost(slug);
