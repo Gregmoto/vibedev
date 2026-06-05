@@ -1248,6 +1248,624 @@ export const blogPosts: BlogPost[] = [
       },
     ],
   },
+  /* ── Aktuella nyheter 2026: Vibecoding ───────────────────────────────────── */
+  {
+    slug: "ai-agenter-i-utvecklingsflodet-2026",
+    title: "AI-agenter i utvecklingsflödet 2026 — vad de faktiskt klarar",
+    excerpt:
+      "Agentverktygen har gått från autocomplete till att ta sig an hela uppgifter på egen hand. Här är var de levererar 2026 — och var de fortfarande behöver dig.",
+    description:
+      "En aktuell lägesbild över AI-agenter i utveckling 2026: vad de klarar självständigt, var de fortfarande fallerar och hur team får ut värdet utan att tappa kontrollen.",
+    category: "Vibecoding",
+    tags: ["vibecoding", "ai-agenter", "automation", "ai-verktyg"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-03",
+    author: "VibeDev",
+    heroLabel: "Aktuellt",
+    content: [
+      {
+        heading: "Från autocomplete till agent",
+        paragraphs: [
+          "För ett par år sedan handlade AI i kod om att föreslå nästa rad. 2026 ser bilden helt annorlunda ut: agentverktyg läser hela kodbasen, planerar en uppgift, redigerar flera filer, kör tester och itererar tills något fungerar — med dig som granskare snarare än skrivare.",
+          "Det är ett verkligt skifte i hur arbetet känns. Men hypen har sprungit före verkligheten på flera punkter, och det lönar sig att vara tydlig med var gränsen faktiskt går just nu.",
+        ],
+      },
+      {
+        heading: "Där agenterna levererar idag",
+        paragraphs: [
+          "Agenter är starkast på väldefinierade, mönsterbundna uppgifter som spänner över många filer: migrera ett API, uppdatera importer efter en omstrukturering, skriva tester för en modul, eller bygga ut en feature efter en tydlig beskrivning där liknande kod redan finns att härma.",
+          "De är också utmärkta på att snabbt sätta sig in i ett okänt projekt och svara på 'var hanteras X och vad händer om jag ändrar det'. Den utforskande förmågan sparar mycket tid innan en enda rad skrivs.",
+        ],
+      },
+      {
+        heading: "Där de fortfarande fallerar",
+        paragraphs: [
+          "Agenter snubblar på uppgifter som kräver att förstå varför något är byggt som det är — outtalade affärsregler, historiska beslut, subtila beroenden som inte syns i koden. De kan producera något som ser rätt ut och kör grönt, men ändå missar poängen.",
+          "De överskattar också ofta sin säkerhet. En agent säger sällan 'jag är osäker här'; den fortsätter med självförtroende rakt in i fel antagande. Det är därför granskning inte blir mindre viktig med bättre agenter — den blir mer.",
+        ],
+      },
+      {
+        heading: "Så får team ut värdet utan att tappa kontrollen",
+        paragraphs: [
+          "Be om en plan före kod på allt som rör mer än en fil. Håll uppgifterna avgränsade — en agent som får ett tydligt, smalt mål presterar långt bättre än en som ska 'fixa autentiseringen'. Och ge den bra kontext: en kort fil med konventioner och arkitektur höjer kvaliteten dramatiskt.",
+          "Låt aldrig en agent köra irreversibla operationer utan en grind. Den som mergar koden äger den, oavsett vem som skrev den. Med den disciplinen blir agenter en kraftmultiplikator i stället för en källa till tyst teknisk skuld.",
+        ],
+      },
+      {
+        heading: "Vart det är på väg",
+        paragraphs: [
+          "Trenden 2026 är tydlig: agenterna blir bättre på att hålla längre uppgifter i huvudet och samarbeta i flera steg. Men kärnkompetensen som efterfrågas förskjuts — från att skriva kod till att specificera, granska och fatta beslut.",
+          "Det är goda nyheter för team som behärskar produkttänk. Verktygen tar hand om mer av hantverket; värdet ligger alltmer i att veta vad som ska byggas och varför.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "spec-driven-utveckling-med-ai",
+    title: "Spec-driven utveckling — så får du AI att bygga rätt sak",
+    excerpt:
+      "Det största problemet med AI-genererad kod är sällan kvaliteten — det är att den bygger fel sak. En tydlig spec är botemedlet.",
+    description:
+      "En aktuell metod för 2026: hur du använder en lättviktig spec för att styra AI-agenter mot rätt resultat, och varför det blivit kärnfärdigheten i modern utveckling.",
+    category: "Vibecoding",
+    tags: ["vibecoding", "spec", "ai-verktyg", "arbetssätt"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-05-29",
+    author: "VibeDev",
+    heroLabel: "Metod",
+    content: [
+      {
+        heading: "Problemet är inte koden — det är riktningen",
+        paragraphs: [
+          "När AI kan producera fungerande kod på sekunder flyttas flaskhalsen. Den nya risken är inte buggig kod, utan kod som löser fel problem snyggt och snabbt. Ju snabbare verktygen blir, desto dyrare blir ett otydligt mål.",
+          "Spec-driven utveckling är svaret som vuxit fram 2026: i stället för att prompta löst beskriver du tydligt vad som ska byggas, låter AI:n bygga mot specen, och granskar resultatet mot samma spec.",
+        ],
+      },
+      {
+        heading: "Vad en bra spec innehåller",
+        paragraphs: [
+          "En spec behöver inte vara ett tjockt dokument. Den ska svara på: vad ska byggas, för vem, vilket beteende förväntas i normalfallet och i kantfallen, vad ligger uttryckligen utanför scope, och hur vet vi att det är klart.",
+          "Just kantfallen och 'utanför scope' är det som gör mest skillnad. AI fyller annars luckorna med antaganden, och antaganden är där missförstånden föds. En mening som 'hantera tom lista genom att visa ett tomt-tillstånd' sparar en hel iteration.",
+        ],
+      },
+      {
+        heading: "Specen är både input och facit",
+        paragraphs: [
+          "Det fina med att skriva specen först är att den fungerar dubbelt: den styr vad AI:n bygger, och den blir måttstocken du granskar mot. När du ska bedöma resultatet jämför du inte mot en vag känsla, utan mot något konkret du skrev innan.",
+          "Det gör granskningen snabbare och ärligare. Antingen uppfyller koden specen eller inte — och om specen visade sig vara fel har du lärt dig något billigt, innan en massa kod byggdes på fel premiss.",
+        ],
+      },
+      {
+        heading: "Lättvikt slår byråkrati",
+        paragraphs: [
+          "Faran är att 'spec' låter som tungrodd kravhantering. Det är inte poängen. En spec kan vara ett par stycken i ett issue, en punktlista, eller en kort beskrivning som du och agenten kommer överens om innan kodning börjar.",
+          "Målet är precis så mycket struktur som behövs för att alla — människa och maskin — bygger samma sak. Mer än så bromsar; mindre än så leder till omarbete.",
+        ],
+      },
+      {
+        heading: "Den nya kärnfärdigheten",
+        paragraphs: [
+          "Att formulera tydligt vad som ska byggas har alltid varit värdefullt. 2026 har det blivit avgörande, för det är precis den färdigheten som avgör hur mycket du får ut av AI-verktygen.",
+          "Den som kan tänka klart, avgränsa skarpt och beskriva exakt får utmärkta resultat. Den som promptar löst får löst byggd kod — snabbt, men åt fel håll. Specen är skillnaden.",
+        ],
+      },
+    ],
+  },
+  /* ── Aktuella nyheter 2026: AI i produkter ───────────────────────────────── */
+  {
+    slug: "eu-ai-act-for-produktteam",
+    title: "EU:s AI Act — vad svenska produktteam behöver göra nu",
+    excerpt:
+      "AI Act fasas in steg för steg och påverkar alla som bygger AI i sina produkter. Här är vad det betyder i praktiken — utan juristsnack.",
+    description:
+      "En praktisk genomgång av EU:s AI Act för svenska produktteam 2026: riskklassning, transparenskrav och vad ni bör göra redan nu för att ligga rätt.",
+    category: "AI i produkter",
+    tags: ["ai", "ai-act", "regelefterlevnad", "eu"],
+    readingTime: "9 min läsning",
+    publishedAt: "2026-06-04",
+    author: "VibeDev",
+    heroLabel: "Aktuellt",
+    content: [
+      {
+        heading: "Varför det här angår er nu",
+        paragraphs: [
+          "EU:s AI Act är världens första breda AI-lagstiftning och fasas in i flera steg. Förbjudna användningar och transparenskrav börjar gälla först, medan tyngre krav på högrisksystem kommer senare. Poängen är att det inte är något som händer 'någon gång i framtiden' — delar gäller redan, och resten närmar sig.",
+          "Det här är inte juridisk rådgivning, utan en praktisk orientering. Behöver ni säkra svar för just er produkt ska ni prata med en jurist — men ni vinner mycket på att förstå grunderna innan dess.",
+        ],
+      },
+      {
+        heading: "Allt handlar om risknivå",
+        paragraphs: [
+          "AI Act delar in användning i risknivåer. Vissa användningar är förbjudna. En del räknas som högrisk och får tunga krav på dokumentation, dataunderlag, mänsklig tillsyn och loggning. Mycket faller i en lägre kategori med främst transparenskrav. Och en stor del av vanliga produktfunktioner berörs ganska lätt.",
+          "Första steget är därför att klassa: vad gör er AI, i vilket sammanhang, och vilken risknivå hamnar den i? De flesta SaaS- och konsumentprodukter ligger lågt, men det förändras snabbt om AI:n påverkar saker som anställning, kredit, utbildning eller hälsa.",
+        ],
+      },
+      {
+        heading: "Transparens är minimikravet för de flesta",
+        paragraphs: [
+          "Även produkter med låg risk har transparenskrav. Användare ska veta när de interagerar med ett AI-system, och AI-genererat innehåll behöver i många fall märkas. Det är sällan svårt att uppfylla — men det måste vara medvetet inbyggt, inte påklistrat i efterhand.",
+          "Praktiskt betyder det tydliga formuleringar i gränssnittet: att en chatt drivs av AI, att ett svar är genererat, att ett förslag bör granskas. Det bygger dessutom förtroende, vilket är bra produktdesign oavsett lag.",
+        ],
+      },
+      {
+        heading: "Använder ni en extern modell? Då delar ni ansvaret",
+        paragraphs: [
+          "De flesta team bygger på en modell från en leverantör snarare än att träna egen. Det tar inte bort ert ansvar — det delar upp det. Leverantören har sina skyldigheter för själva modellen, men hur ni använder den i er produkt är ert ansvar.",
+          "Håll därför koll på vad leverantören dokumenterar och tillåter, och var tydliga internt med var er produkt drar gränsen. Att kunna svara på 'vilken modell, till vad, med vilken data' är halva jobbet.",
+        ],
+      },
+      {
+        heading: "Vad ni bör göra redan nu",
+        paragraphs: [
+          "Börja med en enkel inventering: var sitter AI i er produkt, vad gör den, och vilken risknivå rör det sig om? Dokumentera transparensen mot användaren och se till att ni vet vilken data som går till modellen — det kopplar direkt till GDPR.",
+          "Bygg in efterlevnad som en del av produktarbetet, inte som en panikåtgärd inför en deadline. Team som tänker risk och transparens från början får sällan obehagliga överraskningar — och slipper bygga om i efterhand.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "multimodal-ai-i-produkter",
+    title: "Multimodal AI i produkter — text, bild och röst i samma flöde",
+    excerpt:
+      "Modellerna ser, hör och läser numera i samma anrop. Det öppnar nya produktupplevelser — men också nya sätt att göra fel.",
+    description:
+      "En aktuell guide 2026 till multimodal AI i produkter: när det tillför verkligt värde, vanliga fallgropar och hur du bygger upplevelsen rätt.",
+    category: "AI i produkter",
+    tags: ["ai", "multimodal", "produktdesign", "ux"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-05-27",
+    author: "VibeDev",
+    heroLabel: "Aktuellt",
+    content: [
+      {
+        heading: "Modellerna är inte längre bara text",
+        paragraphs: [
+          "2026 är multimodalitet standard snarare än undantag. En och samma modell kan ta emot text, bild, ljud och ibland video i samma anrop och resonera över dem tillsammans. En användare kan fotografera något, ställa en fråga med rösten och få ett svar som väger in båda.",
+          "Det öppnar produktupplevelser som var opraktiska tidigare. Men precis som med all AI är frågan inte 'kan vi', utan 'löser det här ett verkligt problem bättre än alternativet'.",
+        ],
+      },
+      {
+        heading: "Där multimodalt tillför verkligt värde",
+        paragraphs: [
+          "De starkaste användningarna tar bort friktion som tidigare var oundviklig. Att fotografera en produkt i stället för att beskriva den i ord. Att prata in en anteckning under fältarbete där tangentbord är opraktiskt. Att låta en bild och en fråga tolkas tillsammans, som när någon visar ett felmeddelande och frågar vad det betyder.",
+          "Gemensamt för dem: den nya modaliteten är ett naturligare sätt att uttrycka samma sak. Det är då det känns som magi och inte som en gimmick.",
+        ],
+      },
+      {
+        heading: "De nya fallgroparna",
+        paragraphs: [
+          "Multimodalt innebär nya felkällor. Bilder kan vara suddiga, mörka eller visa något helt annat än användaren tror. Ljud har brus och dialekter. Modellen kan tolka fel på sätt som är svårare att förutse än ren text, och kostnaden per anrop är ofta högre eftersom bild och ljud väger tungt.",
+          "Designa för det: gör det lätt att korrigera en feltolkning, visa tydligt vad modellen uppfattade, och ha ett vettigt beteende när indata är för dålig för att lita på. En produkt som tyst gissar fel tappar förtroende snabbt.",
+        ],
+      },
+      {
+        heading: "Sekretess väger ännu tyngre",
+        paragraphs: [
+          "Bilder och ljud bär ofta mer känslig information än användaren tänker på — ansikten i bakgrunden, dokument på skrivbordet, röster som kan identifiera. När den datan skickas till en extern modell blir GDPR-frågan direkt skarpare än med text.",
+          "Var tydlig med vad som spelas in och skickas, samla bara in det som behövs för uppgiften, och fundera på var datan får behandlas. Det är både ett lagkrav och en förtroendefråga.",
+        ],
+      },
+      {
+        heading: "Börja smalt",
+        paragraphs: [
+          "Frestelsen är att bygga en allätande assistent som hanterar allt. Det blir nästan alltid sämre än en fokuserad funktion som gör en multimodal sak riktigt bra. Välj det enda flöde där en bild eller röst tydligt slår text, och putsa det tills det känns självklart.",
+          "Multimodalt är ett kraftfullt verktyg 2026 — men samma regel gäller som alltid: värdet kommer från ett tydligt användarbehov, inte från att tekniken är imponerande.",
+        ],
+      },
+    ],
+  },
+  /* ── Aktuella nyheter 2026: MVP-utveckling ───────────────────────────────── */
+  {
+    slug: "ai-prototyp-pa-en-dag",
+    title: "Bygg en AI-prototyp på en dag — och vad den faktiskt bevisar",
+    excerpt:
+      "Med dagens verktyg kan du ha en klickbar prototyp på timmar. Men en prototyp svarar bara på vissa frågor — och inte de du kanske tror.",
+    description:
+      "En aktuell guide 2026 till att snabbprototypa med AI-verktyg: vad du kan bygga på en dag, vilka frågor det besvarar och var gränsen mot en riktig MVP går.",
+    category: "MVP-utveckling",
+    tags: ["mvp", "prototyp", "ai-verktyg", "validering"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-02",
+    author: "VibeDev",
+    heroLabel: "Aktuellt",
+    content: [
+      {
+        heading: "Prototyp på timmar är verklighet nu",
+        paragraphs: [
+          "Med 2026 års verktyg kan en enskild person ha en klickbar, snygg prototyp på en dag — ibland på en eftermiddag. Du beskriver idén, får ett gränssnitt som ser färdigt ut, och kan klicka dig igenom flödet nästan direkt.",
+          "Det är en superkraft för att tänka och kommunicera. Men det är lätt att blanda ihop 'ser färdig ut' med 'är validerad'. En prototyp svarar bara på vissa frågor, och det är värt att vara tydlig med vilka.",
+        ],
+      },
+      {
+        heading: "Vad en endagsprototyp faktiskt besvarar",
+        paragraphs: [
+          "En snabbprototyp är utmärkt för att svara på: förstår folk vad det här är? Känns flödet logiskt? Väcker det rätt reaktion när jag visar det? Den gör abstrakta idéer konkreta nog att få ärlig feedback på, och den är ovärderlig för att rikta in teamet.",
+          "Den är också perfekt för att upptäcka att en idé inte håller — innan du investerat veckor. Att en prototyp får ett ljummet mottagande är en billig och nyttig läxa.",
+        ],
+      },
+      {
+        heading: "Vad den inte besvarar",
+        paragraphs: [
+          "En prototyp säger nästan ingenting om det riktigt svåra: håller det under verklig belastning, fungerar integrationerna, är datan korrekt, vill folk betala, kommer de tillbaka om en vecka? Allt det som avgör om produkten faktiskt fungerar i drift ligger utanför vad en mockup kan visa.",
+          "Den vanligaste fällan 2026 är att tro att en imponerande prototyp betyder att produkten är 'nästan klar'. Avståndet från klickbar yta till robust produkt är fortfarande stort — verktygen har bara gjort ytan billig.",
+        ],
+      },
+      {
+        heading: "Prototyp först, MVP sen — i rätt ordning",
+        paragraphs: [
+          "Använd prototypen för det den är bra på: testa förståelse och riktning snabbt och billigt. När den bekräftat att idén är värd att bygga, då börjar det riktiga arbetet med en MVP som faktiskt fungerar för riktiga användare.",
+          "Hoppa inte över valideringen bara för att ytan blev fin på en dag. Och försök inte heller göra prototypen till produkten genom att lappa på den — det leder oftast till skör grund som måste rivas.",
+        ],
+      },
+      {
+        heading: "Det billiga steget gör de dyra besluten bättre",
+        paragraphs: [
+          "Det bästa med endagsprototyper är att de gör tidiga produktbeslut billigare och modigare. Du kan testa tre riktningar på en vecka i stället för att gissa, och bara den som överlever kontakt med riktiga människor går vidare till bygge.",
+          "Använd hastigheten till att lära dig mer, inte till att hoppa över lärandet. Det är så snabbprototyper gör MVP-arbetet bättre i stället för att lura dig.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "mvp-nyckeltal-2026",
+    title: "MVP-nyckeltal 2026 — vad du faktiskt ska mäta",
+    excerpt:
+      "Nedladdningar och registreringar känns bra men säger lite. Här är måtten som faktiskt avslöjar om din MVP är på rätt väg.",
+    description:
+      "En aktuell guide till vilka nyckeltal som betyder något för en MVP 2026 — aktivering, retention och verkligt värde framför vanity-mått.",
+    category: "MVP-utveckling",
+    tags: ["mvp", "nyckeltal", "retention", "produktstrategi"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-05-25",
+    author: "VibeDev",
+    heroLabel: "Guide",
+    content: [
+      {
+        heading: "Fel mått ger falsk trygghet",
+        paragraphs: [
+          "Det är lätt att fastna i siffror som känns bra: antal registreringar, nedladdningar, sidvisningar, klick. De stiger, grafen pekar uppåt och det känns som framgång. Men de säger nästan ingenting om huruvida produkten faktiskt löser ett problem.",
+          "En MVP byggs för att lära, och då måste du mäta rätt saker. Annars optimerar du mot en känsla av framgång i stället för mot verkligt värde — och upptäcker först sent att grunden inte höll.",
+        ],
+      },
+      {
+        heading: "Aktivering: når folk fram till värdet?",
+        paragraphs: [
+          "Det första som betyder något är aktivering — andelen som faktiskt når fram till produktens kärnvärde, inte bara registrerar sig. Om hundra personer skapar konto men bara tio kommer fram till det som gör produkten användbar, har du ett onboarding-problem som överskuggar allt annat.",
+          "Definiera tydligt vad 'aha-ögonblicket' är för just er produkt, och mät hur stor andel som kommer dit. Det pekar oftast på den mest värdefulla förbättringen ni kan göra.",
+        ],
+      },
+      {
+        heading: "Retention är sanningens ögonblick",
+        paragraphs: [
+          "Det starkaste enskilda måttet för en MVP är retention: kommer folk tillbaka av sig själva? En produkt som folk återvänder till vecka efter vecka har hittat något verkligt. En som testas en gång och glöms bort har det inte, oavsett hur många som provade.",
+          "Titta på om kurvan planar ut på en sund nivå och håller sig där, snarare än på en lansering eller en topp. Det är skillnaden mellan en hink som håller vatten och en med hål i botten.",
+        ],
+      },
+      {
+        heading: "Komplettera siffror med samtal",
+        paragraphs: [
+          "I en MVP-fas är datamängden ofta för liten för att lita blint på siffror. Därför är kvalitativ feedback minst lika viktig. Prata särskilt med dem som testade och försvann — de pekar precis på var produkten brister medan det är billigt att ändra.",
+          "Kombinationen är poängen: siffrorna visar vad som händer, samtalen förklarar varför. Den ena utan den andra leder lätt till felslut.",
+        ],
+      },
+      {
+        heading: "Välj få mått och var ärlig",
+        paragraphs: [
+          "Mät inte allt — välj de få tal som faktiskt skulle få er att ändra beslut, och sätt gärna en tröskel i förväg för vad som räknas som framgång. Annars är det lätt att i efterhand tolka vilken data som helst som uppmuntrande.",
+          "En MVP med ärlig mätning av aktivering och retention ger dig ett tydligt svar: bygg vidare, justera, eller släpp. Det svaret är hela poängen med att bygga litet först.",
+        ],
+      },
+    ],
+  },
+  /* ── Aktuella nyheter 2026: Tekniska val ─────────────────────────────────── */
+  {
+    slug: "managed-vs-egen-infra-2026",
+    title: "Managed hosting eller egen server 2026 — vår beslutsguide",
+    excerpt:
+      "Plattformar som hanterar driften åt dig är billigare och smidigare än någonsin — men inte alltid rätt. Här är hur vi väljer.",
+    description:
+      "En aktuell beslutsguide 2026 för valet mellan managed hosting och egen infrastruktur — kostnad, kontroll, skalning och var brytpunkten ligger.",
+    category: "Tekniska val",
+    tags: ["infrastruktur", "hosting", "teknikval", "skalning"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-01",
+    author: "VibeDev",
+    heroLabel: "Beslutsguide",
+    content: [
+      {
+        heading: "Standardvalet har förskjutits",
+        paragraphs: [
+          "2026 är managed-plattformar — där någon annan sköter servrar, skalning, certifikat och en stor del av driften — det naturliga förstavalet för de flesta produkter. De är mogna, prisvärda och låter små team fokusera på produkten i stället för på serverunderhåll.",
+          "Men 'standardval' betyder inte 'alltid rätt'. Det finns lägen där egen infrastruktur fortfarande lönar sig, och det är värt att veta var brytpunkten går innan kostnaden eller begränsningarna överraskar er.",
+        ],
+      },
+      {
+        heading: "När managed är rätt",
+        paragraphs: [
+          "För de allra flesta webappar, SaaS-produkter och MVP:er är managed rätt. Ni slipper en hel kategori av arbete — drift, säkerhetspatchar, skalning vid trafiktoppar — och kommer ut snabbare. Ett litet team får effekten av en driftavdelning utan att anställa en.",
+          "Det är särskilt rätt tidigt, när hastighet och fokus är viktigare än att optimera varje krona. Att lägga teamets begränsade tid på produkten i stället för på infrastruktur är nästan alltid rätt prioritering i början.",
+        ],
+      },
+      {
+        heading: "När egen infrastruktur lönar sig",
+        paragraphs: [
+          "Egen infrastruktur blir intressant vid tre saker: kostnad i stor skala, specifika krav, och kontroll. Vid hög och jämn belastning kan managed bli dyrt jämfört med egna servrar. Vissa krav — på var data får ligga, på specialiserad hårdvara, på låg latens — kan tvinga fram egen drift.",
+          "Och ibland handlar det om kontroll: att inte vara låst vid en leverantörs begränsningar eller prismodell. Men räkna ärligt med vad egen drift kostar i tid och kompetens — den kostnaden är lätt att underskatta.",
+        ],
+      },
+      {
+        heading: "Den dolda kostnaden: inlåsning",
+        paragraphs: [
+          "Managed-plattformars baksida är beroendet. Ju mer ni bygger mot en specifik leverantörs unika funktioner, desto svårare blir det att flytta. Det är sällan ett problem — förrän priset höjs eller en gräns blir kännbar.",
+          "Du behöver inte undvika managed för det. Men var medveten om var inlåsningen sitter, och håll de mest kritiska delarna så portabla som rimligt. Det är en billig försäkring mot en dyr framtida flytt.",
+        ],
+      },
+      {
+        heading: "Vår tumregel",
+        paragraphs: [
+          "Börja managed om inget tydligt skäl talar emot. Hastigheten och fokuset är värt mer än de besparingar egen drift kan ge tidigt, och de flesta produkter når aldrig den skala där egen infrastruktur lönar sig.",
+          "Ompröva när ni ser konkreta signaler: kostnaden skenar i skala, en gräns börjar skava, eller ett krav tvingar fram det. Då är flytten ett medvetet beslut grundat i verkliga siffror — inte en magkänsla om att 'riktiga' team kör egna servrar.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "postgres-som-allt-2026",
+    title: "Postgres för det mesta 2026 — när en databas räcker långt",
+    excerpt:
+      "Kö, sök, cache, vektorer — Postgres kan numera ersätta en hel rad specialverktyg. Här är när det är smart och när det inte är det.",
+    description:
+      "En aktuell teknisk genomgång 2026 av att använda Postgres för mer än bara relationsdata — fördelar, gränser och när du faktiskt behöver ett separat verktyg.",
+    category: "Tekniska val",
+    tags: ["postgres", "databas", "arkitektur", "teknikval"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-05-26",
+    author: "VibeDev",
+    heroLabel: "Tekniskt",
+    content: [
+      {
+        heading: "En databas som vuxit ut ur sin roll",
+        paragraphs: [
+          "Postgres har blivit en av de mest pragmatiska grunderna att bygga på 2026. Med tillägg och inbyggda funktioner kan den hantera mycket som tidigare krävde separata system: jobbköer, fulltextsök, geodata, JSON-dokument och till och med vektorsökning för AI-funktioner.",
+          "För många produkter betyder det att en enda, välbekant databas täcker behov som annars hade spridits över ett halvdussin tjänster. Det är ofta en stor vinst — men inte en universallösning.",
+        ],
+      },
+      {
+        heading: "Varför 'bara Postgres' ofta vinner tidigt",
+        paragraphs: [
+          "Varje extra system i en arkitektur är något att driva, övervaka, säkra och hålla i synk. Att klara sig med en databas i stället för fem minskar komplexiteten dramatiskt — mindre att lära sig, färre saker som kan gå sönder, en plats att backa upp.",
+          "För ett litet team eller en ny produkt är det nästan alltid rätt att börja med Postgres för så mycket som möjligt. Du kan alltid bryta ut en del till ett specialverktyg senare, när ett verkligt behov visat sig.",
+        ],
+      },
+      {
+        heading: "Var gränsen går",
+        paragraphs: [
+          "Postgres är förvånansvärt kapabel, men inte gränslös. En jobbkö i databasen räcker långt men inte i extrem volym. Fulltextsök i Postgres är utmärkt tills kraven på relevans och skala blir riktigt höga. Vektorsök fungerar bra för måttliga datamängder men möter dedikerade verktyg vid riktigt stora.",
+          "Tecknet att bryta ut något är konkret: när Postgres-lösningen börjar kräva mer trixande och tuning än det specialverktyg du undvek hade kostat att införa. Då, och inte tidigare, är det dags.",
+        ],
+      },
+      {
+        heading: "Glöm inte grunderna — som säkerhet",
+        paragraphs: [
+          "När en databas bär mycket av produkten blir det desto viktigare att den är rätt konfigurerad. Behörigheter, radnivåsäkerhet där data exponeras, backuper och övervakning är inte detaljer utan kärnan. En felkonfigurerad central databas är en enda punkt där mycket kan gå fel samtidigt.",
+          "Ju mer ni lägger i Postgres, desto mer lönar det sig att vara noggrann med just dessa grunder. Bekvämligheten med en databas får inte bli en ursäkt för slarv med åtkomst och drift.",
+        ],
+      },
+      {
+        heading: "Pragmatism framför renlärighet",
+        paragraphs: [
+          "Det finns en dragning mot att välja det 'rätta' specialverktyget för varje behov. Men varje verktyg har en kostnad i komplexitet, och den kostnaden är verklig från dag ett medan vinsten ofta är teoretisk tills ni når skala.",
+          "Vår hållning 2026: börja med Postgres för det mesta, mät var det faktiskt brister, och lägg bara till komplexitet där den löser ett verkligt problem. Det ger enklare system som är lättare att förstå, driva och lita på.",
+        ],
+      },
+    ],
+  },
+  /* ── Aktuella nyheter 2026: Produktstrategi ──────────────────────────────── */
+  {
+    slug: "prissattning-av-ai-funktioner",
+    title: "Prissättning av AI-funktioner — abonnemang, krediter eller användning?",
+    excerpt:
+      "AI-funktioner har en rörlig kostnad per användning, vilket bryter den klassiska SaaS-prismodellen. Här är hur du tänker rätt.",
+    description:
+      "En aktuell guide 2026 till att prissätta AI-funktioner: varför fast månadspris kan bli en förlustaffär och hur du väljer mellan abonnemang, krediter och användningsbaserat.",
+    category: "Produktstrategi",
+    tags: ["prissättning", "ai", "affärsmodell", "saas"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-05-31",
+    author: "VibeDev",
+    heroLabel: "Strategi",
+    content: [
+      {
+        heading: "AI bryter den klassiska SaaS-modellen",
+        paragraphs: [
+          "Traditionell SaaS prissätts gärna med ett fast månadsbelopp, för marginalkostnaden för ytterligare en användare är nära noll. AI-funktioner förändrar det: varje anrop till en modell kostar pengar, och en intensiv användare kan kosta mångdubbelt mer än en passiv.",
+          "Det betyder att ett naivt fast pris kan bli en förlustaffär — era mest aktiva kunder blir era dyraste. Prissättning av AI kräver därför mer tanke än att bara sätta en siffra per månad.",
+        ],
+      },
+      {
+        heading: "Tre vanliga modeller",
+        paragraphs: [
+          "Abonnemang: enkelt och förutsägbart för kunden, men riskabelt om användningen varierar kraftigt — du måste prissätta för att täcka även storförbrukarna. Krediter: kunden köper en pott som förbrukas, vilket kopplar pris till användning men ändå ger en känsla av kontroll. Rent användningsbaserat: betala per användning, rättvist men svårare för kunden att förutse.",
+          "Inget är universellt rätt. Valet beror på hur jämn er användning är, hur priskänsliga kunderna är och hur mycket förutsägbarhet de värderar.",
+        ],
+      },
+      {
+        heading: "Skydda marginalen utan att straffa lojala kunder",
+        paragraphs: [
+          "Nyckeln är att er intäkt per kund grovt ska följa er kostnad per kund. Ett vanligt grepp är ett abonnemang som täcker normal användning, med tydliga gränser och möjlighet att köpa till för den som vill mer. Då får majoriteten enkelhet medan storförbrukarna betalar för sin förbrukning.",
+          "Undvik att bygga en modell där era bästa, mest aktiva kunder blir de mest olönsamma. Det skapar en absurd situation där framgång gör ont, och det leder förr eller senare till panikhöjningar som skadar förtroendet.",
+        ],
+      },
+      {
+        heading: "Var transparent — överraskningar dödar förtroende",
+        paragraphs: [
+          "Användningsbaserade modeller har en känd risk: räkningschock. En kund som får en oväntat hög faktura blir inte bara missnöjd, utan slutar lita på produkten. Tydliga gränser, varningar när man närmar sig dem och möjligheten att sätta tak är inte detaljer — de är kärnan i en hållbar modell.",
+          "Förutsägbarhet är värt mycket för köparen. Även en något dyrare men begriplig modell vinner ofta över en billigare men oförutsägbar.",
+        ],
+      },
+      {
+        heading: "Börja enkelt, justera med data",
+        paragraphs: [
+          "Du behöver inte den perfekta modellen från start, men du behöver förstå din kostnadsstruktur innan du sätter priset. Mät vad en typisk och en intensiv kund faktiskt kostar er, och prissätt utifrån det snarare än utifrån en gissning.",
+          "Börja med en enkel, begriplig modell och var beredd att justera när ni ser verklig användning. Prissättning av AI är inte ett engångsbeslut — det är något ni förfinar i takt med att ni lär er hur produkten används.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "konkurrera-nar-alla-bygger-med-ai",
+    title: "Konkurrera när alla bygger med AI — var finns vallgraven?",
+    excerpt:
+      "När vem som helst kan bygga en snygg AI-funktion på en helg, vad gör då din produkt svår att kopiera? Här är var försvaret faktiskt sitter.",
+    description:
+      "En aktuell strategigenomgång 2026: när AI gör funktioner till en commodity, var ligger en produkts verkliga konkurrensfördel — och var ligger den inte?",
+    category: "Produktstrategi",
+    tags: ["strategi", "ai", "konkurrens", "produktstrategi"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-05-24",
+    author: "VibeDev",
+    heroLabel: "Strategi",
+    content: [
+      {
+        heading: "Funktioner är inte längre en vallgrav",
+        paragraphs: [
+          "När en konkurrent kan bygga en motsvarande AI-funktion på en helg är själva funktionen inte längre ett försvar. Det som kändes som en unik förmåga 2023 är ofta en kryssruta i alla konkurrenters produkter 2026. Att tävla på funktionslistan blir en kapplöpning ingen vinner.",
+          "Det betyder inte att produkten är värdelös — det betyder att vallgraven flyttat. Frågan blir: vad i er produkt är faktiskt svårt att kopiera?",
+        ],
+      },
+      {
+        heading: "Data och distribution håller",
+        paragraphs: [
+          "Två klassiska vallgravar har snarare stärkts av AI. Den första är proprietär data: information som bara ni har och som gör er AI bättre på just ert problem än en generisk modell. Den är svår att kopiera eftersom den byggs upp över tid genom användning.",
+          "Den andra är distribution: att redan ha kunderna, förtroendet och de inarbetade arbetsflödena. En konkurrent kan kopiera funktionen men inte över en natt kopiera er relation till marknaden. Båda är trögrörliga på ett sätt som faktiskt skyddar.",
+        ],
+      },
+      {
+        heading: "Integration och arbetsflöde är svårkopierat",
+        paragraphs: [
+          "En enskild funktion är lätt att härma. En produkt som sitter djupt inbäddad i kundens arbetsflöde, integrerad med deras andra system och anpassad efter hur de faktiskt jobbar, är det inte. Bytet kostar kunden för mycket.",
+          "Det är därför det ofta lönar sig att bygga djupt snarare än brett: lös ett verkligt arbetsflöde hela vägen, i stället för att lägga till ytterligare en ytlig AI-funktion. Djupet är där bytkostnaden — och därmed försvaret — byggs.",
+        ],
+      },
+      {
+        heading: "Utförande och förtroende avgör",
+        paragraphs: [
+          "När alla har tillgång till samma modeller blir hur väl ni använder dem avgörande. En AI-funktion som är genomtänkt, pålitlig och faktiskt löser problemet slår en som imponerar i demo men sviker i vardagen. Kvaliteten i utförandet är en vallgrav i sig.",
+          "Förtroende hör ihop med det. I en värld full av AI-funktioner som lovar mer än de håller blir en produkt som konsekvent levererar något folk vågar lita på. Det byggs långsamt och förloras snabbt — vilket gör det värdefullt.",
+        ],
+      },
+      {
+        heading: "Sluta tävla på det som blivit gratis",
+        paragraphs: [
+          "Den strategiska slutsatsen 2026 är att flytta tävlan bort från funktioner som blivit en commodity. Det vore slöseri att jaga en funktionsparitet som ändå inte ger något försvar.",
+          "Lägg energin där den faktiskt bygger något varaktigt: data ni unikt kan samla, ett arbetsflöde ni löser djupare än andra, en relation och ett förtroende som tar tid att kopiera. Det är där en produkt blir svår att konkurrera ut — även när alla har samma AI.",
+        ],
+      },
+    ],
+  },
+  /* ── Aktuella nyheter 2026: Integrationer ────────────────────────────────── */
+  {
+    slug: "klarna-integration-guide",
+    title: "Klarna-integration — så kopplar du svensk checkout rätt",
+    excerpt:
+      "Klarna är en självklarhet i svensk e-handel, men integrationen har detaljer som lätt blir fel. Här är vad du behöver tänka på.",
+    description:
+      "En praktisk guide till att integrera Klarna i en e-handel — betalflödet, statushantering, webhooks och de vanligaste fallgroparna.",
+    category: "Integrationer",
+    tags: ["klarna", "integration", "e-handel", "betalningar"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-05-30",
+    author: "VibeDev",
+    heroLabel: "Integration",
+    content: [
+      {
+        heading: "Klarna är förväntat i svensk e-handel",
+        paragraphs: [
+          "För svenska kunder är Klarna närmast en självklarhet i kassan — faktura, dela upp betalningen, eller betala direkt. Att erbjuda det är ofta avgörande för konvertering. Men en Klarna-integration är mer än en betalknapp; den har ett betalflöde och en statuslivscykel som måste hanteras rätt.",
+          "Den här guiden går igenom det du behöver tänka på för att kopplingen ska bli pålitlig, inte bara fungera i en demo.",
+        ],
+      },
+      {
+        heading: "Förstå betalflödets faser",
+        paragraphs: [
+          "Klarna skiljer på olika faser i en betalning — att en order auktoriseras, att den fångas (när du levererar), och eventuella återbetalningar eller annulleringar. En vanlig miss är att behandla 'order lagd' som 'betalning klar'. Pengarna fångas typiskt först när du faktiskt skickar varan.",
+          "Bygg din orderlogik kring de här faserna. Att blanda ihop dem leder till bokföring som inte stämmer och till kunder som debiteras vid fel tillfälle — två problem du verkligen inte vill ha.",
+        ],
+      },
+      {
+        heading: "Webhooks och statusuppdateringar",
+        paragraphs: [
+          "Betalstatus ändras inte alltid i samma ögonblick som kunden klickar — en betalning kan bli godkänd, nekad eller ändrad senare. Klarna meddelar din tjänst om förändringar, och din integration måste lyssna på det och hålla orderns status i synk.",
+          "Verifiera att uppdateringarna faktiskt kommer från Klarna, och gör hanteringen idempotent så att en upprepad notis inte dubbelbehandlar en order. Det är samma robusthetsprinciper som för all betalintegration.",
+        ],
+      },
+      {
+        heading: "Testa kantfallen, inte bara lyckat köp",
+        paragraphs: [
+          "Det glada flödet — kund betalar, allt funkar — är det enkla. Det som ställer till det i produktion är kantfallen: en nekad betalning, en delvis återbetalning, en annullerad order, en kund som avbryter mitt i. Varje sådant fall måste din integration hantera utan att lämna ordern i ett oklart tillstånd.",
+          "Testa dem aktivt i Klarnas testmiljö innan lansering. En betalintegration som bara testats på det lyckade fallet är en integration som kommer att överraska dig.",
+        ],
+      },
+      {
+        heading: "Logga allt som rör pengar",
+        paragraphs: [
+          "Med betalningar är spårbarhet inte valfritt. Logga varje statusövergång, webhook och åtgärd med tydlig orderreferens. När en kund hör av sig om en debitering, eller bokföringen inte stämmer, måste du snabbt kunna rekonstruera exakt vad som hände.",
+          "En välbyggd Klarna-integration handlar mindre om själva API-anropen och mer om att hantera statuslivscykeln korrekt, robust och spårbart. Får du det rätt blir det en koppling du kan lita på i åratal.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "stripe-integration-guide",
+    title: "Stripe-integration — betalningar som skalar utan krångel",
+    excerpt:
+      "Stripe är förstavalet för många som bygger egna betalflöden. Här är hur du integrerar det rätt — och de misstag som kostar dig.",
+    description:
+      "En praktisk guide till att integrera Stripe i en produkt — betalflödet, webhooks som sanningskälla, abonnemang och vanliga fallgropar.",
+    category: "Integrationer",
+    tags: ["stripe", "integration", "betalningar", "saas"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-05-23",
+    author: "VibeDev",
+    heroLabel: "Integration",
+    content: [
+      {
+        heading: "Varför Stripe är förstavalet för många",
+        paragraphs: [
+          "När du bygger ett eget betalflöde — för en SaaS, en marknadsplats eller en produkt utanför de färdiga e-handelsplattformarna — är Stripe ofta det självklara valet. Dokumentationen är stark, verktygen är utvecklarvänliga och det hanterar allt från engångsköp till abonnemang och utbetalningar.",
+          "Men kraftfullt är inte detsamma som självgående. En Stripe-integration som byggs slarvigt blir en källa till tysta fel som först syns i intäkterna. Här är principerna som gör den robust.",
+        ],
+      },
+      {
+        heading: "Webhooks är din sanningskälla",
+        paragraphs: [
+          "Det enskilt viktigaste att förstå: lita inte på vad som händer i kundens webbläsare för att avgöra om en betalning gått igenom. Användaren kan stänga fliken innan flödet är klart. Stripe skickar webhooks om vad som faktiskt hänt, och det är dem du ska basera din orderlogik på.",
+          "Bygg din betalstatus kring inkommande webhooks, inte kring redirect-svaret. Det är skillnaden mellan en integration som stämmer och en som ibland missar betalningar eller levererar utan att ha tagit betalt.",
+        ],
+      },
+      {
+        heading: "Verifiera och gör allt idempotent",
+        paragraphs: [
+          "Verifiera signaturen på varje webhook så att ingen kan skicka falska betalhändelser till din endpoint. Och utgå från att webhooks kan komma mer än en gång — gör hanteringen idempotent så att samma händelse aldrig leder till dubbel leverans eller dubbel bokföring.",
+          "Använd även idempotensnycklar på dina egna anrop mot Stripe, så att ett nätverksfel och en automatisk retry inte råkar skapa två debiteringar. Stripe stödjer det inbyggt — utnyttja det.",
+        ],
+      },
+      {
+        heading: "Abonnemang har sin egen komplexitet",
+        paragraphs: [
+          "Bygger du återkommande betalningar tillkommer en hel värld av tillstånd: provperioder, misslyckade förnyelser, uppgraderingar mitt i en period, uppsägningar, betalningar som försöker igen. Stripe hanterar mekaniken, men din produkt måste reagera rätt på varje övergång.",
+          "Särskilt misslyckade förnyelser är värda omsorg — en kunds kort som går ut ska leda till ett vänligt påminnelseflöde, inte till en tyst avstängning eller en fortsatt gratis tjänst. Mappa upp tillstånden medvetet.",
+        ],
+      },
+      {
+        heading: "Testa i testläge och logga noggrant",
+        paragraphs: [
+          "Stripe har ett komplett testläge med testkort för alla scenarier — lyckat, nekat, kräver autentisering, misslyckad förnyelse. Använd det för att gå igenom kantfallen innan du går live, inte efter att en riktig kund stött på dem.",
+          "Och som med all betalintegration: logga varje händelse med tydlig referens. När något rör pengar måste du kunna svara exakt på vad som hände, för vem och när. Får du webhooks, idempotens och loggning rätt blir Stripe en grund som skalar utan dramatik.",
+        ],
+      },
+    ],
+  },
 ];
 
 export const blogCategories = Array.from(new Set(blogPosts.map((post) => post.category)));
