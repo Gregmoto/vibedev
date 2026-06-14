@@ -482,6 +482,12 @@ export async function getRelatedPublicPodcastEpisodes(current: PublicPodcastEpis
   return episodes.filter((episode) => episode.slug !== current.slug).slice(0, limit);
 }
 
+function getStaticCaseStudies(): PublicCaseStudy[] {
+  return staticCaseStudies
+    .map((item) => mapStaticCaseStudy(item.slug))
+    .filter((item): item is PublicCaseStudy => Boolean(item));
+}
+
 export async function getPublishedCaseStudies(): Promise<PublicCaseStudy[]> {
   const result = await safeDbRead(async () =>
     db.caseStudy.findMany({
@@ -490,11 +496,20 @@ export async function getPublishedCaseStudies(): Promise<PublicCaseStudy[]> {
     }),
   );
 
+  const staticCases = getStaticCaseStudies();
+
   if (result.enabled) {
-    return (result.data ?? []).map(mapDbCaseStudy);
+    // The bundled static cases are the real, authored case studies. Keep them
+    // (in their authored order) and append any DB-managed cases that don't
+    // collide on slug, so CMS additions still surface without hiding the real
+    // ones behind seed/placeholder rows.
+    const staticSlugs = new Set(staticCases.map((c) => c.slug));
+    const dbCases = (result.data ?? []).map(mapDbCaseStudy).filter((c) => !staticSlugs.has(c.slug));
+
+    return [...staticCases, ...dbCases];
   }
 
-  return staticCaseStudies.map((item) => mapStaticCaseStudy(item.slug)).filter((item): item is PublicCaseStudy => Boolean(item));
+  return staticCases;
 }
 
 export async function getPublishedCaseStudyBySlug(slug: string): Promise<PublicCaseStudy | null> {
@@ -509,7 +524,8 @@ export async function getPublishedCaseStudyBySlug(slug: string): Promise<PublicC
   );
 
   if (result.enabled) {
-    return result.data ? mapDbCaseStudy(result.data) : null;
+    // Prefer the bundled static case; fall back to a DB-managed one.
+    return mapStaticCaseStudy(slug) ?? (result.data ? mapDbCaseStudy(result.data) : null);
   }
 
   return mapStaticCaseStudy(slug);

@@ -135,6 +135,35 @@ export const caseStudies: CaseStudy[] = [
     },
   },
   {
+    slug: "omdio",
+    projectName: "Omdio",
+    industry: "Omdömesplattform / SaaS",
+    status: "published",
+    websiteUrl: "https://omdio.se",
+    summary:
+      "Köpverifierad omdömesplattform för butiker och produkter — i samma plattform.",
+    customerProblem:
+      "Svenska marknaden saknade en plats för köpverifierade omdömen som täcker både företag och enskilda produkter. Trustpilot betygsätter företag, Prisjakt jämför pris — men ingen knöt ihop verifierat köp med både butiks- och produktomdöme. Utan köpverifiering manipuleras omdömen lätt, och utan omdömen är en omdömesplattform värdelös — det klassiska kallstartsproblemet.",
+    solution:
+      "Vi byggde en plattformsneutral omdömeskärna med köpverifiering: butiker kopplar sin e-handel via adaptrar, en lättviktig widget samlar in verifierade omdömen direkt efter köp, och produktomdömen matchas över butiksgränser via EAN. Resultatet är trovärdiga omdömen för både företag och produkter på samma ställe.",
+    process: [
+      "Plattformsneutral kärna med adaptrar för Shopify och WooCommerce",
+      "Inbäddbar widget (~4 kB, Shadow DOM) med köpverifiering via JSON-LD",
+      "EAN-baserad produktmatchning över butiksgränser",
+      "Utskicksmotor med kvot, sampling och leveransbarhet (SPF/DKIM/DMARC)",
+      "AI-moderering av inkommande omdömen",
+      "Företagsportal, admin och betalflöde via Stripe",
+    ],
+    results: [
+      "En komplett plattform i produktion: publik sajt, företagsportal, admin, betalflöde och e-handelsintegrationer.",
+    ],
+    techStack: ["Next.js", "TypeScript", "Supabase/PostgreSQL", "Cloudflare Workers", "Stripe", "Resend"],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
     slug: "endoo",
     projectName: "Endoo",
     industry: "SaaS / Ekonomi",
