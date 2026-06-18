@@ -65,6 +65,28 @@ const PROJECTS: Project[] = [
     siteHref:  "https://minodling.se",
   },
   {
+    status:      "Lanserad",
+    industryTag: "OMDÖMESPLATTFORM",
+    name:        "Omdio",
+    domain:      "omdio.se",
+    description:
+      "Köpverifierad omdömesplattform som samlar företags- och produktomdömen på ett ställe. Plattformsneutral kärna, inbäddbar widget och EAN-matchning över butiksgränser.",
+    tech:      ["Next.js", "TypeScript", "Cloudflare Workers", "Stripe"],
+    caseHref:  "/case-studies/omdio",
+    siteHref:  "https://omdio.se",
+  },
+  {
+    status:      "Lanserad",
+    industryTag: "REGISTER / DATA",
+    name:        "Konkursfakta",
+    domain:      "konkursfakta.se",
+    description:
+      "Öppet, sökbart register över svenska bolag i konkurs. Datan från Bolagsverket, PoIT och tingsrätter samlad på ett reklamfritt ställe, med SSR-säkra bolagssidor och rik SEO.",
+    tech:      ["React 19", "TanStack Start", "Supabase", "Cloudflare Workers"],
+    caseHref:  "/case-studies/konkursfakta",
+    siteHref:  "https://konkursfakta.se",
+  },
+  {
     status:      "Kommande",
     industryTag: "SAAS / EKONOMI",
     name:        "Endoo",
