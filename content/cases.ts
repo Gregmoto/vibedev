@@ -164,6 +164,34 @@ export const caseStudies: CaseStudy[] = [
     },
   },
   {
+    slug: "konkursfakta",
+    projectName: "Konkursfakta",
+    industry: "Register / Offentlig data",
+    status: "published",
+    websiteUrl: "https://konkursfakta.se",
+    summary:
+      "Öppet, sökbart register över svenska bolag i konkurs — datan från Bolagsverket, PoIT och tingsrätter samlad på ett ställe.",
+    customerProblem:
+      "Konkursuppgifter om svenska bolag ligger utspridda hos Bolagsverket, Post- och Inrikes Tidningar och landets tingsrätter. Leverantörer som bevakar fordringar, anställda som berörs av lönegaranti, kreditbeslutsfattare och journalister tvingas leta på flera ställen. Det fanns inget renodlat, reklamfritt register fokuserat enbart på konkurser — allabolag och ratsit är breda och kommersiella.",
+    solution:
+      "En öppen, sökbar plattform där varje konkurs får en egen bolagssida med org.nr, bransch, ort, konkursdatum, förvaltare, tingsrätt, adress, SNI-koder och juridisk form. Besökare söker på bolagsnamn eller organisationsnummer och får de senast inkomna konkurserna. En blogg med guideartiklar förklarar konkursprocessen, och ett inloggat admin-gränssnitt låter redaktionen lägga till och redigera bolag.",
+    process: [
+      "Egen bolagssida per konkurs med org.nr, förvaltare, tingsrätt, SNI-koder och juridisk form",
+      "Sök på bolagsnamn eller organisationsnummer med lista över senast inkomna konkurser",
+      "Blogg med tio guideartiklar som förklarar konkursprocessen",
+      "Inloggat admin-gränssnitt för redaktionen att lägga till och redigera bolag",
+      "SSR-säkra sidor med JSON-LD per bolag och dynamiskt genererad sitemap",
+    ],
+    results: [
+      "Ett öppet register med cirka 13 400 bolag och SEO-optimerade bolagssidor — konkursdata samlad på ett reklamfritt ställe.",
+    ],
+    techStack: ["React 19", "TanStack Start", "Tailwind v4", "shadcn/ui", "Supabase", "Cloudflare Workers", "SSR", "SEO"],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
     slug: "endoo",
     projectName: "Endoo",
     industry: "SaaS / Ekonomi",
