@@ -180,7 +180,7 @@ export default function CaseStudiesPage() {
       <Section>
         <SectionHeading
           eyebrow="PROJEKT"
-          title="Sex lanserade produkter + ett pågående."
+          title="Sju lanserade produkter + ett pågående."
           description="Oavsett bransch är mönstret detsamma: rätt scope, rätt teknik och ett team som tar ägarskap hela vägen till lansering."
           className="mb-10"
         />

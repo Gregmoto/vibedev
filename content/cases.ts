@@ -164,6 +164,37 @@ export const caseStudies: CaseStudy[] = [
     },
   },
   {
+    slug: "tis",
+    projectName: "TIS",
+    industry: "EdTech / Körkort",
+    status: "published",
+    websiteUrl: "https://tisonline.se",
+    summary:
+      "Digital teoriplattform för svenska B-körkortet — övningsprov, AI-förklaringar och flerspråkigt stöd på 11 språk.",
+    customerProblem:
+      "Att plugga inför teoriprovet för B-körkort är torrt och svårtillgängligt för den som inte har svenska som modersmål. Befintliga tjänster erbjuder ofta bara frågor utan förklaring och saknar stöd för flerspråkiga elever. Tröskeln blir hög för nyanlända som ska lära sig både trafikregler och ett nytt språk samtidigt.",
+    solution:
+      "Vi byggde en komplett inlärningsplattform där eleven kan öva, få AI-genererade förklaringar upplästa och ställa frågor till en flerspråkig AI-tutor — på 11 språk, inte bara svara rätt eller fel.",
+    process: [
+      "Övningsprov och tidsbegränsade, simulerade riktiga prov",
+      "Frågebank med AI-genererade pedagogiska förklaringar, optimerade för uppläsning",
+      "\"Trafiktutor\" — en flerspråkig AI-chatt för trafikfrågor",
+      "Vägmärkesguide med 610 svenska vägmärken i 20 kategorier",
+      "Bildanalys av parkeringsskyltar — ladda upp ett foto och få en förklaring",
+      "Premium Learning Support: veckovisa fokusområden baserade på elevens svaga ämnen",
+      "Teorilektioner, blogg, dagliga trafikfakta och mål/badges",
+      "Fullt admin med frågebank, taggar, ämnen, kluster och översättningshantering",
+    ],
+    results: [
+      "En komplett inlärningsplattform i produktion där eleven kan plugga på 11 språk och få förklaringar upplästa av en AI-tutor.",
+    ],
+    techStack: ["React 18", "Vite", "TypeScript", "Tailwind", "Supabase", "Edge Functions", "Gemini 2.5 Flash", "ElevenLabs"],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
     slug: "konkursfakta",
     projectName: "Konkursfakta",
     industry: "Register / Offentlig data",

@@ -77,6 +77,17 @@ const PROJECTS: Project[] = [
   },
   {
     status:      "Lanserad",
+    industryTag: "EDTECH / KÖRKORT",
+    name:        "TIS",
+    domain:      "tisonline.se",
+    description:
+      "Digital teoriplattform för svenska B-körkortet med övningsprov, AI-genererade förklaringar och flerspråkigt stöd på 11 språk. Eleven förstår svaren — inte bara svarar rätt eller fel.",
+    tech:      ["React 18", "Supabase", "Gemini 2.5 Flash", "ElevenLabs"],
+    caseHref:  "/case-studies/tis",
+    siteHref:  "https://tisonline.se",
+  },
+  {
+    status:      "Lanserad",
     industryTag: "REGISTER / DATA",
     name:        "Konkursfakta",
     domain:      "konkursfakta.se",
