@@ -38,7 +38,7 @@ export const defaultSiteSettings: ResolvedSiteSettings = {
   defaultSeoTitle: "VibeDev",
   defaultMetaDescription:
     "VibeDev bygger appar, webbappar, AI-lösningar och digitala produkter för företag som vill växa snabbare.",
-  ga4MeasurementId: null,
+  ga4MeasurementId: "G-ZTM2L9Y2DD",
   ga4CustomScript: null,
   googleSearchConsoleVerification: null,
 };
@@ -79,7 +79,7 @@ export function mergeSiteSettings(settings?: SiteSettings | null): ResolvedSiteS
     defaultSeoTitle: settings?.defaultSeoTitle?.trim() || defaultSiteSettings.defaultSeoTitle,
     defaultMetaDescription:
       settings?.defaultMetaDescription?.trim() || defaultSiteSettings.defaultMetaDescription,
-    ga4MeasurementId: settings?.ga4MeasurementId?.trim() || null,
+    ga4MeasurementId: settings?.ga4MeasurementId?.trim() || defaultSiteSettings.ga4MeasurementId,
     ga4CustomScript: normalizeScriptContent(settings?.ga4CustomScript),
     googleSearchConsoleVerification: settings?.googleSearchConsoleVerification?.trim() || null,
   };
