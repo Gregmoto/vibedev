@@ -1866,6 +1866,524 @@ export const blogPosts: BlogPost[] = [
       },
     ],
   },
+  /* ── Kampanj: 10 säljande inlägg ─────────────────────────────────────────── */
+  {
+    slug: "excel-kaos-till-skalbar-webbapp",
+    title: "Från internt Excel-kaos till skalbar webbapp — tecknen på att ni vuxit ur era verktyg",
+    excerpt:
+      "Affärskritiska flöden som hänger på sega kalkylark är en dold kostnad. Här är tecknen på att det är dags att utveckla en egen webbapp och automatisera interna processer.",
+    description:
+      "När era viktigaste processer drivs av Excel betalar ni en dold skatt varje dag. Lär dig känna igen tecknen och förstå värdet av skräddarsydd mjukvara som automatiserar flödet.",
+    category: "Produktstrategi",
+    tags: ["webbapp", "automatisera interna processer", "skräddarsydd mjukvara", "internt system"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-20",
+    author: "VibeDev",
+    heroLabel: "Guide",
+    content: [
+      {
+        heading: "När kalkylarket blev ett affärssystem ni aldrig valde",
+        paragraphs: [
+          "Det börjar alltid oskyldigt. Ett kalkylark för ordrar, ett till för lager, ett tredje för något HR egentligen skulle äga. Två år senare driver en handfull Excel-filer era mest affärskritiska flöden — och varje gång någon är sjuk, slutar eller råkar sortera om en kolumn stannar verksamheten upp.",
+          "Om det känns igen är ni förmodligen redo att utveckla en egen webbapp. Frågan är inte om Excel fungerar, för det gör det på sätt och vis. Frågan är vad det kostar er att låta affärskritiska processer vila på ett verktyg som aldrig var byggt för det.",
+        ],
+      },
+      {
+        heading: "Den dolda skatten ni betalar varje dag",
+        paragraphs: [
+          "Problemet med att låta ett kalkylark bli ett system är att det saknar allt som ett riktigt system ger. Det finns ingen sanningskälla — fem versioner av samma fil ger fem olika svar. Det kräver manuell handpåläggning där någon kopierar, klistrar och dubbelkollar. Det har ingen spårbarhet, så ingen vet vem som ändrade vad. Och mänskliga fel skalar tyst genom hela kedjan via en felaktig formel.",
+          "Den verkliga kostnaden är inte Office-licensen. Det är timmarna, felen och risken — och att era bästa medarbetare blir mänsklig copy-paste i stället för att driva verksamheten framåt.",
+        ],
+      },
+      {
+        heading: "Fem tecken på att ni vuxit ur era verktyg",
+        paragraphs: [
+          "Det första tecknet är att en enda person i praktiken är systemet: slutar hen försvinner kunskapen om hur flödet fungerar. Det andra är att ni byggt makron på makron tills arket blivit ett skört korthus som ingen vågar röra. Det tredje är att samma data matas in manuellt på flera ställen.",
+          "Det fjärde tecknet är allvarligast: ni börjar säga nej till tillväxt för att flödet inte skalar. Och det femte är att felen kostar riktiga pengar — felaktiga lagersaldon, missade leveranser eller fakturafel som beror på handpåläggning. Ett eller två av dessa? Håll koll. Tre eller fler? Då är det inte längre en fråga om ni ska bygga, utan när.",
+        ],
+      },
+      {
+        heading: "Vad skräddarsydd mjukvara faktiskt löser",
+        paragraphs: [
+          "Att automatisera interna processer handlar inte om att digitalisera för sakens skull, utan om att ta bort friktion där den kostar mest. En genomtänkt intern app ger er en sanningskälla där all data finns på ett ställe, inbyggd logik där reglerna som idag lever i någons huvud kodas in, samt behörigheter och spårbarhet så att rätt person ser rätt sak och varje ändring loggas.",
+          "Skillnaden mot ett färdigt standardsystem är att skräddarsydd mjukvara formas efter ert sätt att arbeta — inte tvärtom. Ni slipper böja verksamheten efter en generisk produkts begränsningar, och ni äger både logiken och datan.",
+        ],
+      },
+      {
+        heading: "Det behöver varken vara dyrt eller ta ett år",
+        paragraphs: [
+          "Bilden av skräddarsytt som dyrt och långsamt är föråldrad. Med moderna, AI-stödda arbetssätt bygger vi på en bråkdel av tiden jämfört med en traditionell IT-byrå, och vi börjar smått: en skarp första version som löser ert mest smärtsamma flöde först, så att ni får värde på veckor i stället för att vänta på ett projekt i tolv månader.",
+          "Eftersom vi jobbar med fast pris vet ni dessutom exakt vad det kostar innan vi börjar. Sitter ni fast i Excel-kaos är nästa steg enkelt: boka ett förutsättningslöst möte med oss, så tittar vi tillsammans på era flöden och pekar ut var en skräddarsydd webbapp ger snabbast effekt.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "lovable-bolt-vibedev-ai-byggare",
+    title: "Lovable, Bolt och VibeDev — hur nästa generations AI-byggare förändrar produktutveckling",
+    excerpt:
+      "AI-verktyg gör att vi kan leverera färdiga produkter på veckor i stället för månader. Så ser modern produktutveckling ut — och så skiljer den sig från traditionell kodning.",
+    description:
+      "Lovable, Bolt och Cursor förändrar hur digitala produkter byggs. Lär dig skillnaden mot traditionell kodning och hur bygga app med AI ger snabb mjukvaruutveckling utan att offra kvalitet.",
+    category: "Vibecoding",
+    tags: ["modern produktutveckling", "bygga app med AI", "snabb mjukvaruutveckling", "lovable"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-19",
+    author: "VibeDev",
+    heroLabel: "Perspektiv",
+    content: [
+      {
+        heading: "Ett tyst skifte i hur produkter byggs",
+        paragraphs: [
+          "Det har skett ett tyst skifte i hur digitala produkter byggs. Där det förut tog månader att gå från idé till fungerande app gör verktyg som Lovable, Bolt och Cursor att samma resa kan ta veckor. Det är inte en framtidsspaning — det är så modern produktutveckling ser ut redan idag, och det är kärnan i hur vi arbetar.",
+          "För en VD eller produktägare är poängen inte verktygen i sig, utan vad de möjliggör: att validera en idé med riktiga användare innan konkurrenterna ens skrivit klart sin kravspec.",
+        ],
+      },
+      {
+        heading: "Skillnaden mot traditionell kodning",
+        paragraphs: [
+          "Traditionell mjukvaruutveckling är linjär och långsam: kravspec, design, utveckling, test och leverans i sekventiella steg där varje fas väntar på den förra. Att bygga app med AI vänder upp och ner på det. I stället för wireframes som ingen kan testa får ni en klickbar prototyp samma dag, och ändringar som förut tog en hel sprint tar nu minuter.",
+          "Resultatet är snabb mjukvaruutveckling utan att kvaliteten faller, för att de svåra besluten fortfarande är mänskliga. AI:n sköter det repetitiva; vi lägger tiden på arkitektur, datamodell och affärslogik.",
+        ],
+      },
+      {
+        heading: "Vibecoding är inte att låta AI gissa",
+        paragraphs: [
+          "Den vanligaste missuppfattningen är att AI-byggande betyder att man släpper kontrollen. Tvärtom. Lovable och Bolt är fantastiska på att snabbt få upp en yta, men en produktion-redo produkt kräver senior arkitektur: säkerhet, datamodell, integrationer och skalbarhet.",
+          "Vår superkraft är kombinationen — AI-accelererad exekvering ovanpå senior ingenjörskonst. Vi använder rätt verktyg för rätt sak: snabba byggare för prototyper, och mer kraftfulla agentverktyg för den riktiga kodbasen.",
+        ],
+      },
+      {
+        heading: "Vad det betyder för er affär",
+        paragraphs: [
+          "Effekten för verksamheten är konkret. Ni kommer snabbare till marknaden och kan testa en idé skarpt innan ni satsar stort. Ni sänker risken genom att bygga smått, testa och justera i stället för att lägga allt på en enda stor leverans. Och eftersom bygget går snabbare kan vi jobba med fast pris, vilket gör kostnaden förutsägbar.",
+          "Det handlar alltså inte om att byta ut hantverket mot en knapp, utan om att ta bort det långsamma och dyra som aldrig tillförde värde — och lägga den tiden på det som faktiskt avgör om produkten lyckas.",
+        ],
+      },
+      {
+        heading: "Vill ni se vad ni kan ha lanserat om sex veckor?",
+        paragraphs: [
+          "Nästa generations AI-byggare förändrar inte bara hur snabbt vi bygger, utan vad som ens är möjligt för ett litet, vasst team att leverera. Det öppnar dörren för bolag som tidigare tyckte att skräddarsytt var för dyrt eller för långsamt.",
+          "Vill ni se konkret hur arbetssättet skulle fungera för just er produkt? Testa er idé med oss — boka ett möte, så visar vi hur vägen från idé till lansering ser ut med modern, AI-stödd produktutveckling.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "skraddarsydd-brygga-e-handel-affarssystem",
+    title: "När standardsystemen inte räcker — bygg en skräddarsydd brygga mellan e-handel och affärssystem",
+    excerpt:
+      "Växande e-handlare fastnar i manuell handpåläggning mellan butik och affärssystem. Så bygger du en skräddarsydd API-integration där vanliga plugins sviker.",
+    description:
+      "En guide för e-handlare som vuxit ur färdiga plugins: hur en skräddarsydd integration kopplar ihop Shopify eller Starweb med Fortnox och andra affärssystem — robust och utan handpåläggning.",
+    category: "Integrationer",
+    tags: ["api-integration e-handel", "koppla affärssystem", "skräddarsydda integrationer", "fortnox integration"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-18",
+    author: "VibeDev",
+    heroLabel: "Integration",
+    content: [
+      {
+        heading: "Symptomet: någon sitter och kopierar data för hand",
+        paragraphs: [
+          "Du växer, ordrarna strömmar in, och någonstans mellan butiken och bokföringen sitter en person och kopierar data manuellt. Det är symptomet på att standardpluggarna inte längre räcker, och att en API-integration för e-handel byggd för just era flöden börjar bli lönsam.",
+          "Färdiga plugins är gjorda för det vanligaste fallet. Så fort er verksamhet har en egenhet — en speciell artikellogik, en ovanlig momshantering, ett extra lager eller en kombination av system — börjar de svika. Då blir den manuella handpåläggningen er tillväxtbroms.",
+        ],
+      },
+      {
+        heading: "Varför färdiga plugins sviker när ni växer",
+        paragraphs: [
+          "En plugin gör ett antagande om hur er butik och ert affärssystem ser ut. Det håller tills ni gör något plugin-utvecklaren inte tänkt på. Ofta kan den bara mappa fält rakt av, hanterar inte era specialfall, och ger ingen kontroll när något går fel — ordrar fastnar tyst utan att någon larmas.",
+          "Att koppla affärssystem som Fortnox mot en butik på Shopify eller Starweb handlar sällan om att flytta data. Det handlar om att översätta mellan två världar som beskriver samma sak olika: artikelnummer som inte matchar, momssatser som uttrycks olika, fraktrader och rabatter som måste bokföras rätt.",
+        ],
+      },
+      {
+        heading: "Vad en skräddarsydd brygga faktiskt gör",
+        paragraphs: [
+          "En skräddarsydd integration är ett tunt, robust lager mellan systemen som äger översättningen och felhanteringen. Den normaliserar data åt båda håll, mappar artiklar och moms explicit efter era regler, och lägger arbetet i en kö så att en order aldrig kopplar kundens kassa direkt till ett externt system som kan vara långsamt eller nere.",
+          "Den är dessutom idempotent — samma order kan aldrig bokföras dubbelt — och den larmar aktivt när något fallerar. En tyst trasig integration upptäcks annars först i månadsskiftet när siffrorna inte stämmer, och då är felsökningen mycket dyrare.",
+        ],
+      },
+      {
+        heading: "Fortnox-integration i praktiken",
+        paragraphs: [
+          "En Fortnox-integration är kraftfull men har sina egenheter. Rate limits sätter taket tidigare än man tror vid trafiktoppar, artikelnummer och momskoder är de tysta felkällorna, och token-hanteringen i OAuth-flödet måste vara robust så att synken inte tyst tystnar när en token löper ut.",
+          "Det här är precis den sortens komplexitet där färdiga lösningar tar slut och senior erfarenhet gör skillnad. Vi har byggt den typen av kopplingar i flera e-handelsprojekt och vet var fällorna sitter.",
+        ],
+      },
+      {
+        heading: "Låt oss titta på er arkitektur",
+        paragraphs: [
+          "Om er tillväxt bromsas av manuellt arbete mellan butik och affärssystem är en skräddarsydd brygga ofta den investering som betalar sig snabbast — den frigör timmar varje vecka och tar bort en hel kategori av fel.",
+          "Boka ett möte så tittar vi på er arkitektur, kartlägger flödena mellan era system och föreslår var en skräddarsydd integration ger störst effekt först.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "bygga-egen-ai-agent-produktion",
+    title: "Att bygga en egen AI-agent — från experiment i sandlådan till affärsnytta i produktion",
+    excerpt:
+      "Gå bortom generiska chatt-prompter. Så bygger företag autonoma AI-agenter som faktiskt utför arbete i bakgrunden — och vad som krävs för att de ska hålla i produktion.",
+    description:
+      "En praktisk guide till att utveckla en AI-agent som skapar verklig affärsnytta: skillnaden mot en chatt, var agenter passar, och hur du automatiserar med AI på ett säkert och pålitligt sätt.",
+    category: "AI i produkter",
+    tags: ["utveckla ai-agent", "ai i företag", "automatisera med ai", "ai-agent"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-17",
+    author: "VibeDev",
+    heroLabel: "Guide",
+    content: [
+      {
+        heading: "Skillnaden mellan en chatt och en agent",
+        paragraphs: [
+          "De flesta företags första möte med AI är en chattruta: någon ställer en fråga och får ett svar. Det är användbart, men det är inte en agent. Att utveckla en AI-agent handlar om något mer kraftfullt — ett system som tar ett mål, planerar stegen, använder verktyg och faktiskt utför arbete, inte bara svarar.",
+          "Skillnaden är som mellan en kollega som svarar på frågor och en som du kan delegera en hel uppgift till. Det är där den verkliga affärsnyttan av AI i företag börjar.",
+        ],
+      },
+      {
+        heading: "Var agenter faktiskt skapar värde",
+        paragraphs: [
+          "De bästa agentanvändningarna är ofta osynliga och pågår i bakgrunden. Det kan vara att automatiskt sortera och berika inkommande data, att bevaka en informationskälla och agera när något förändras, att kategorisera och dirigera ärenden, eller att utföra repetitivt underhållsarbete som annars äter en medarbetares dag.",
+          "Gemensamt för dem är att de tar en uppgift som följer ett mönster men kräver omdöme, och låter en agent sköta grovjobbet. Att automatisera med AI på det sättet frigör människor till det som faktiskt kräver en människa.",
+        ],
+      },
+      {
+        heading: "Från imponerande demo till pålitlig produktion",
+        paragraphs: [
+          "En agent som imponerar i en demo och en agent som håller i produktion är två olika saker. I demon kör man det lyckade fallet några gånger. I produktion möter den verkligheten: trasig indata, externa system som är nere, kantfall ingen tänkt på. Demoeffekten — att något fungerar i 80 procent av fallen men fallerar oförutsägbart i resten — är den vanligaste anledningen till att AI-projekt fastnar.",
+          "Vägen till produktion handlar om att bygga för felen: tydliga gränser, fallback-logik, loggning av varje steg och en mänsklig grind för det som är irreversibelt. Det är mindre glamoröst än prompten, men det är vad som avgör om agenten skapar värde eller blir ett experiment som aldrig lämnar sandlådan.",
+        ],
+      },
+      {
+        heading: "Säkerhet och behörigheter är inte valfritt",
+        paragraphs: [
+          "En agent som kan agera är också en ny angreppsyta. Den dyraste designmissen är att ge agenten breda behörigheter för att det är smidigt. En agent som kan läsa hela databasen, skicka mejl och radera poster är en risk som väntar på rätt input.",
+          "Principen är minsta möjliga behörighet: ge agenten exakt de verktyg och den åtkomst uppgiften kräver, inte mer. Läsbehörighet är säkrare än skriv, och varje åtgärd som inte går att ångra ska ha en spärr. Det är så ni får nyttan utan att öppna en dörr ni inte vill ha öppen.",
+        ],
+      },
+      {
+        heading: "Börja med en uppgift, inte en vision",
+        paragraphs: [
+          "Det vanligaste misstaget är att försöka bygga en allätande superassistent. Det blir nästan alltid sämre än en fokuserad agent som gör en konkret sak riktigt bra. Välj den enskilt mest tidskrävande, mönsterbundna uppgiften ni har och låt en agent ta den först.",
+          "Funderar ni på var en AI-agent skulle göra mest nytta hos er? Boka ett förutsättningslöst möte, så hjälper vi er hitta rätt första uppgift och skissar på hur en agent skulle byggas för att faktiskt klara den i produktion.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "darfor-misslyckas-it-upphandlingar",
+    title: "Därför misslyckas traditionella IT-upphandlingar — och hur vårt arbetssätt räddar budgeten",
+    excerpt:
+      "Stela kravspecar och timdebitering är en fälla som spränger budgetar. Så undviker du den med fast pris, snabba iterationer och fokus på en skarp MVP.",
+    description:
+      "Traditionella IT-upphandlingar bygger på antaganden som sällan håller. Lär dig varför de spräcker budgeten och hur agil produktutveckling med fast pris ger bättre resultat.",
+    category: "Produktstrategi",
+    tags: ["it-upphandling mjukvara", "fast pris utveckling", "agil produktutveckling", "budget"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-16",
+    author: "VibeDev",
+    heroLabel: "Perspektiv",
+    content: [
+      {
+        heading: "Felet sitter inbyggt i modellen",
+        paragraphs: [
+          "En traditionell IT-upphandling för mjukvara bygger på en tilltalande men felaktig idé: att man kan specificera exakt vad som ska byggas i förväg, lägga ut det, och få tillbaka precis det. Verkligheten är att ingen vet exakt vad som behövs förrän man börjat bygga och testa med riktiga användare.",
+          "Resultatet är förutsägbart. Kravspecen blir antingen för stel för att rymma det man lär sig på vägen, eller så fylls den på med ändringar som var och en debiteras extra. Båda vägar leder till samma ställe: överskriden budget och en produkt som ändå inte träffar rätt.",
+        ],
+      },
+      {
+        heading: "Timdebiteringsfällan",
+        paragraphs: [
+          "Den klassiska modellen tar betalt per timme. Det skapar ett incitament som pekar åt fel håll: leverantören tjänar mer ju längre projektet tar. Det betyder inte att alla är ohederliga, men det betyder att ingen i upplägget belönas för att vara snabb eller skära bort onödigt.",
+          "För er som beställare blir kostnaden oförutsägbar. Varje fråga, varje möte och varje ändring tickar, och slutnotan är okänd tills projektet är klart. Det gör det svårt att budgetera och ännu svårare att våga prova nytt.",
+        ],
+      },
+      {
+        heading: "Stora leveranser döljer risken till slutet",
+        paragraphs: [
+          "Den traditionella modellen samlar dessutom risken på ett ställe: i den stora slutleveransen. Man bygger i månader och visar resultatet sent. Om det visar sig att man byggt fel sak — eller rätt sak på fel sätt — upptäcks det när nästan hela budgeten redan är spenderad.",
+          "Agil produktutveckling vänder på det. Genom att leverera i små, fungerande steg ser man tidigt om man är på rätt väg, medan det fortfarande är billigt att justera. Risken sprids ut och hanteras löpande i stället för att samlas till en dyr överraskning.",
+        ],
+      },
+      {
+        heading: "Vårt arbetssätt: fast pris och en skarp MVP först",
+        paragraphs: [
+          "Vi gör tvärtom mot den gamla modellen. Vi börjar med en tydligt avgränsad MVP som löser ert viktigaste behov först, och vi sätter ett fast pris på ett tydligt scope. Då vet ni exakt vad det kostar innan vi börjar, och vi belönas för att leverera effektivt snarare än för att dra ut på tiden.",
+          "Ändringar hanteras öppet: vi beskriver vad ett tillägg innebär, vad det kostar och hur det påverkar tidsplanen, så bestämmer ni. Inget byggs i skymundan och inget faktureras i efterhand utan att ni sagt ja.",
+        ],
+      },
+      {
+        heading: "Rädda budgeten innan upphandlingen börjar",
+        paragraphs: [
+          "Det bästa sättet att undvika en misslyckad IT-upphandling är att inte gå in i den gamla modellens fälla från början. En förutsägbar kostnad, snabba iterationer och fokus på att få ut något skarpt tidigt slår en tjock kravspec nästan varje gång.",
+          "Står ni inför en upphandling eller ett större utvecklingsprojekt? Boka ett möte så går vi igenom ert behov och visar hur ett upplägg med fast pris och tidig MVP skulle se ut för just er.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "innovationsfallan-startup-snabbhet",
+    title: "Innovationsfällan — så bygger etablerade bolag nya digitala tjänster med en startups snabbhet",
+    excerpt:
+      "Stora bolag vill förnya sig men hämmas av interna processer. Så fungerar en extern, blixtsnabb tech-avdelning som testar och validerar nya idéer på riktigt.",
+    description:
+      "Etablerade bolag har resurserna men inte farten att lansera digitala produkter. Lär dig hur en innovationspartner och MVP-utveckling låter er röra er som en startup.",
+    category: "MVP-utveckling",
+    tags: ["lansera digital produkt", "mvp utveckling", "innovationspartner", "innovation"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-13",
+    author: "VibeDev",
+    heroLabel: "Strategi",
+    content: [
+      {
+        heading: "Resurserna finns — men inte farten",
+        paragraphs: [
+          "Etablerade bolag har något de flesta startups bara drömmer om: kunder, kapital, data och distribution. Ändå är det ofta startupen som vinner kapplöpningen om en ny digital tjänst. Inte för att den har mer resurser, utan för att den rör sig snabbare.",
+          "Det är innovationsfällan. Samma struktur som gör ett stort bolag stabilt och effektivt i sin kärnverksamhet gör det långsamt när det ska prova något nytt. Beslut tar tid, processer är byggda för att minimera risk, och en ny idé hinner tappa luft innan den ens fått testas.",
+        ],
+      },
+      {
+        heading: "Varför interna processer bromsar innovation",
+        paragraphs: [
+          "Ironin är att det som bromsar oftast är välmenande. Budgetcykler, prioriteringsmöten, IT-avdelningar som redan är fullbelagda med drift, och en helt rimlig ovilja att röra produktionssystem — allt det skyddar kärnaffären men kväver experiment.",
+          "En ny digital tjänst behöver det motsatta klimatet: snabba beslut, frihet att testa, och acceptans för att de flesta idéer behöver justeras eller läggas ner. Det är svårt att skapa det inuti en organisation byggd för stabilitet.",
+        ],
+      },
+      {
+        heading: "En extern tech-avdelning som rör sig som en startup",
+        paragraphs: [
+          "Lösningen är inte att bygga om hela organisationen, utan att lägga innovationsarbetet där det kan röra sig fritt. Som innovationspartner fungerar vi som en extern, blixtsnabb tech-avdelning: vi tar en idé, bygger en skarp MVP och får den i händerna på riktiga användare medan den interna processen fortfarande hade varit i uppstartsfasen.",
+          "Ni får startupens fart utan att riskera kärnaffären. Experimentet sker vid sidan om, kopplat till er kunskap och era resurser, men utan att fastna i de processer som annars hade bromsat det.",
+        ],
+      },
+      {
+        heading: "Validera billigt innan ni satsar stort",
+        paragraphs: [
+          "Poängen med MVP-utveckling är att lära, inte att leverera en färdig produkt direkt. En skarp första version svarar på den enda fråga som spelar roll tidigt: vill någon faktiskt ha det här? Det svaret är värt mer än någon marknadsanalys, och det kostar en bråkdel av en full satsning.",
+          "Faller idén lär ni er det billigt och tidigt. Håller den har ni redan ett fungerande fundament att bygga vidare på, med riktig användarfeedback som visar vägen.",
+        ],
+      },
+      {
+        heading: "Testa er nästa idé med oss",
+        paragraphs: [
+          "Innovationsfällan är inte ett tecken på att ert bolag är dåligt på innovation — den är en naturlig följd av att vara bra på att driva en stabil verksamhet. Lösningen är att ge nya idéer ett annat tempo och en annan miljö att växa i.",
+          "Har ni en idé som fastnat mellan möten och prioriteringar? Boka ett förutsättningslöst möte, så visar vi hur vi kan testa och validera den med en startups snabbhet — och er trygghet i ryggen.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "bygga-eller-kopa-egen-saas",
+    title: "Bygga eller köpa? Så vet du när det är dags att utveckla en egen SaaS-plattform",
+    excerpt:
+      "Beslutsunderlag för ledningsgrupper: när blir licenskostnader och begränsningar i färdiga system dyrare än att äga sin egen tech-stack och sin egen data?",
+    description:
+      "En guide för ledningsgrupper som väger skräddarsytt system mot standardsystem. Lär dig när det lönar sig att utveckla en egen SaaS-plattform och äga både logik och data.",
+    category: "Tekniska val",
+    tags: ["utveckla saas plattform", "skräddarsytt system vs standardsystem", "teknikval", "bygga eller köpa"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-12",
+    author: "VibeDev",
+    heroLabel: "Beslutsguide",
+    content: [
+      {
+        heading: "Rätt fråga är inte bygga eller köpa — det är när",
+        paragraphs: [
+          "Nästan alla bolag bör köpa standardsystem i början. Att utveckla en egen SaaS-plattform för något ett färdigt verktyg redan löser bra är slöseri. Frågan är inte om standardsystem är bra — det är de ofta — utan när de slutar vara rätt val för er.",
+          "Den punkten kommer smygande. Licenskostnaderna växer med antalet användare, begränsningarna blir mer kännbara ju mer specifikt ni jobbar, och ni anpassar gradvis er verksamhet efter verktyget i stället för tvärtom. Då är det dags att räkna på alternativet.",
+        ],
+      },
+      {
+        heading: "När licenskostnaden börjar arbeta emot er",
+        paragraphs: [
+          "Standardsystem prissätts ofta per användare och månad. Det är billigt när ni är få och dyrt när ni är många — och kostnaden fortsätter uppåt utan att ni äger något. Vid en viss skala passerar de samlade licenskostnaderna vad det hade kostat att bygga och driva något eget.",
+          "Lägg därtill att prismodellen är utanför er kontroll. En höjning, en ändrad licensnivå eller en funktion som flyttas till en dyrare plan kan plötsligt förändra kalkylen. Att äga sin egen plattform tar bort den osäkerheten.",
+        ],
+      },
+      {
+        heading: "När er data och era processer är det unika",
+        paragraphs: [
+          "Det starkaste argumentet för att bygga eget handlar sällan om pris, utan om det som gör er unika. Om er konkurrensfördel ligger i hur ni hanterar er data eller i ett arbetsflöde ingen färdig produkt stödjer, då tvingar standardsystemet in er i andras mall — och suddar ut just det som skiljer er från mängden.",
+          "Ett skräddarsytt system formas efter er verklighet och låter er äga både logiken och datan. Det betyder också att ni kan vidareutveckla i er egen takt, koppla ihop precis de system ni vill, och inte vara beroende av en leverantörs roadmap.",
+        ],
+      },
+      {
+        heading: "Den verkliga jämförelsen är total ägandekostnad",
+        paragraphs: [
+          "Många jämför bara inköpspriset: en månadslicens mot en utvecklingskostnad. Den rättvisa jämförelsen är total ägandekostnad över tid. För standardsystemet: licenser som växer, begränsningar som kostar i form av kringgående lösningar, och beroendet av leverantören. För egen plattform: bygget, driften och vidareutvecklingen — men också en tillgång ni äger.",
+          "Med modern, AI-stödd utveckling har dessutom byggsidan av kalkylen förändrats. Att utveckla en egen SaaS-plattform är inte längre det mångåriga, dyra projekt det en gång var, vilket flyttar brytpunkten tidigare än många tror.",
+        ],
+      },
+      {
+        heading: "Låt oss räkna på ert fall",
+        paragraphs: [
+          "Bygga eller köpa är ett beslut som tjänar på ett ärligt underlag snarare än en magkänsla. Var ligger er brytpunkt? Vad kostar era nuvarande system egentligen över tre år, inklusive begränsningarna? Och hur mycket av er konkurrensfördel sitter i sådant ett standardsystem aldrig kommer stödja?",
+          "Boka ett möte, så hjälper vi er ledningsgrupp att räkna på det konkret och ärligt — och säger rakt ut om ett standardsystem faktiskt är rätt val för er just nu.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "automatisera-leads-foretagsdata-crm",
+    title: "Automatisera era leads — koppla ihop publika företagsdata med era säljverktyg",
+    excerpt:
+      "Sluta leta leads manuellt. Så använder ni smarta API-kopplingar för att automatiskt hämta, matcha och leverera färska företagsleads direkt in i säljarnas CRM.",
+    description:
+      "En guide till att automatisera lead generation genom att hämta publika företagsdata och koppla dem via API till ert CRM — så att säljarna får färska, relevanta leads utan handpåläggning.",
+    category: "Integrationer",
+    tags: ["automatisera lead generation", "hämta företagsdata", "api integration crm", "automation"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-11",
+    author: "VibeDev",
+    heroLabel: "Integration",
+    content: [
+      {
+        heading: "Manuell leadshantering är dyr och färskvara",
+        paragraphs: [
+          "I många säljteam går orimligt mycket tid åt till att leta, sammanställa och mata in leads för hand. Någon googlar företag, kopierar uppgifter till ett kalkylark och klistrar sedan in dem i CRM:et. Det är långsamt, det blir fel, och informationen är ofta gammal redan när den når en säljare.",
+          "Att automatisera lead generation handlar om att låta maskinen göra det maskinen är bra på — samla in, matcha och leverera data — så att säljarna kan lägga sin tid på att faktiskt sälja.",
+        ],
+      },
+      {
+        heading: "Det finns mer publik företagsdata än ni tror",
+        paragraphs: [
+          "Sverige har en ovanligt rik tillgång på publik företagsinformation: organisationsnummer, bransch via SNI-koder, ort, juridisk form, registreringar och förändringar. Mycket av detta går att hämta programmatiskt och kombinera till en bild som är långt mer träffsäker än en manuell sökning.",
+          "Att hämta företagsdata på det sättet låter er definiera er idealkund i kriterier — bransch, storlek, geografi, nyligen registrerade bolag — och låta systemet kontinuerligt hitta matchningar i stället för att någon ska leta dem en och en.",
+        ],
+      },
+      {
+        heading: "Kopplingen som gör datan användbar",
+        paragraphs: [
+          "Rådata blir värdefull först när den landar rätt. Med en API-integration mot ert CRM kan färska leads matchas mot det ni redan har — så att ni inte dubbletter eller kontaktar befintliga kunder — och sedan skapas eller berikas automatiskt på rätt plats, med rätt ägare och rätt status.",
+          "Bygget måste vara robust: matchningslogik som hanterar att samma bolag kan stavas olika, dedup mot befintliga poster, och felhantering så att inget tappas tyst. Det är skillnaden mellan ett flöde säljarna litar på och ett de ignorerar.",
+        ],
+      },
+      {
+        heading: "Färska leads, automatiskt levererade",
+        paragraphs: [
+          "När allt hänger ihop förvandlas leadshanteringen från en manuell syssla till ett tyst flöde i bakgrunden. Nya bolag som matchar era kriterier dyker upp i CRM:et av sig själva, berikade med relevant data, redo att bearbetas. Säljaren öppnar systemet och hittar färska möjligheter i stället för en tom lista.",
+          "Det här är också ett område där integritet och regler måste hanteras rätt. Publik data är publik, men hur den används och lagras lyder under GDPR — något vi bygger in från start snarare än lappar på i efterhand.",
+        ],
+      },
+      {
+        heading: "Koppla ihop era säljverktyg",
+        paragraphs: [
+          "Om era säljare lägger tid på att leta och mata in leads för hand finns det nästan alltid timmar att frigöra med rätt automation. Vinsten är dubbel: mer säljtid och färskare, mer relevanta leads.",
+          "Boka ett möte, så tittar vi på era källor och ert CRM och skissar på hur ett automatiserat leadsflöde skulle se ut — från publik företagsdata hela vägen in i säljarnas vardag.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "somlos-ai-integrera-sprakmodeller-ux",
+    title: "Sömlös AI — så integrerar du språkmodeller utan att förstöra användarupplevelsen",
+    excerpt:
+      "Sluta klistra in chatt-rutor överallt. Så integreras AI bäst som osynliga, smarta funktioner som lyfter produkten i bakgrunden i stället för att stå i vägen.",
+    description:
+      "En guide till UX för AI: hur du integrerar språkmodeller i din app som sömlösa funktioner som faktiskt förbättrar produktupplevelsen, i stället för ännu en chattruta.",
+    category: "AI i produkter",
+    tags: ["integrera ai i app", "ux för ai", "produktutveckling mjukvara", "ai-features"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-06-10",
+    author: "VibeDev",
+    heroLabel: "Produktdesign",
+    content: [
+      {
+        heading: "Chattrutan är inte svaret på allt",
+        paragraphs: [
+          "När språkmodeller blev tillgängliga klistrade halva mjukvaruvärlden in en chattruta i hörnet av sin produkt. Det är den mest uppenbara — och ofta sämsta — vägen att integrera AI i en app. En chatt lägger arbetet på användaren: hen måste veta vad som går att fråga, formulera det väl, och tolka svaret.",
+          "Bra UX för AI börjar i motsatt ände. Frågan är inte var vi kan stoppa in en chatt, utan var i produkten användaren tvekar, väntar eller gör något tråkigt manuellt — och hur AI kan ta bort den friktionen.",
+        ],
+      },
+      {
+        heading: "De bästa AI-funktionerna känns som genvägar",
+        paragraphs: [
+          "Den starkaste AI-upplevelsen skriker sällan AI. Den föreslår nästa steg, fyller i det uppenbara, strukturerar något rörigt eller sammanfattar automatiskt. Ett förslag användaren kan acceptera med ett klick slår en tom ruta hen måste formulera sig i.",
+          "Det innebär att AI ofta gör mest nytta inbäddad i ett befintligt flöde snarare än som en separat funktion. Den smartaste integrationen är den användaren knappt tänker på — den gör bara uppgiften enklare.",
+        ],
+      },
+      {
+        heading: "Designa för osäkerheten",
+        paragraphs: [
+          "Språkmodeller har rätt ofta, men inte alltid, och de gör fel på sätt som kan vara svåra att förutse. En funktion som har rätt nio gånger av tio men fel oförutsägbart på den tionde tappar förtroende snabbt. Därför måste osäkerheten designas, inte gömmas.",
+          "Det betyder att göra det lätt att se vad AI:n föreslog, lätt att ångra, och ärligt att visa när modellen är osäker. En funktion som säger att den inte är säker och ber användaren kolla är mer användbar än en som låtsas vara säker och har fel.",
+        ],
+      },
+      {
+        heading: "Behåll människan vid rodret",
+        paragraphs: [
+          "Användare accepterar AI-hjälp mycket lättare när de behåller kontrollen. Förslag de kan redigera, automationer de kan stänga av, utdata de kan justera. Funktioner som tar över helt utan insyn skapar obehag även när de fungerar.",
+          "Tumregeln är enkel: AI gör grovjobbet, människan fattar beslutet. Den uppdelningen förvandlar funktionen från en svart låda till en assistent — och det är assistenter folk vill ha i sina verktyg.",
+        ],
+      },
+      {
+        heading: "Lyft produkten, inte bara funktionslistan",
+        paragraphs: [
+          "Att integrera AI väl är en produktdesignfråga minst lika mycket som en teknisk. Det handlar om att veta var en smart funktion faktiskt sparar tid eller höjer kvaliteten, och att bygga den så att den känns självklar snarare än påklistrad.",
+          "Vill ni lägga in AI i er produkt på ett sätt som lyfter upplevelsen i stället för att belamra den? Boka ett möte, så går vi igenom era flöden och pekar ut var sömlös AI gör störst skillnad för era användare.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "behind-the-scenes-ide-till-lansering",
+    title: "Behind the scenes — så tar vi en digital produkt från ritbord till lansering på halva tiden",
+    excerpt:
+      "En transparent titt på vår process: från första workshopen, genom den AI-stödda utvecklingsfasen, till driftsättning och optimering — och varför det går snabbare.",
+    description:
+      "Så ser VibeDevs process ut, steg för steg: från idé till färdig app via en smidig, AI-stödd systemutveckling som tar produkter till lansering på halva tiden.",
+    category: "Vibecoding",
+    tags: ["från idé till färdig app", "smidig systemutveckling", "vibecoding", "process"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-09",
+    author: "VibeDev",
+    heroLabel: "Process",
+    content: [
+      {
+        heading: "Snabbare betyder inte slarvigare",
+        paragraphs: [
+          "Att ta en digital produkt från idé till färdig app på halva tiden låter som en genväg, men det är motsatsen. Farten kommer inte av att hoppa över steg, utan av att göra rätt steg i rätt ordning och låta moderna verktyg sköta det som inte kräver mänskligt omdöme.",
+          "Här är en transparent genomgång av hur vi faktiskt arbetar — från första samtalet till en produkt i drift — så att ni vet exakt vad ni får och varför det går snabbt.",
+        ],
+      },
+      {
+        heading: "Steg 1: Workshop och skarpt scope",
+        paragraphs: [
+          "Allt börjar med att förstå problemet, inte att skriva kod. I en fokuserad workshop formulerar vi kärnan: vad produkten ska göra, för vem, och vilket enda flöde som måste fungera först. Lika viktigt är vad vi medvetet skär bort till en senare-lista.",
+          "Det här steget är det som avgör om resten går snabbt. Ett otydligt scope hinner aldrig ifatt, hur effektivt teamet än kodar sedan. Ett skarpt scope är den enskilt största tidsbesparingen i hela projektet.",
+        ],
+      },
+      {
+        heading: "Steg 2: AI-stödd utveckling",
+        paragraphs: [
+          "Här ligger tempot. Med en AI-stödd, smidig systemutveckling — det vi kallar vibecoding — bygger vi kärnflödet hela vägen igenom på en bråkdel av den tid traditionell kodning hade krävt. AI:n accelererar det repetitiva: boilerplate, integrationer, tester. Den seniora tiden går till arkitektur, datamodell och de beslut som faktiskt är svåra.",
+          "Vi visar framsteg löpande i stället för att försvinna i månader och dyka upp med en stor leverans. Det fångar missförstånd tidigt, medan de fortfarande är billiga att rätta, och håller er delaktiga hela vägen.",
+        ],
+      },
+      {
+        heading: "Steg 3: Driftsättning och optimering",
+        paragraphs: [
+          "När kärnan fungerar putsar vi det som möter användaren — felfall, tomma tillstånd, laddtider och den text folk faktiskt läser — och förbereder lansering: mätning på plats, säkerheten i ordning och en plan för hur feedback fångas upp.",
+          "Lansering är inte slutet utan början på lärandet. Med riktiga användare i produkten ser vi vad som fungerar och optimerar därefter. Eftersom vi byggt på en genomtänkt grund går vidareutvecklingen snabbt — nästa förbättring är en iteration, inte en omskrivning.",
+        ],
+      },
+      {
+        heading: "Varför det går på halva tiden",
+        paragraphs: [
+          "Hastigheten kommer från tre saker tillsammans: ett skarpt scope som tar bort onödigt arbete, moderna AI-verktyg som accelererar exekveringen, och senior erfarenhet som ser till att grunden håller. Ingen av dem ensam räcker — det är kombinationen som gör skillnaden.",
+          "Det gör också att vi kan jobba med fast pris och förutsägbara tidsramar, eftersom processen är något vi gjort många gånger och vet håller.",
+        ],
+      },
+      {
+        heading: "Vill ni se processen tillämpad på er idé?",
+        paragraphs: [
+          "Den bästa förståelsen för hur det här skulle fungera för er får ni inte av en text, utan av ett samtal om er konkreta idé. Då kan vi skissa på scope, tidsram och hur de första veckorna skulle se ut.",
+          "Boka ett förutsättningslöst möte, så går vi igenom er produktidé och visar hur vägen från ritbord till lansering ser ut när den görs på halva tiden — utan att tumma på kvaliteten.",
+        ],
+      },
+    ],
+  },
 ];
 
 export const blogCategories = Array.from(new Set(blogPosts.map((post) => post.category)));
