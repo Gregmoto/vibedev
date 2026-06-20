@@ -34,6 +34,24 @@ const clients: Client[] = [
     tagline: "Community & Odling",
   },
   {
+    name:    "Omdio",
+    slug:    "omdio",
+    color:   "#0E7490",
+    tagline: "Omdömesplattform / SaaS",
+  },
+  {
+    name:    "TIS",
+    slug:    "tis",
+    color:   "#DB2777",
+    tagline: "EdTech / Körkort",
+  },
+  {
+    name:    "Konkursfakta",
+    slug:    "konkursfakta",
+    color:   "#B45309",
+    tagline: "Register / Offentlig data",
+  },
+  {
     name:     "Endoo",
     slug:     "endoo",
     color:    "#7D3C98",
@@ -61,7 +79,7 @@ export function LogoBar() {
         </div>
 
         {/* Project tiles */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {clients.map((client) => (
             <Link
               key={client.slug}
