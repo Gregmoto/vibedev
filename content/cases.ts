@@ -223,6 +223,35 @@ export const caseStudies: CaseStudy[] = [
     },
   },
   {
+    slug: "cultio",
+    projectName: "Cultio",
+    industry: "SaaS / Web-to-Print",
+    status: "ongoing",
+    websiteUrl: "https://cultio.se",
+    summary:
+      "Web-to-print-plattform där nordiska tryckerier får en färdig webbutik för att sälja tryck online.",
+    customerProblem:
+      "Många tryckerier sitter fast i manuella flöden — ordrar via mejl, tryckfiler via WeTransfer, korrektur via telefon och fakturor för hand. Befintliga web-to-print-system är gamla och röriga, och generella e-handelsplattformar som Shopify, WooCommerce och PrestaShop klarar inte trycklogiken: upplagor, kvadratmeterpris, bleed/preflight, korrekturflöden eller kundspecifika B2B-prislistor.",
+    solution:
+      "Vi bygger specialiserad tryckmjukvara — inte en generell butik man försöker böja till tryck. Allt ett tryckeri behöver är inbyggt: konfigurator med realtidspris, preflight, korrektur, B2B-prislistor och white-label, på en delad commerce-kärna med tryck som första vertikal.",
+    process: [
+      "Produktkonfigurator med realtidspris — kvantitetstrappor och m²-pris för storformat",
+      "Filuppladdning med automatisk preflight (bleed, DPI, CMYK) och digitalt godkänt korrektur",
+      "Kundspecifika prislistor och B2B-flöden (faktura, förskott, rabattsatser)",
+      "Multi-tenant med white-label: varje tryckeri får egen butik på egen domän",
+      "Återförsäljarnätverk — tryckerier ger sina partners egna white-label-butiker med vinstvy",
+      "Kundportal, viktbaserad frakt, nyhetsbrev och ett tvåaxlat orderflöde (produktion + betalning)",
+    ],
+    results: [
+      "Aktiv utveckling på en delad commerce-kärna med tryck som första vertikal. Lansering planerad till 2026.",
+    ],
+    techStack: ["Next.js", "TypeScript", "Supabase/PostgreSQL", "Cloudflare Workers", "Stripe", "Resend"],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
     slug: "endoo",
     projectName: "Endoo",
     industry: "SaaS / Ekonomi",
