@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
-import Script from "next/script";
+import { CookieConsent } from "@/components/consent/cookie-consent";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { StickyCta } from "@/components/layout/sticky-cta";
@@ -75,8 +75,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             ]),
           }}
         />
-        {/* Dynamic global scripts from database-backed settings */}
-        <AnalyticsScripts settings={settings} />
+        {/* GA4 laddas först efter cookie-samtycke — bannern hanterar valet */}
+        <CookieConsent
+          ga4MeasurementId={settings.ga4MeasurementId}
+          ga4CustomScript={settings.ga4CustomScript}
+        />
         <Navbar />
         <main id="main-content">{children}</main>
         <Footer />
@@ -87,36 +90,3 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   );
 }
 
-function AnalyticsScripts({ settings }: { settings: Awaited<ReturnType<typeof getResolvedSiteSettings>> }) {
-  if (settings.ga4CustomScript) {
-    return (
-      <Script
-        id="ga4-custom-script"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: settings.ga4CustomScript }}
-      />
-    );
-  }
-
-  if (!settings.ga4MeasurementId) {
-    return null;
-  }
-
-  return (
-    <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.ga4MeasurementId}`} strategy="afterInteractive" />
-      <Script
-        id="ga4-script"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${settings.ga4MeasurementId}');
-          `,
-        }}
-      />
-    </>
-  );
-}

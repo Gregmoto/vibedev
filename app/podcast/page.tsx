@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   return createMetadataForStandardPage({
     routePath: "/podcast",
-    fallbackTitle: "Vibecoding-podden — Samtal om AI, produktutveckling och vibecoding | VibeDev",
+    fallbackTitle: "Vibecoding-podden — AI och produktutveckling | VibeDev",
     fallbackDescription:
       "Samtal om hur moderna team bygger digitala produkter med AI, struktur och seniort hantverk. Korta avsnitt, raka åsikter, inga säljpitchar.",
     keywords: ["vibecoding podcast", "ai podcast svenska", "produktutveckling podcast", "startup podcast", "vibecoding"],

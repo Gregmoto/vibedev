@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     routePath: "/case-studies",
     fallbackTitle: "Case studies — Plattformar och produkter vi byggt | VibeDev",
     fallbackDescription:
-      "Konkreta exempel: CMS Online, Bookiz, Mittbrottmål, Min Odling, Omdio, Cultio och Endoo. Se hur strategi, design och utveckling skapar riktiga produkter.",
+      "Konkreta exempel: VIBESHOPS, CMS Online, Bookiz, Mittbrottmål, Min Odling, Omdio, Cultio och Endoo. Se hur strategi, design och utveckling skapar riktiga produkter.",
     keywords: ["case studies", "produktexempel", "mvp", "apputveckling", "webbapp", "ai-lösning"],
   });
 }
@@ -180,7 +180,7 @@ export default function CaseStudiesPage() {
       <Section>
         <SectionHeading
           eyebrow="PROJEKT"
-          title="Sju lanserade produkter + två pågående."
+          title="Sju lanserade produkter + tre pågående."
           description="Oavsett bransch är mönstret detsamma: rätt scope, rätt teknik och ett team som tar ägarskap hela vägen till lansering."
           className="mb-10"
         />

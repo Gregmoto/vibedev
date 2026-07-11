@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { Container } from "@/components/ui/container";
 import { createMetadata } from "@/lib/metadata";
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = createMetadata(
 
 export default function CookiesPage() {
   return (
-    <main id="main-content" className="py-20">
+    <div className="py-20">
       <Container>
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-text">
@@ -91,7 +92,6 @@ export default function CookiesPage() {
                   </tbody>
                 </table>
               </div>
-              {/* TODO: implementera cookie-banner med samtycke innan GA4 aktiveras */}
             </section>
 
             <section>
@@ -110,6 +110,9 @@ export default function CookiesPage() {
                 cookie-bannern på webbplatsen, eller genom att rensa cookies i din webbläsare.
                 Observera att om du avaktiverar alla cookies kan vissa funktioner sluta fungera.
               </p>
+              <div className="mt-4">
+                <CookieSettingsButton />
+              </div>
               <p className="mt-3">
                 Läs mer om hur du hanterar cookies i din webbläsare:
               </p>
@@ -146,6 +149,6 @@ export default function CookiesPage() {
           </div>
         </div>
       </Container>
-    </main>
+    </div>
   );
 }

@@ -12,7 +12,7 @@ export const metadata: Metadata = createMetadata(
 
 export default function IntegritetspolicyPage() {
   return (
-    <main id="main-content" className="py-20">
+    <div className="py-20">
       <Container>
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-text">
@@ -181,6 +181,6 @@ export default function IntegritetspolicyPage() {
           </div>
         </div>
       </Container>
-    </main>
+    </div>
   );
 }

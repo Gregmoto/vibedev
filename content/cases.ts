@@ -23,6 +23,44 @@ export type CaseStudy = {
 
 export const caseStudies: CaseStudy[] = [
   {
+    slug: "vibeshops",
+    projectName: "VIBESHOPS",
+    industry: "SaaS / E-handel",
+    status: "ongoing",
+    websiteUrl: "https://vibeshops.se",
+    summary:
+      "Multi-tenant e-handelsplattform där svenska handlare får en komplett webbutik — utan provision och utan inlåsning.",
+    customerProblem:
+      "Svenska handlare som vill sälja online har i praktiken två val: en internationell plattform som Shopify — där du betalar provision på varje order och tvingas in i deras kassa — eller en äldre svensk lösning som visserligen förstår Swish, moms och Fortnox men känns byggd för ett annat årtionde. Ingen av dem löser svensk verklighet, modern prestanda och ärlig prissättning i samma produkt.",
+    solution:
+      "Vi bygger en multi-tenant e-handelsplattform där svensk regelefterlevnad, modern prestanda och provisionsfri prissättning finns i samma produkt — och där en handlare kan driva flera butiker på flera marknader utan att något av det blir en integrationsövning.",
+    process: [
+      "Multi-tenant kärna med vattentät isolering — RLS på samtliga tabeller, verifierat med skarpa isolationstester i CI",
+      "Multishop — flera butiker, marknader, språk och valutor från ett konto, med delad katalog och delat lager men eget sortiment per butik",
+      "Svensk kassa — Swish, Klarna, kort och Qliro med serverside-beräkning av alla belopp i heltal öre",
+      "Moms som faktiskt stämmer — destinationsmoms för EU-B2C (OSS), omvänd skattskyldighet och nollmoms vid export",
+      "Lager i realtid — flera lagerställen, atomisk reservation vid köp och hämta i butik",
+      "AI där den gör nytta — produkttexter och översättningar på svenska med förhandsgranskning innan de sparas",
+      "Omnibus och GDPR ur lådan — prishistorik loggas från dag ett, cookie-samtycke gatar all spårning",
+      "Integrationer — Fortnox, Google Shopping, Meta, Omdio och fraktbokning mot flera transportörer",
+    ],
+    results: [
+      "Aktiv utveckling. Plattformen körs i skarpt läge med GregMoto som första tenant och en publik demo på demo.vibeshops.se. Tenant-isoleringen är verifierad med cross-tenant-tester i CI. Lansering planeras till 2026.",
+    ],
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "Supabase/PostgreSQL",
+      "Row Level Security",
+      "Cloudflare Workers",
+      "Stripe",
+    ],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
     slug: "cms-online",
     projectName: "CMS Online",
     industry: "E-handel / SaaS",

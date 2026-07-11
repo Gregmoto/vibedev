@@ -107,6 +107,7 @@ export async function submitBookingForm(
   const from = process.env.CONTACT_EMAIL_FROM ?? "onboarding@resend.dev";
 
   // Spara i databasen
+  let savedToDb = false;
   if (hasDatabaseUrl()) {
     try {
       await db.contactSubmission.create({
@@ -125,12 +126,15 @@ export async function submitBookingForm(
           },
         },
       });
+      savedToDb = true;
     } catch (err) {
       console.error("[booking-action] DB-fel:", err);
+      // Fortsätt — notifikationsmailet kan fortfarande rädda leadet
     }
   }
 
   // Notifikation till teamet
+  let notificationSent = false;
   try {
     const notificationHtml = await render(
       BookingNotification({
@@ -153,8 +157,17 @@ export async function submitBookingForm(
       subject: `Ny projektförfrågan från ${data.name} — ${data.projectType}`,
       html: notificationHtml,
     });
+    notificationSent = true;
   } catch (err) {
     console.error("[booking-action] Resend-fel (notifikation):", err);
+  }
+
+  // Leadet nådde varken databasen eller teamet — säg det ärligt istället för falsk bekräftelse
+  if (!savedToDb && !notificationSent) {
+    return {
+      success: false,
+      message: `Något gick fel när din förfrågan skulle skickas. Försök igen, eller mejla oss direkt på ${to}.`,
+    };
   }
 
   // Bekräftelse till avsändaren

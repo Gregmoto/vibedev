@@ -21,6 +21,17 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
+    status:      "Kommande",
+    industryTag: "SAAS / E-HANDEL",
+    name:        "VIBESHOPS",
+    domain:      "vibeshops.se",
+    description:
+      "Multi-tenant e-handelsplattform där svenska handlare får en komplett webbutik — multishop, Swish/Klarna-kassa, moms som stämmer, lager i realtid och SEO ur lådan. Utan provision, utan inlåsning.",
+    tech:      ["Next.js", "TypeScript", "Supabase", "Cloudflare Workers"],
+    caseHref:  "/case-studies/vibeshops",
+    siteHref:  "https://vibeshops.se",
+  },
+  {
     status:      "Lanserad",
     industryTag: "E-HANDEL",
     name:        "CMS Online",

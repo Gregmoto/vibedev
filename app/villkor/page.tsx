@@ -12,7 +12,7 @@ export const metadata: Metadata = createMetadata(
 
 export default function VillkorPage() {
   return (
-    <main id="main-content" className="py-20">
+    <div className="py-20">
       <Container>
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-text">
@@ -156,6 +156,6 @@ export default function VillkorPage() {
           </div>
         </div>
       </Container>
-    </main>
+    </div>
   );
 }

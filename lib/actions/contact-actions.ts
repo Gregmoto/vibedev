@@ -95,6 +95,7 @@ export async function submitContactForm(
   const from = process.env.CONTACT_EMAIL_FROM ?? "onboarding@resend.dev";
 
   // Spara i databasen (primary — spara alltid om DB finns)
+  let savedToDb = false;
   if (hasDatabaseUrl()) {
     try {
       await db.contactSubmission.create({
@@ -107,13 +108,15 @@ export async function submitContactForm(
           type: "contact",
         },
       });
+      savedToDb = true;
     } catch (err) {
       console.error("[contact-action] DB-fel:", err);
-      // Fortsätt — skicka mail ändå
+      // Fortsätt — notifikationsmailet kan fortfarande rädda leadet
     }
   }
 
   // Skicka notifikation till teamet
+  let notificationSent = false;
   try {
     const notificationHtml = await render(
       ContactNotification({
@@ -132,9 +135,17 @@ export async function submitContactForm(
       subject: `Ny kontaktförfrågan från ${data.name}`,
       html: notificationHtml,
     });
+    notificationSent = true;
   } catch (err) {
     console.error("[contact-action] Resend-fel (notifikation):", err);
-    // Returnera success ändå — DB-sparningen lyckades
+  }
+
+  // Leadet nådde varken databasen eller teamet — säg det ärligt istället för falsk bekräftelse
+  if (!savedToDb && !notificationSent) {
+    return {
+      success: false,
+      message: `Något gick fel när ditt meddelande skulle skickas. Försök igen, eller mejla oss direkt på ${to}.`,
+    };
   }
 
   // Skicka bekräftelse till avsändaren

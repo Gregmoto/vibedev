@@ -42,6 +42,7 @@ function DownloadModal({
   const initialState: LeadMagnetState = { status: "idle" };
   const [state, formAction] = useActionState(subscribeLeadMagnet, initialState);
   const emailRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const submitted = state.status === "success" || state.status === "duplicate";
 
   /* Focus email input on open */
@@ -49,10 +50,31 @@ function DownloadModal({
     emailRef.current?.focus();
   }, []);
 
-  /* Close on ESC */
+  /* Close on ESC + trap Tab focus inside the modal */
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !cardRef.current) return;
+
+      const focusable = cardRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey && (active === first || !cardRef.current.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !cardRef.current.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -81,7 +103,7 @@ function DownloadModal({
       />
 
       {/* Modal card */}
-      <div className="relative w-full max-w-md rounded-2xl bg-bg shadow-2xl ring-1 ring-line">
+      <div ref={cardRef} className="relative w-full max-w-md rounded-2xl bg-bg shadow-2xl ring-1 ring-line">
         {/* Close button */}
         <button
           type="button"

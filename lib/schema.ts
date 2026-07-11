@@ -40,13 +40,14 @@ export function articleSchema(input: {
   keywords?: string[];
   siteName?: string;
   siteUrl?: string;
+  type?: "Article" | "BlogPosting";
 }) {
   const siteName = input.siteName || siteConfig.name;
   const siteUrl = input.siteUrl || siteConfig.url;
 
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": input.type ?? "Article",
     headline: input.title,
     description: input.description,
     datePublished: input.publishedAt,
