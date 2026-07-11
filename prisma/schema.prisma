@@ -1,5 +1,8 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // driverAdapters + INGEN output-katalog: OpenNext patchar den genererade klienten i
+  // node_modules så att den kör på Cloudflare Workers (workerd) via @prisma/adapter-pg.
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {

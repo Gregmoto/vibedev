@@ -6,7 +6,7 @@ import { AdminFormFooter } from "@/components/admin/admin-form-footer";
 import { AdminFormLayout } from "@/components/admin/admin-form-layout";
 import { AdminFormSection } from "@/components/admin/admin-form-section";
 import { saveSiteSettingsAction, type SettingsFormState } from "@/lib/admin-settings-actions";
-import { formatSocialLinks } from "@/lib/site-settings";
+import { formatSocialLinks } from "@/lib/social-links";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 

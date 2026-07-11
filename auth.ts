@@ -1,9 +1,9 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
+import { authConfig } from "@/auth.config";
 import { db } from "@/lib/db";
 
 const loginSchema = z.object({
@@ -69,13 +69,8 @@ function clearFailedAttempts(email: string) {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(db),
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/admin/login",
-  },
   providers: [
     Credentials({
       name: "Admin login",
@@ -131,39 +126,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    authorized({ auth: session, request: { nextUrl } }) {
-      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
-      const isLoginRoute = nextUrl.pathname.startsWith("/admin/login");
-      const isLoggedIn = !!session?.user;
-      const role = session?.user?.role;
-      const isAdmin = role === UserRole.ADMIN;
-
-      if (!isAdminRoute) {
-        return true;
-      }
-
-      if (isLoginRoute) {
-        return !isLoggedIn;
-      }
-
-      return isLoggedIn && isAdmin;
-    },
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as typeof user & { role?: UserRole }).role;
-      }
-
-      return token;
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = typeof token.id === "string" ? token.id : "";
-        session.user.role = token.role as UserRole | undefined;
-      }
-
-      return session;
-    },
-  },
 });

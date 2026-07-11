@@ -1,12 +1,18 @@
-import type { Prisma, SiteSettings } from "@prisma/client";
-import { db } from "@/lib/db";
-import { isSafeHttpUrl, validateGa4CustomScript } from "@/lib/admin-action-utils";
+import type { SiteSettings } from "@prisma/client";
+import { db, hasDatabase } from "@/lib/db";
+import { validateGa4CustomScript } from "@/lib/admin-action-utils";
 import { CONTACT } from "@/lib/config/contact";
+import {
+  DEFAULT_SOCIAL_LINKS,
+  formatSocialLinks,
+  parseSocialLinksInput,
+  readSocialLinks,
+  type SocialLink,
+} from "@/lib/social-links";
 
-export type SocialLink = {
-  label: string;
-  url: string;
-};
+// Re-export för bakåtkompatibilitet — flyttat till den db-fria modulen lib/social-links.ts.
+export { formatSocialLinks, parseSocialLinksInput, readSocialLinks };
+export type { SocialLink };
 
 export type ResolvedSiteSettings = {
   siteName: string;
@@ -31,10 +37,7 @@ export const defaultSiteSettings: ResolvedSiteSettings = {
   address: `${CONTACT.address.city}, ${CONTACT.address.country}`,
   footerText:
     "Moderna digitala produkter för bolag som vill växa snabbare med bättre teknik, tydligare produktbeslut och starkare användarupplevelser.",
-  socialLinks: [
-    { label: "LinkedIn", url: CONTACT.social.linkedin },
-    { label: "Instagram", url: CONTACT.social.instagram },
-  ],
+  socialLinks: DEFAULT_SOCIAL_LINKS,
   defaultSeoTitle: "VibeDev",
   defaultMetaDescription:
     "VibeDev bygger appar, webbappar, AI-lösningar och digitala produkter för företag som vill växa snabbare.",
@@ -44,7 +47,7 @@ export const defaultSiteSettings: ResolvedSiteSettings = {
 };
 
 function hasDatabaseUrl() {
-  return Boolean(process.env.DATABASE_URL?.trim());
+  return hasDatabase();
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
@@ -94,50 +97,6 @@ export function parseSearchConsoleVerification(value?: string | null) {
   const contentMatch = trimmed.match(/content=["']([^"']+)["']/i);
 
   return contentMatch?.[1] ?? trimmed;
-}
-
-export function parseSocialLinksInput(value: string): SocialLink[] {
-  return value
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [label, url] = line.split("|").map((part) => part.trim());
-
-      return {
-        label: url ? label : "Länk",
-        url: url ?? label,
-      };
-    })
-    .filter((item) => isSafeHttpUrl(item.url));
-}
-
-export function readSocialLinks(value: Prisma.JsonValue | null | undefined): SocialLink[] {
-  if (!Array.isArray(value)) {
-    return defaultSiteSettings.socialLinks;
-  }
-
-  const links = value
-    .map((item) => {
-      if (!item || typeof item !== "object") {
-        return null;
-      }
-
-      const label = "label" in item && typeof item.label === "string" ? item.label.trim() : "";
-      const url = "url" in item && typeof item.url === "string" ? item.url.trim() : "";
-
-      return label && url && isSafeHttpUrl(url) ? { label, url } : null;
-    })
-    .filter((item): item is SocialLink => Boolean(item));
-
-  return links.length > 0 ? links : defaultSiteSettings.socialLinks;
-}
-
-export function formatSocialLinks(value: unknown) {
-  return readSocialLinks(value as Prisma.JsonValue | null | undefined)
-    .map((item) => `${item.label} | ${item.url}`)
-    .filter(Boolean)
-    .join("\n");
 }
 
 export function normalizeScriptContent(value?: string | null) {

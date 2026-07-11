@@ -2,6 +2,7 @@ import { ContentStatus, UserRole } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { auth } from "@/auth";
+import { hasDatabase } from "@/lib/db";
 
 export const optionalUrlSchema = z
   .string()
@@ -29,7 +30,7 @@ export function isSafeHttpUrl(value: string) {
 }
 
 export function hasDatabaseUrl() {
-  return Boolean(process.env.DATABASE_URL?.trim());
+  return hasDatabase();
 }
 
 export function normalizeEmpty(value: FormDataEntryValue | null) {

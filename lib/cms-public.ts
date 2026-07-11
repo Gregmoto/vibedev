@@ -2,7 +2,7 @@ import { ContentStatus, type BlogPost as DbBlogPost, type CaseStudy as DbCaseStu
 import { blogPosts as staticBlogPosts, getBlogPost } from "@/content/blog";
 import { caseStudies as staticCaseStudies } from "@/content/cases";
 import { getPodcastEpisode, podcastEpisodes as staticPodcastEpisodes } from "@/content/podcast";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import { createDynamicMetadata, type SeoFields } from "@/lib/metadata";
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 
@@ -83,7 +83,7 @@ export type PublicPage = {
 };
 
 function hasDatabaseUrl() {
-  return Boolean(process.env.DATABASE_URL?.trim());
+  return hasDatabase();
 }
 
 function readingTimeFromText(text: string) {

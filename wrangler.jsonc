@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vibedev",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      // Skapas med: npx wrangler hyperdrive create vibedev-db --connection-string="<Supabase DIRECT_URL>"
+      // Klistra in det returnerade id:t här innan `deploy:cf`:
+      "id": "REPLACE_WITH_HYPERDRIVE_ID"
+      // localConnectionString utelämnas medvetet: lokalt (next dev) faller appen tillbaka på
+      // DATABASE_URL. För `wrangler dev`/`preview:cf` mot riktig DB, sätt env
+      // WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="<postgres-url>".
+    }
+  ]
+}
