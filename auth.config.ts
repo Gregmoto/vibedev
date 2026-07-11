@@ -11,6 +11,8 @@ import type { UserRole } from "@prisma/client";
  * utan databasåtkomst.
  */
 export const authConfig = {
+  // Krävs utanför Vercel (Cloudflare Workers) — annars kastar NextAuth "UntrustedHost".
+  trustHost: true,
   session: {
     strategy: "jwt",
   },
