@@ -1,6 +1,7 @@
 export const navigation = [
   { href: "/", label: "Hem" },
   { href: "/tjanster", label: "Tjänster" },
+  { href: "/gratis-hemsida", label: "Gratis hemsida" },
   { href: "/blogg", label: "Blogg" },
   { href: "/podcast", label: "Podcast" },
   { href: "/case-studies", label: "Case studies" },

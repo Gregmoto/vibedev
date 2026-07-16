@@ -7,11 +7,12 @@ import { COMPANY, CONTACT } from "@/lib/config/contact";
 /* ── Column link lists ───────────────────────────────────────────────────────── */
 
 const NAV_LINKS = [
-  { label: "Hem",           href: "/" },
-  { label: "Tjänster",      href: "/tjanster" },
-  { label: "Case studies",  href: "/case-studies" },
-  { label: "Om oss",        href: "/om-oss" },
-  { label: "Resurser",      href: "/resurser" },
+  { label: "Hem",             href: "/" },
+  { label: "Tjänster",        href: "/tjanster" },
+  { label: "Gratis hemsida",  href: "/gratis-hemsida" },
+  { label: "Case studies",    href: "/case-studies" },
+  { label: "Om oss",          href: "/om-oss" },
+  { label: "Resurser",        href: "/resurser" },
 ];
 
 const CONTENT_LINKS = [
