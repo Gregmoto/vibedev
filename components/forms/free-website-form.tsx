@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import {
   submitFreeWebsiteForm,
   type FreeWebsiteFormState,
 } from "@/lib/actions/free-website-actions";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -95,6 +96,16 @@ const initialState: FreeWebsiteFormState = { success: false };
 
 export function FreeWebsiteForm() {
   const [state, formAction] = useActionState(submitFreeWebsiteForm, initialState);
+
+  /* GA4-konvertering: avfyras en gång när skicket lyckats (om samtycke finns). */
+  useEffect(() => {
+    if (state.success) {
+      trackEvent("generate_lead", {
+        form_id: "gratis-hemsida",
+        form_name: "Gratis hemsida",
+      });
+    }
+  }, [state.success]);
 
   if (state.success) {
     return <SuccessCard />;
