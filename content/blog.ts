@@ -17,6 +17,81 @@ export type BlogPost = {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "claude-opus-5-vad-det-betyder",
+    title: "Claude Opus 5 är här — vad det faktiskt betyder för dig som bygger produkt",
+    excerpt:
+      "Anthropic släppte Opus 5 den 24 juli 2026. Dubblad prestanda mot Opus 4.8 — till exakt samma pris. Vi går igenom siffrorna och vad de betyder i praktiken.",
+    description:
+      "Claude Opus 5 släpptes 24 juli 2026 med kraftigt förbättrad prestanda till oförändrat pris. Vi går igenom benchmarks, effort-reglaget, de nya utvecklarfunktionerna — och vad det konkret betyder för dig som bygger en digital produkt.",
+    category: "AI",
+    tags: ["ai", "claude", "anthropic", "opus 5", "produktutveckling", "ai-kostnader"],
+    readingTime: "9 min läsning",
+    publishedAt: "2026-07-24",
+    author: "VibeDev",
+    heroLabel: "Nyhet & analys",
+    content: [
+      {
+        heading: "Vad som släpptes",
+        paragraphs: [
+          "Den 24 juli 2026 släppte Anthropic Claude Opus 5. Modellen finns tillgänglig i API:et under model-id:t claude-opus-5, den är standardmodell för Claude Max-abonnenter och den starkaste modellen på Claude Pro. Den rullas ut på samtliga plattformar.",
+          "Den korta versionen: Opus 5 levererar väsentligt högre kapacitet än föregångaren Opus 4.8 — till exakt samma pris. 5 dollar per miljon input-tokens och 25 dollar per miljon output-tokens, oförändrat.",
+          "Det är den detaljen som gör lanseringen intressant för alla som bygger något med AI i. Priset står stilla medan kapaciteten hoppar. Det förändrar kalkylen för vad som är rimligt att bygga.",
+        ],
+      },
+      {
+        heading: "Siffrorna — och vad de är värda",
+        paragraphs: [
+          "Anthropic redovisar resultat på ett antal utvärderingar. De mest talande: Opus 5 mer än dubblar Opus 4.8:s resultat på Frontier-Bench v0.1, till lägre kostnad. På CursorBench 3.2 landar den inom 0,5 procent av Fable 5:s toppresultat — till halva priset. På ARC-AGI 3 presterar den tre gånger så högt som näst bästa modell, och på Zapier AutomationBench ligger andelen godkända körningar runt 1,5 gånger näst bästa modell.",
+          "På OSWorld 2.0, som mäter hur väl en modell klarar att styra ett faktiskt operativsystem, slår Opus 5 Fable 5:s bästa resultat till drygt en tredjedel av kostnaden.",
+          "Sen den obligatoriska brasklappen: benchmarks är inte din produkt. En modell som presterar exceptionellt på ARC-AGI kan fortfarande vara medioker på just din domän, ditt datamaterial och dina användares faktiska frågor. Siffrorna säger något om riktningen — de säger ingenting om huruvida modellen löser ditt problem.",
+          "Det enda test som räknas är ditt eget. Har ni redan något i produktion: kör en utvärdering på verkliga ärenden innan ni byter. Har ni inte det: låt bli att välja modell utifrån en topplista.",
+        ],
+      },
+      {
+        heading: "Effort-reglaget är den underskattade nyheten",
+        paragraphs: [
+          "Opus 5 låter dig ställa in hur mycket arbete modellen ska lägga på en uppgift — nivåerna heter low, high, xhigh och max. I praktiken är det ett reglage mellan intelligens och kostnad.",
+          "Det låter som en teknisk detalj. Det är det inte. För en produkt med volym är det skillnaden mellan en AI-funktion som bär sig och en som äter marginalen.",
+          "Tanken är enkel: alla anrop är inte lika viktiga. En enkel klassificering — \"är det här ett supportärende eller en säljfråga?\" — behöver inte samma resurser som en komplex analys av ett helt kundcase. Kör det billiga billigt och det svåra ordentligt.",
+          "Vi ser det här som ett av de mest konkreta sätten att få ned AI-kostnaden i en produkt utan att sänka kvaliteten där den faktiskt märks.",
+        ],
+      },
+      {
+        heading: "Två nyheter för oss som bygger",
+        paragraphs: [
+          "Samtidigt med modellen släpptes två saker i beta som löser riktiga problem i produktion.",
+          "Det första är att man kan ändra vilka verktyg modellen har tillgång till mitt i en konversation, utan att slå sönder prompt-cachen. Det låter smalt men är en märkbar kostnadssak: tidigare innebar ett ändrat verktygsutbud att hela den cachade historiken fick bearbetas om och betalas för på nytt. För agent-liknande produkter som byter läge under körning är det pengar rakt ned i fickan.",
+          "Det andra är automatiska fallbacks. Om en förfrågan flaggas av säkerhetsklassificerarna kan den nu automatiskt dirigeras vidare till en annan modell i stället för att bara stanna. Det gör beteendet mer förutsägbart för användaren — särskilt i produkter som ligger nära gränsdragningar, exempelvis säkerhet eller medicin, där legitima frågor ibland fastnar.",
+        ],
+      },
+      {
+        heading: "Vad det betyder om du bygger en produkt",
+        paragraphs: [
+          "Tre saker är värda att ta med sig.",
+          "För det första: prisbilden per levererad kapacitet fortsätter falla snabbt. En AI-funktion som var för dyr att räkna hem för ett halvår sedan kan vara lönsam idag — utan att en rad kod ändrats. Om ni har en idé som ni la på hyllan av kostnadsskäl kan det vara värt att räkna om den.",
+          "För det andra: det är inte längre modellen som är flaskhalsen i de flesta produkter. Det är produktbesluten. Vad ska funktionen faktiskt göra, för vem, och hur vet ni att den gör nytta? Vi ser fler projekt kapsejsa på oklart scope än på otillräcklig modellkapacitet.",
+          "För det tredje: bygg så att modellen kan bytas. Modellvalet är det som åldras snabbast i hela din stack — ungefär två gånger om året just nu. Ligger anropen bakom ett tunt eget lager är ett byte en konfigurationsändring. Ligger de utspridda i hela kodbasen blir det ett projekt.",
+        ],
+      },
+      {
+        heading: "Hur vi tänker på det här",
+        paragraphs: [
+          "Vi bygger appar, webbappar och AI-funktioner åt founders och produktteam. Vår hållning är oförändrad: modellen är en komponent, inte en produktstrategi.",
+          "Det vi gör konkret är att isolera modellvalet, mäta på riktiga ärenden i stället för på benchmarks, och sätta effort-nivån per anropstyp i stället för att köra allt på högsta växeln. Det brukar ge en produkt som både känns bra och går att räkna hem.",
+          "Och när nästa modell släpps — vilket den gör, om ungefär ett halvår — är bytet en eftermiddag i stället för ett kvartal.",
+        ],
+      },
+      {
+        heading: "Sammanfattat",
+        paragraphs: [
+          "Claude Opus 5 ger mer kapacitet för samma pengar som Opus 4.8, med ett effort-reglage som gör kostnaden styrbar och två beta-funktioner som tar bort verklig friktion i produktion.",
+          "Det är goda nyheter. Men det ändrar inte den svåra delen: att veta vad som är värt att bygga. Den frågan löser ingen modelluppgradering åt dig.",
+          "Funderar ni på att lägga in AI i er produkt — eller på att räkna om något ni tidigare valde bort? Hör av er, så tittar vi på det tillsammans.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "ai-i-din-produkt",
     title: "AI i din digitala produkt — när det tillför värde och när det inte gör det",
     excerpt:
