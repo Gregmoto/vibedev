@@ -4,6 +4,8 @@ export type CaseStudy = {
   industry: string;
   /** "published" = live product, "ongoing" = active build */
   status: "published" | "ongoing";
+  /** Overrides the default status badge text on listing cards */
+  statusLabel?: string;
   /** External product URL — opens in new tab */
   websiteUrl?: string;
   /** Short tagline shown on listing cards */
@@ -101,14 +103,15 @@ export const caseStudies: CaseStudy[] = [
     slug: "vibeshops",
     projectName: "VIBESHOPS",
     industry: "SaaS / E-handel",
-    status: "ongoing",
+    status: "published",
+    statusLabel: "Lanserad — vidare utveckling pågår",
     websiteUrl: "https://vibeshops.se",
     summary:
       "Multi-tenant e-handelsplattform där svenska handlare får en komplett webbutik — utan provision och utan inlåsning.",
     customerProblem:
       "Svenska handlare som vill sälja online har i praktiken två val: en internationell plattform som Shopify — där du betalar provision på varje order och tvingas in i deras kassa — eller en äldre svensk lösning som visserligen förstår Swish, moms och Fortnox men känns byggd för ett annat årtionde. Ingen av dem löser svensk verklighet, modern prestanda och ärlig prissättning i samma produkt.",
     solution:
-      "Vi bygger en multi-tenant e-handelsplattform där svensk regelefterlevnad, modern prestanda och provisionsfri prissättning finns i samma produkt — och där en handlare kan driva flera butiker på flera marknader utan att något av det blir en integrationsövning.",
+      "Vi byggde en multi-tenant e-handelsplattform där svensk regelefterlevnad, modern prestanda och provisionsfri prissättning finns i samma produkt — och där en handlare kan driva flera butiker på flera marknader utan att något av det blir en integrationsövning.",
     process: [
       "Multi-tenant kärna med vattentät isolering — RLS på samtliga tabeller, verifierat med skarpa isolationstester i CI",
       "Multishop — flera butiker, marknader, språk och valutor från ett konto, med delad katalog och delat lager men eget sortiment per butik",
@@ -120,7 +123,7 @@ export const caseStudies: CaseStudy[] = [
       "Integrationer — Fortnox, Google Shopping, Meta, Omdio och fraktbokning mot flera transportörer",
     ],
     results: [
-      "Aktiv utveckling. Plattformen körs i skarpt läge med GregMoto som första tenant och en publik demo på demo.vibeshops.se. Tenant-isoleringen är verifierad med cross-tenant-tester i CI. Lansering planeras till 2026.",
+      "Lanserad och i drift med GregMoto som första tenant, plus en publik demo på demo.vibeshops.se. Tenant-isoleringen är verifierad med cross-tenant-tester i CI. Vidareutvecklingen fortsätter med nya funktioner och fler butiker.",
     ],
     techStack: [
       "Next.js",

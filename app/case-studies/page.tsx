@@ -63,7 +63,7 @@ function CaseCard({ cs, index }: { cs: (typeof caseStudies)[number]; index: numb
         {/* Status + industry badges */}
         <div className="flex flex-wrap gap-2">
           <Badge tone={isOngoing ? "neutral" : "success"}>
-            {isOngoing ? "Pågående — lansering 2026" : "Lanserad"}
+            {cs.statusLabel ?? (isOngoing ? "Pågående — lansering 2026" : "Lanserad")}
           </Badge>
           <Badge tone="accent">{cs.industry}</Badge>
         </div>
@@ -180,7 +180,7 @@ export default function CaseStudiesPage() {
       <Section>
         <SectionHeading
           eyebrow="PROJEKT"
-          title="Nio lanserade produkter + tre pågående."
+          title="Tio lanserade produkter + två pågående."
           description="Oavsett bransch är mönstret detsamma: rätt scope, rätt teknik och ett team som tar ägarskap hela vägen till lansering."
           className="mb-10"
         />

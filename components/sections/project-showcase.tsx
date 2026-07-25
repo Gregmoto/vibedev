@@ -21,7 +21,7 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
-    status:      "Kommande",
+    status:      "Lanserad",
     industryTag: "SAAS / E-HANDEL",
     name:        "VIBESHOPS",
     domain:      "vibeshops.se",

@@ -123,8 +123,8 @@ export default async function VibeshopsPage() {
               <span className="rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-brand">
                 SAAS / E-HANDEL
               </span>
-              <span className="animate-pulse rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">
-                Pågående — lansering 2026
+              <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-green-700">
+                Lanserad — vidare utveckling pågår
               </span>
             </div>
 
@@ -133,7 +133,7 @@ export default async function VibeshopsPage() {
             </h1>
 
             <p className="body-lg mt-5 max-w-3xl">
-              VIBESHOPS är en multi-tenant e-handelsplattform vi bygger för svenska handlare. Svensk
+              VIBESHOPS är en multi-tenant e-handelsplattform vi byggt för svenska handlare. Svensk
               handel — moms, Swish, Fortnox, Omnibus och hämta i butik — är inbyggt från grunden,
               inte påklistrat i efterhand. En handlare kan driva flera butiker på flera marknader
               från ett konto, utan provision på försäljningen.
@@ -225,7 +225,7 @@ export default async function VibeshopsPage() {
 
             {/* Vad vi bygger */}
             <section>
-              <SectionLabel>Vad vi bygger</SectionLabel>
+              <SectionLabel>Vad vi byggde</SectionLabel>
               <h2 className="heading-md mb-5">
                 Svensk e-handel inbyggd från grunden — inte påklistrad
               </h2>
@@ -392,18 +392,18 @@ export default async function VibeshopsPage() {
             <section>
               <SectionLabel>Status idag</SectionLabel>
               <h2 className="heading-md mb-5">
-                Aktiv utveckling — i skarpt läge, lansering 2026
+                Lanserad — och vidareutvecklingen fortsätter
               </h2>
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-7">
+              <div className="rounded-2xl border border-green-200 bg-green-50 px-6 py-7">
                 <div className="flex items-start gap-4">
-                  <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100">
-                    <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-500" />
+                  <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100">
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
                   </span>
                   <div>
-                    <p className="font-semibold text-amber-900">Pågående utveckling</p>
-                    <p className="mt-1 text-sm leading-7 text-amber-800">
-                      Plattformen körs i skarpt läge med <strong>GregMoto som första tenant</strong>,
-                      och en publik demo-butik finns på{" "}
+                    <p className="font-semibold text-green-900">Lanserad och i drift</p>
+                    <p className="mt-1 text-sm leading-7 text-green-800">
+                      Plattformen är i drift med <strong>GregMoto som första tenant</strong>, och en
+                      publik demo-butik finns på{" "}
                       <a
                         href="https://demo.vibeshops.se"
                         target="_blank"
@@ -414,7 +414,7 @@ export default async function VibeshopsPage() {
                       </a>
                       . Tenant-isoleringen är verifierad genom skarpa cross-tenant-tester i CI, och en
                       fullständig säkerhetsgranskning av kassa, webhooks och behörigheter är genomförd.{" "}
-                      <strong>Lansering planeras till 2026.</strong>
+                      <strong>Vidareutvecklingen pågår</strong> med nya funktioner och fler butiker.
                     </p>
                   </div>
                 </div>
@@ -455,8 +455,8 @@ export default async function VibeshopsPage() {
                 <div>
                   <dt className="text-xs font-medium uppercase tracking-wide text-muted/70">Status</dt>
                   <dd className="mt-0.5 flex items-center gap-1.5">
-                    <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-500" />
-                    <span className="text-text">Pågående — lansering 2026</span>
+                    <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
+                    <span className="text-text">Lanserad — vidare utveckling pågår</span>
                   </dd>
                 </div>
                 <div>

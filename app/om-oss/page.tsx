@@ -253,7 +253,7 @@ export default function AboutPage() {
           <ul className="mt-8 space-y-3">
             {[
               { label: "E-handel & CMS",                detail: "CMS Online"               },
-              { label: "E-handelsplattform",             detail: "VIBESHOPS — pågående"      },
+              { label: "E-handelsplattform",             detail: "VIBESHOPS"                 },
               { label: "Community-plattformar",          detail: "Bookiz, Min Odling"        },
               { label: "Legal tech",                     detail: "Mittbrottmål"              },
               { label: "Ekonomi-SaaS",                   detail: "Endoo — pågående"          },
