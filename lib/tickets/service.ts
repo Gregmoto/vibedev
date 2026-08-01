@@ -99,7 +99,10 @@ export async function ingestInboundEmail(event: InboundWebhookEvent): Promise<In
   }
 
   const automated = isAutomatedMessage(email.headers, fromEmail);
-  const fromName = extractDisplayName(email.from || data.from);
+  // Resend normaliserar `from` till enbart adressen. Visningsnamnet finns bara
+  // kvar i den råa From-headern, så den måste läsas först — annars står varje
+  // ärende som anonymt även när kunden signerat med namn.
+  const fromName = extractDisplayName(email.headers["from"] || email.from || data.from);
   const bodyText = email.text?.trim() || "(tomt meddelande)";
   const subject = normalizeSubject(email.subject || data.subject || "");
 

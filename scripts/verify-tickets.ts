@@ -32,5 +32,9 @@ eq(stripQuotedReply(svar), "Tack, det låter bra!", "klipper citat");
 eq(stripQuotedReply("Bara ett vanligt mejl utan citat."), "Bara ett vanligt mejl utan citat.", "lämnar text utan citat orörd");
 eq(normalizeSubject("Re: SV: [#42] Offert"), "Offert", "rensar prefix");
 
+// Resend normaliserar from till bara adressen; namnet finns kvar i From-headern.
+eq(extractDisplayName("test@sending.vibedev.se"), null, "bar adress ger inget namn");
+eq(extractDisplayName("\"Test Testsson\" <test@sending.vibedev.se>"), "Test Testsson", "namn ur r\u00e5 From-header");
+
 console.log(fail === 0 ? "\nALLA TESTER OK" : `\n${fail} TESTER MISSLYCKADES`);
 process.exit(fail === 0 ? 0 : 1);
