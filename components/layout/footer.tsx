@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { label: "Hem",             href: "/" },
   { label: "Tjänster",        href: "/tjanster" },
   { label: "Gratis hemsida",  href: "/gratis-hemsida" },
+  { label: "Hyr hemsida",     href: "/hyr" },
   { label: "Case studies",    href: "/case-studies" },
   { label: "Om oss",          href: "/om-oss" },
   { label: "Resurser",        href: "/resurser" },

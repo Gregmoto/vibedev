@@ -11,6 +11,7 @@ const staticPriority: Record<string, number> = {
   "":                  1.0,
   "/tjanster":         0.9,
   "/gratis-hemsida":   0.9,
+  "/hyr":              0.9,
   "/vibecoding":       0.8,
 };
 
@@ -23,6 +24,7 @@ const routes = [
   "",
   "/tjanster",
   "/gratis-hemsida",
+  "/hyr",
   "/om-oss",
   "/blogg",
   "/podcast",
