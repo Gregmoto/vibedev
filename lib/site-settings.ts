@@ -59,7 +59,12 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     return await db.siteSettings.findFirst({
       orderBy: { createdAt: "asc" },
     });
-  } catch {
+  } catch (err) {
+    // Vi faller tillbaka på standardvärden så att sajten fortsätter fungera,
+    // men felet måste loggas: annars ser ett databasavbrott exakt likadant ut
+    // som "inga inställningar sparade än" — och sparade ändringar verkar
+    // försvinna utan spår i adminpanelen.
+    console.error("[site-settings] Kunde inte läsa inställningar från databasen:", err);
     return null;
   }
 }
