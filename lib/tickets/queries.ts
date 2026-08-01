@@ -19,7 +19,9 @@ export async function getUnreadTicketCount(): Promise<number> {
   }
 
   try {
-    return await db.ticket.count({ where: { readAt: null } });
+    // Skräpärenden räknas aldrig — poängen med att markera skräp är just att
+    // slippa se det, och en siffra som aldrig går ner blir snabbt meningslös.
+    return await db.ticket.count({ where: { readAt: null, spamAt: null } });
   } catch (err) {
     console.error("[tickets] Kunde inte räkna olästa ärenden:", err);
     return 0;
@@ -32,7 +34,30 @@ export type RelatedTicket = {
   subject: string;
   status: "OPEN" | "PENDING" | "CLOSED";
   lastMessageAt: Date;
+  spamAt: Date | null;
 };
+
+/** True om adressen har minst ett ärende som markerats som skräppost. */
+export async function isKnownSpamSender(customerEmail: string): Promise<boolean> {
+  if (!hasDatabase()) {
+    return false;
+  }
+
+  try {
+    const hit = await db.ticket.findFirst({
+      where: {
+        customerEmail: { equals: customerEmail, mode: "insensitive" },
+        spamAt: { not: null },
+      },
+      select: { id: true },
+    });
+
+    return hit !== null;
+  } catch (err) {
+    console.error("[tickets] Kunde inte kontrollera skräpavsändare:", err);
+    return false;
+  }
+}
 
 /**
  * Andra ärenden från samma kund. Matchar på e-postadressen, som är det enda
@@ -54,7 +79,16 @@ export async function getOtherTicketsForCustomer(
       },
       orderBy: { lastMessageAt: "desc" },
       take: 20,
-      select: { id: true, number: true, subject: true, status: true, lastMessageAt: true },
+      select: {
+        id: true,
+        number: true,
+        subject: true,
+        status: true,
+        lastMessageAt: true,
+        // Skräpärenden visas här ändå, men märkta: att kunden tidigare
+        // klassats som skräp är relevant när man bedömer ett nytt ärende.
+        spamAt: true,
+      },
     });
   } catch (err) {
     console.error("[tickets] Kunde inte hämta kundens övriga ärenden:", err);

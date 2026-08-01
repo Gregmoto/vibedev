@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
 import {
   deleteTicketAction,
+  markTicketNotSpamAction,
   markTicketReadAction,
+  markTicketSpamAction,
   markTicketUnreadAction,
   updateTicketStatusAction,
 } from "@/lib/admin-ticket-actions";
@@ -88,7 +90,8 @@ export default async function AdminTicketDetailPage({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <Badge tone={STATUS_TONE[ticket.status]}>{STATUS_LABEL[ticket.status]}</Badge>
-            {ticket.readAt ? null : <Badge tone="accent">Oläst</Badge>}
+            {ticket.spamAt ? <Badge tone="neutral">Skräppost</Badge> : null}
+            {ticket.readAt || ticket.spamAt ? null : <Badge tone="accent">Oläst</Badge>}
             <span className="text-xs uppercase tracking-[0.14em] text-muted">
               Språk: {ticket.language}
             </span>
@@ -100,6 +103,13 @@ export default async function AdminTicketDetailPage({
               <input type="hidden" name="id" value={ticket.id} />
               <Button type="submit" variant="secondary" size="sm">
                 {ticket.readAt ? "Markera som oläst" : "Markera som läst"}
+              </Button>
+            </form>
+
+            <form action={ticket.spamAt ? markTicketNotSpamAction : markTicketSpamAction}>
+              <input type="hidden" name="id" value={ticket.id} />
+              <Button type="submit" variant="secondary" size="sm">
+                {ticket.spamAt ? "Inte skräppost" : "Markera som skräp"}
               </Button>
             </form>
 
@@ -144,6 +154,17 @@ export default async function AdminTicketDetailPage({
         </dl>
       </section>
 
+      {ticket.spamAt ? (
+        <section className="surface border-l-2 border-white/20 p-6">
+          <h2 className="text-sm font-semibold text-text">Markerat som skräppost</h2>
+          <p className="mt-2 text-sm text-muted">
+            Ärendet ligger i skräpfliken och räknas inte som oläst. Nya mejl från{" "}
+            {ticket.customerEmail} hamnar direkt i skräp utan autosvar. Tryck &quot;Inte
+            skräppost&quot; ovan för att ta tillbaka det.
+          </p>
+        </section>
+      ) : null}
+
       {ticket.autoReplyError ? (
         <TicketAutoReplyRetry ticketId={ticket.id} errorMessage={ticket.autoReplyError} />
       ) : null}
@@ -167,7 +188,11 @@ export default async function AdminTicketDetailPage({
                   #{other.number} · {other.subject}
                 </Link>
                 <div className="flex items-center gap-3">
-                  <Badge tone={STATUS_TONE[other.status]}>{STATUS_LABEL[other.status]}</Badge>
+                  {other.spamAt ? (
+                    <Badge tone="neutral">Skräp</Badge>
+                  ) : (
+                    <Badge tone={STATUS_TONE[other.status]}>{STATUS_LABEL[other.status]}</Badge>
+                  )}
                   <span className="text-xs text-muted">{formatDateTime(other.lastMessageAt)}</span>
                 </div>
               </li>

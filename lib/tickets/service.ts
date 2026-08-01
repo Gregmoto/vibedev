@@ -18,6 +18,7 @@ import {
   listInboundAttachments,
   type InboundWebhookEvent,
 } from "@/lib/tickets/resend-inbound";
+import { isKnownSpamSender } from "@/lib/tickets/queries";
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 import { buildStorageKey, storeAttachment } from "@/lib/tickets/storage";
 import { normalizeSubject } from "@/lib/tickets/text";
@@ -127,12 +128,19 @@ export async function ingestInboundEmail(event: InboundWebhookEvent): Promise<In
     await db.ticket.update({
       where: { id: existing.id },
       data: {
-        // Kundens svar öppnar ett avslutat ärende igen — annars försvinner
-        // uppföljningen tyst.
-        status: "OPEN",
-        // Ett nytt kundmeddelande gör ärendet oläst igen, även om det lästs
-        // tidigare. Annars syns aldrig följdfrågor i räknaren.
-        readAt: null,
+        // Ett skräpmarkerat ärende ska inte kunna ta sig tillbaka in i flödet
+        // bara för att avsändaren skickar mer. Meddelandet sparas, men ärendet
+        // förblir läst och orört.
+        ...(existing.spamAt
+          ? {}
+          : {
+              // Kundens svar öppnar ett avslutat ärende igen — annars
+              // försvinner uppföljningen tyst.
+              status: "OPEN",
+              // Ett nytt kundmeddelande gör ärendet oläst igen, även om det
+              // lästs tidigare. Annars syns aldrig följdfrågor i räknaren.
+              readAt: null,
+            }),
         lastMessageAt: new Date(),
       },
     });
@@ -146,6 +154,12 @@ export async function ingestInboundEmail(event: InboundWebhookEvent): Promise<In
   // skapar hellre ett nytt ärende än tappar kundens meddelande.
   const { language } = detectLanguage(bodyText);
 
+  // Har adressen redan markerats som skräp av en handläggare litar vi på den
+  // bedömningen: ärendet hamnar direkt i skräpfliken och får inget autosvar.
+  // Utan det svarar systemet artigt på varje nytt skräpmejl från samma
+  // avsändare, vilket både är brus och skickar post till en spammare.
+  const knownSpam = await isKnownSpamSender(fromEmail);
+
   const ticket = await db.ticket.create({
     data: {
       accountId: account.id,
@@ -153,6 +167,8 @@ export async function ingestInboundEmail(event: InboundWebhookEvent): Promise<In
       customerEmail: fromEmail,
       customerName: fromName,
       language,
+      spamAt: knownSpam ? new Date() : null,
+      readAt: knownSpam ? new Date() : null,
       publicToken: generatePublicToken(),
       replyKey: generateReplyKey(),
       lastMessageAt: new Date(),
@@ -173,7 +189,7 @@ export async function ingestInboundEmail(event: InboundWebhookEvent): Promise<In
 
   await saveAttachments(email.id, ticket.id, ticket.messages[0].id);
 
-  if (!automated) {
+  if (!automated && !knownSpam) {
     await sendAutoReply(ticket, account, email.messageId);
   }
 

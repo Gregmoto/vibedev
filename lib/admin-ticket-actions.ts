@@ -191,6 +191,44 @@ export async function markTicketUnreadAction(formData: FormData): Promise<void> 
   revalidatePath("/admin", "layout");
 }
 
+/**
+ * Flyttar ärendet till skräpfliken. Det markeras samtidigt som läst, så att
+ * det inte ligger kvar i olästräknaren, och nya ärenden från samma adress
+ * hamnar hädanefter direkt i skräp utan autosvar.
+ */
+export async function markTicketSpamAction(formData: FormData): Promise<void> {
+  await requireAdminAction();
+
+  const id = normalizeEmpty(formData.get("id"));
+  if (!id) {
+    return;
+  }
+
+  const now = new Date();
+  await db.ticket.update({ where: { id }, data: { spamAt: now, readAt: now } });
+
+  revalidatePath(`/admin/arenden/${id}`);
+  revalidatePath("/admin/arenden");
+  revalidatePath("/admin", "layout");
+}
+
+/** Tar tillbaka ett felmarkerat ärende. Statusen är orörd och gäller igen. */
+export async function markTicketNotSpamAction(formData: FormData): Promise<void> {
+  await requireAdminAction();
+
+  const id = normalizeEmpty(formData.get("id"));
+  if (!id) {
+    return;
+  }
+
+  // Oläst igen: ett ärende som visar sig vara riktigt behöver hanteras.
+  await db.ticket.update({ where: { id }, data: { spamAt: null, readAt: null } });
+
+  revalidatePath(`/admin/arenden/${id}`);
+  revalidatePath("/admin/arenden");
+  revalidatePath("/admin", "layout");
+}
+
 export async function retryAutoReplyAction(
   _prevState: TicketFormState,
   formData: FormData,

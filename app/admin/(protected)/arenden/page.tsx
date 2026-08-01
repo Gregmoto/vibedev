@@ -2,8 +2,9 @@ import Link from "next/link";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminTable } from "@/components/admin/admin-table";
 import { Badge } from "@/components/ui/badge";
-import { LinkButton } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
+import { markTicketNotSpamAction, markTicketSpamAction } from "@/lib/admin-ticket-actions";
 import { db } from "@/lib/db";
 import { countTicketsByCustomer } from "@/lib/tickets/queries";
 import { toPreview } from "@/lib/tickets/text";
@@ -46,6 +47,10 @@ export default async function AdminTicketsPage({
     );
   }
 
+  // Skräppost är en egen vy, inte ett status. I alla andra vyer hålls den
+  // utanför — det är hela poängen med att markera något som skräp.
+  const showSpam = status === "SPAM";
+
   const statusFilter =
     status && ["OPEN", "PENDING", "CLOSED"].includes(status)
       ? (status as "OPEN" | "PENDING" | "CLOSED")
@@ -54,6 +59,7 @@ export default async function AdminTicketsPage({
   const [tickets, accounts] = await Promise.all([
     db.ticket.findMany({
       where: {
+        spamAt: showSpam ? { not: null } : null,
         ...(statusFilter ? { status: statusFilter } : {}),
         ...(konto ? { account: { slug: konto } } : {}),
         ...(kund ? { customerEmail: { equals: kund, mode: "insensitive" as const } } : {}),
@@ -72,6 +78,8 @@ export default async function AdminTicketsPage({
     db.ticketAccount.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  const spamCount = await db.ticket.count({ where: { spamAt: { not: null } } });
+
   // Antal ärenden per kundadress, så återkommande kunder syns direkt i listan
   // i stället för att man måste öppna varje ärende för att upptäcka det.
   const ticketsPerCustomer = await countTicketsByCustomer(
@@ -79,10 +87,15 @@ export default async function AdminTicketsPage({
   );
 
   const filters = [
-    { label: "Alla", href: "/admin/arenden", active: !statusFilter && !kund },
+    { label: "Alla", href: "/admin/arenden", active: !statusFilter && !kund && !showSpam },
     { label: "Öppna", href: "/admin/arenden?status=OPEN", active: statusFilter === "OPEN" },
     { label: "Väntar på kund", href: "/admin/arenden?status=PENDING", active: statusFilter === "PENDING" },
     { label: "Avslutade", href: "/admin/arenden?status=CLOSED", active: statusFilter === "CLOSED" },
+    {
+      label: spamCount > 0 ? `Skräppost (${spamCount})` : "Skräppost",
+      href: "/admin/arenden?status=SPAM",
+      active: showSpam,
+    },
   ];
 
   return (
@@ -134,8 +147,12 @@ export default async function AdminTicketsPage({
       </div>
 
       <AdminTable
-        title="Alla ärenden"
-        description="Sorterade efter senaste meddelande."
+        title={showSpam ? "Skräppost" : "Alla ärenden"}
+        description={
+          showSpam
+            ? "Ärenden du markerat som skräp. De syns inte i de andra vyerna och räknas inte som olästa. Nya mejl från samma avsändare hamnar direkt här, utan autosvar."
+            : "Sorterade efter senaste meddelande. Skräppost visas i egen flik."
+        }
         rows={tickets}
         rowKey={(row) => row.id}
         actions={
@@ -144,6 +161,15 @@ export default async function AdminTicketsPage({
           </LinkButton>
         }
         emptyState={
+          showSpam ? (
+            <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-10 text-center">
+              <p className="text-base font-medium text-text">Ingen skräppost</p>
+              <p className="mt-2 text-sm text-muted">
+                Markera ett ärende som skräp så hamnar det här — och nya mejl från samma avsändare
+                med det.
+              </p>
+            </div>
+          ) : (
           <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-10 text-center">
             <p className="text-base font-medium text-text">Inga ärenden ännu</p>
             <p className="mt-2 text-sm text-muted">
@@ -157,6 +183,7 @@ export default async function AdminTicketsPage({
               </LinkButton>
             </div>
           </div>
+          )
         }
         columns={[
           {
@@ -236,6 +263,18 @@ export default async function AdminTicketsPage({
             header: "Senaste",
             render: (row) => (
               <span className="text-sm text-muted">{formatDate(row.lastMessageAt)}</span>
+            ),
+          },
+          {
+            key: "spam",
+            header: "",
+            render: (row) => (
+              <form action={showSpam ? markTicketNotSpamAction : markTicketSpamAction}>
+                <input type="hidden" name="id" value={row.id} />
+                <Button type="submit" variant="secondary" size="sm">
+                  {showSpam ? "Inte skräp" : "Skräp"}
+                </Button>
+              </form>
             ),
           },
         ]}

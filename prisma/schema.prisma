@@ -275,6 +275,12 @@ model Ticket {
   /// nollställs igen så snart kunden skickar ett nytt meddelande.
   readAt DateTime?
 
+  /// null = inte skräppost. Skräpärenden hålls utanför det vanliga flödet och
+  /// utanför olästräknaren, men raderas inte — en felmarkering ska gå att ångra.
+  /// Egen kolumn i stället för ett status-värde, så att ärendet behåller sitt
+  /// öppet/väntande/avslutat om det tas tillbaka.
+  spamAt DateTime?
+
   /// Senaste felet från autosvaret, t.ex. en avsändardomän som inte är
   /// verifierad. Sparas för att ett misslyckat autosvar annars bara syns i
   /// serverloggen — kunden får inget mejl och ingen märker det.
@@ -289,6 +295,7 @@ model Ticket {
   @@index([accountId, status, lastMessageAt])
   @@index([customerEmail])
   @@index([readAt])
+  @@index([spamAt])
 }
 
 model TicketMessage {
