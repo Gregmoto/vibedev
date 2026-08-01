@@ -17,6 +17,657 @@ export type BlogPost = {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "fran-vercel-till-cloudflare-workers",
+    title: "Vi flyttade vibedev.se från Vercel till Cloudflare Workers — det här gick sönder",
+    excerpt:
+      "En Next.js-app på Cloudflare låter som en konfigurationsändring. Det är det inte. Här är de fyra sakerna som faktiskt stoppade oss — och hur vi löste dem.",
+    description:
+      "Vi migrerade vibedev.se från Vercel till Cloudflare Workers via OpenNext. Konkret genomgång av middleware som inte kan köras, Prisma på edge, Hyperdrive och certifikatglappet vid domänbytet.",
+    category: "Tekniska val",
+    tags: ["cloudflare workers", "opennext", "next.js", "prisma", "hyperdrive", "migrering"],
+    readingTime: "9 min läsning",
+    publishedAt: "2026-08-01",
+    author: "VibeDev",
+    heroLabel: "Från vår egen kodbas",
+    content: [
+      {
+        heading: "Varför vi flyttade",
+        paragraphs: [
+          "Vår egen sajt låg på Vercel. Vi bygger sedan en tid tillbaka flera av våra kundprojekt på Cloudflare Workers, och det blev svårt att motivera varför vår egen sajt skulle ligga någon annanstans än där vi rekommenderar andra att ligga.",
+          "Planen såg enkel ut: byt adapter, peka om domänen, klart. Verkligheten var fyra konkreta stopp. Ingen av dem stod i en snabbstartsguide, så vi skriver ner dem här.",
+          "Kort om upplägget: Next.js kör på Cloudflare Workers genom OpenNext, som paketerar appen till en Worker. Databasen ligger kvar i Postgres hos Supabase.",
+        ],
+      },
+      {
+        heading: "Stopp 1: middleware kan inte köras alls",
+        paragraphs: [
+          "Vår adminpanel skyddades av middleware — en fil som körs före varje förfrågan och kontrollerar inloggning. Det är standardmönstret i Next.js.",
+          "Problemet: i Next.js 16 döptes middleware om och kör numera i Node-miljö, medan OpenNext bara stödjer edge-varianten. Två lager som utvecklats åt olika håll. Det gick inte att tvinga fram — vi försökte, och byggverktyget svarade rakt ut att kombinationen inte finns.",
+          "Lösningen blev att sluta använda middleware. Vi flyttade de skyddade adminsidorna till en egen mapp med en gemensam layout som kontrollerar inloggningen på serversidan innan något renderas. Inloggningssidan ligger utanför. Adresserna är oförändrade, skyddet är likvärdigt — och det som blev av med sig var beroendet till ett lager som inte kunde köras.",
+          "Lärdomen: middleware känns som infrastruktur men är i praktiken applikationslogik. Ligger den i en layout i stället är den lättare att flytta.",
+        ],
+      },
+      {
+        heading: "Stopp 2: Prisma pratar inte TCP på Workers",
+        paragraphs: [
+          "Den här var den verkliga tröskeln. En vanlig databasanslutning öppnar en TCP-socket. Cloudflare Workers kan inte öppna sockets på det sättet.",
+          "Vi behövde tre saker samtidigt. Först Cloudflare Hyperdrive, som sitter framför databasen och ger Workern en anslutning den kan använda — plus pooling på köpet. Sedan en driver-adapter i Prisma i stället för standardklienten. Och slutligen ett litet paket som låter drivrutinen använda Cloudflares egna sockets.",
+          "Sedan kom en fälla till: Prisma försökte ladda sin inbyggda motor, som inte finns i den här miljön. Felmeddelandet handlade om filsystemsanrop som inte är implementerade, vilket inte alls pekar mot orsaken. Rätt lösning var att inte ange någon egen output-katalog för den genererade klienten och att markera Prisma som externt paket i bygget — då kan byggverktyget anpassa klienten för miljön.",
+          "En sista detalj som är lätt att missa: på Workers får en anslutningspool inte återanvändas mellan förfrågningar. Klienten måste skapas per förfrågan. Vi löste det med en tunn omslagsfunktion, vilket innebar att inget av de nästan tjugo ställen som använder databasen behövde skrivas om.",
+        ],
+      },
+      {
+        heading: "Stopp 3: byggverktyget tog med databasen i webbläsarpaketet",
+        paragraphs: [
+          "Mitt i migreringen började bygget klaga på att det inte hittade moduler som `net`, `dns` och `fs`. Det är Node-funktioner som inte finns i en webbläsare — och de skulle aldrig hamna där.",
+          "Orsaken visade sig vara en enda importrad. En liten hjälpfunktion för att formatera länkar låg i samma fil som databasanropen. En klientkomponent importerade den funktionen — och drog därmed med sig hela databaslagret in i webbläsarpaketet.",
+          "Fixen var att bryta ut de rena hjälpfunktionerna till en egen fil utan databasberoenden. Det tog fem minuter när vi väl förstod vad som hände.",
+          "Detta är värt att ta med sig även om du inte migrerar någonstans: en `import` är inte gratis. Den drar med sig allt filen råkar innehålla.",
+        ],
+      },
+      {
+        heading: "Stopp 4: sajten var nere en stund vid domänbytet",
+        paragraphs: [
+          "När vi kopplade domänen till Workern slutade sajten svara i ungefär tio minuter. Inget var trasigt — Cloudflare höll på att utfärda SSL-certifikatet för domänen, och innan det är klart finns det inget att svara med.",
+          "Det står i dokumentationen att det kan ta upp till femton minuter, men i stunden ser det ut som ett haveri. Vi kontrollerade i loggarna att Workern var frisk och att det bara var certifikatet som saknades, och väntade ut det.",
+          "Planera in det glappet. Gör bytet när trafiken är låg, och ha kvar den gamla miljön så att du kan peka tillbaka om något faktiskt är fel.",
+        ],
+      },
+      {
+        heading: "Vad vi skulle gjort annorlunda",
+        paragraphs: [
+          "Vi skulle testat databasanslutningen först. Alla fyra stoppen utom det sista handlade i grunden om att koden antog en Node-miljö, och det är databaslagret som avslöjar det snabbast. En halvdag på just den biten hade sparat oss omvägar.",
+          "Vi skulle också deployat till en tillfällig testadress innan vi rörde domänen. Det gjorde vi till slut, och det var där vi kunde verifiera att databasen faktiskt svarade — utan att någon besökare påverkades.",
+          "Var det värt det? Ja. Sajten körs nu på samma stack som vi bygger kundprojekt på, vilket gör att erfarenheterna går åt båda hållen. Men det var en migrering, inte en inställning.",
+        ],
+      },
+      {
+        heading: "Kort checklista om du står inför samma sak",
+        paragraphs: [
+          "Kontrollera databaslagret först — det är där de flesta antaganden om Node sitter. Kontrollera om du använder middleware och vad den gör. Räkna med att paketeringen kan behöva justeras för paket som talar med nätverket eller filsystemet.",
+          "Deploya till en testadress och verifiera hela kedjan där: sidvisning, databasläsning, inloggning och formulär. Rör domänen sist, och först när testadressen är grön.",
+          "Behöver ni hjälp med en liknande flytt? Titta på våra tjänster eller hör av er — vi har gjort den här resan på vår egen sajt och i kundprojekt.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "wordpress-till-next-js-utan-att-tappa-google",
+    title: "Från WordPress till Next.js utan att tappa Google-rankningen",
+    excerpt:
+      "Den största risken med att lämna WordPress är inte tekniken — det är länkarna. Så här flyttade vi ett innehållstungt magasin utan att en enda adress dog.",
+    description:
+      "Praktisk genomgång av hur du migrerar från WordPress till Next.js och behåller din SEO: omdirigeringar, bilder som slutar fungera vid DNS-bytet, och vad som måste göras före cutover.",
+    category: "Tekniska val",
+    tags: ["wordpress", "next.js", "migrering", "seo", "redirects", "webbprestanda"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-07-28",
+    author: "VibeDev",
+    heroLabel: "Ur ett kundprojekt",
+    content: [
+      {
+        heading: "Risken ligger inte där du tror",
+        paragraphs: [
+          "När företag lämnar WordPress handlar oron nästan alltid om tekniken: klarar vi att bygga om allt? Går innehållet att flytta?",
+          "Den verkliga risken är en annan. En sajt med några års artiklar har rankning i Google och länkar utifrån som pekar på specifika adresser. Bryts de adresserna försvinner trafiken — och för en annonsfinansierad sajt försvinner intäkten med den.",
+          "Vi gjorde den här flytten för Powerbike, ett svenskt magasin om MC, moped, ATV, snöskoter och cykel. Det som följer är vad vi faktiskt gjorde.",
+        ],
+      },
+      {
+        heading: "Adresserna: 399 omdirigeringar",
+        paragraphs: [
+          "WordPress körde adresser i formen år/artikelnamn. Den nya sajten har en plattare struktur utan årtal, vilket är bättre långsiktigt — en artikel som fortfarande är relevant ska inte se gammal ut i adressfältet.",
+          "Alternativet hade varit att behålla den gamla formen för att slippa problemet. Vi valde i stället att generera en permanent omdirigering per artikel. Det blev 399 stycken.",
+          "Permanent är nyckelordet. En permanent omdirigering talar om för Google att adressen har flyttat för gott, och rankningen följer med. En tillfällig gör det inte.",
+          "Uppslagningen sker i utkanten av nätet med cache, så databasen belastas som mest en gång per adress och timme. En besökare som klickar på en fem år gammal länk märker ingenting.",
+        ],
+      },
+      {
+        heading: "Bilderna: 113 filer som skulle ha dött",
+        paragraphs: [
+          "Det här är den detalj som är lättast att missa och dyrast att missa. Artiklarnas bilder låg på WordPress-installationen. I samma sekund som domänen pekas om till den nya sajten slutar den gamla servern nås — och varenda bild i varenda artikel blir en trasig ruta.",
+          "Vi hämtade hem samtliga 113 bilder innan bytet, konverterade dem till ett modernt format i tre storlekar och skrev om artiklarnas innehåll så att de pekar på de nya filerna.",
+          "Skriptet som gjorde det kör i torrläge som standard och kräver ett explicit kommando för att faktiskt skriva. Vid en engångsoperation som rör hela arkivet vill man se vad som kommer att hända innan det händer.",
+        ],
+      },
+      {
+        heading: "Innehållet: från fritext till struktur",
+        paragraphs: [
+          "WordPress sparar artiklar som ett fält med fri HTML. Det fungerar, men gör innehållet svårt att återanvända — samma artikel kan inte enkelt visas annorlunda på mobil, och det går inte att lägga in en annonsplats mitt i texten utan att klistra in kod.",
+          "Vi byggde i stället upp artiklar av block: text, bild, citat, faktaruta, annonsplats och affiliatelänk. Redaktionen ser fortfarande en vanlig editor, men innehållet är strukturerat under ytan.",
+          "En konkret vinst: tester har egna fält för betygskriterier och pris. Det gör att samma data både visas enhetligt på sidan och kan levereras till Google som strukturerad information, vilket gör att betyg kan synas direkt i sökresultaten.",
+        ],
+      },
+      {
+        heading: "Ordningen som gör att det inte blir dramatiskt",
+        paragraphs: [
+          "Importera innehållet först och kontrollera antalet. I vårt fall bearbetades 61 poster, 60 importerades och en hoppades över medvetet eftersom den hamnat i fel kategori. Noll misslyckade, noll adresskrockar. Den sortens rapport ska du ha innan du går vidare.",
+          "Hämta hem bilderna. Generera omdirigeringarna och testa ett urval av dem mot den nya sajten innan domänen rörs.",
+          "Peka om domänen sist. Låt den gamla installationen ligga kvar en tid — inte som backup för innehållet, utan så att du kan gå tillbaka om något oväntat dyker upp.",
+          "Efter bytet: skicka in den nya sitemapen i Google Search Console och håll ett öga på rapporten över adresser som inte hittas. Den avslöjar snabbt om någon omdirigering saknas.",
+        ],
+      },
+      {
+        heading: "Vad du får på andra sidan",
+        paragraphs: [
+          "En sajt utan plugins som ska hållas uppdaterade och utan de säkerhetsuppdateringar som följer med dem. Innehåll som ligger strukturerat och går att använda på flera sätt. Och sidor som laddar snabbt eftersom de inte drar in ett dussin tredjepartsskript.",
+          "Det sista är inte en detalj för en annonsfinansierad sajt. Laddtid påverkar både hur många som stannar och hur Google värderar sidan.",
+          "Funderar ni på att lämna WordPress? Läs mer om hur vi jobbar under tjänster, eller hör av er så tittar vi på er sajt.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "10-hemsideideer-2026",
+    title: "10 idéer på hemsidor och webbappar att bygga 2026",
+    excerpt:
+      "Idéer som löser ett konkret problem, går att avgränsa och faktiskt kan tjäna pengar. Ingen av dem kräver ett stort team för att komma igång.",
+    description:
+      "Tio konkreta idéer på hemsidor, webbappar och system att bygga under 2026 — med vad som gör varje idé rimlig att avgränsa, vad den kan tjäna pengar på och vilka fallgropar som finns.",
+    category: "Produktstrategi",
+    tags: ["hemsida", "webbapp", "produktidéer", "2026", "saas", "mvp"],
+    readingTime: "10 min läsning",
+    publishedAt: "2026-07-22",
+    author: "VibeDev",
+    heroLabel: "Idéer & inspiration",
+    content: [
+      {
+        heading: "Vad som gör en idé byggbar",
+        paragraphs: [
+          "De flesta produktidéer stupar inte på tekniken utan på omfattningen. En idé som kräver att tre användargrupper finns på plats samtidigt för att vara värd något är svår att starta. En idé som är värdefull för en enda användare från dag ett är det inte.",
+          "Idéerna nedan har det gemensamt att de går att avgränsa. Du kan bygga en liten version, visa den för någon och få veta om du är på rätt spår.",
+          "En sak till: ingen av idéerna är värd något i sig. Värdet ligger i att du kan något om just den branschen, eller är beredd att lära dig. Det är den delen som inte går att köpa.",
+        ],
+      },
+      {
+        heading: "1–3: Verktyg som ersätter ett kalkylark",
+        paragraphs: [
+          "Bokningssystem för en smal bransch. Generella bokningssystem finns i mängd, men de förstår inte att en hundtrim tar olika lång tid beroende på ras, eller att en däckverkstad behöver veta bilmodellen. Att bygga för en enda bransch gör produkten skarpare och säljet enklare.",
+          "Offert- och kalkylverktyg för hantverkare. Många räknar fortfarande offerter i Excel och skickar dem som PDF via mejl. Ett verktyg som håller reda på prislistor, räknar fram totalen och låter kunden godkänna digitalt löser ett dagligt irritationsmoment.",
+          "Internt system för schemaläggning och avvikelser. Nästan varje verksamhet med personal i skift har ett kalkylark som någon äger och som går sönder när den personen är sjuk. Det är sällan tekniskt svårt — värdet ligger i att förstå just den arbetsplatsens regler.",
+        ],
+      },
+      {
+        heading: "4–6: Produkter byggda på öppna data",
+        paragraphs: [
+          "Sökbar tjänst ovanpå ett offentligt register. Sverige publicerar stora mängder data gratis — bolagsinformation, fastighetsdata, upphandlingar, statistik. Datan är sällan trevlig att jobba med, och det är just där värdet ligger: den som gör den sökbar och begriplig har byggt något användbart. Vi har gjort detta med Bolagsdata API, byggt på data från Bolagsverket och SCB.",
+          "Bevaknings- och notistjänst. Samma data, annan vinkel: i stället för att användaren söker, säger den till när något ändras. Ett nytt bolag i en bransch, en ny upphandling i en kommun, en ändring i ett register. Prenumeration är en naturlig affärsmodell.",
+          "Jämförelsetjänst för en avgränsad marknad. Fungerar när priser eller villkor är svåra att överblicka och det finns en tydlig affärsmodell — förmedling, annonsering eller premiumfunktioner. Kräver att du kan hålla datan aktuell, vilket är den verkliga kostnaden.",
+        ],
+      },
+      {
+        heading: "7–8: Innehåll och community",
+        paragraphs: [
+          "Nischat magasin med egen annonsförsäljning. Ett redaktionellt fokus som är smalt nog att annonsörer vet att de når rätt personer. Vi har byggt detta för Powerbike inom motor och fordon, med eget annonssystem, betalt företagsregister och affiliatelänkar som fyra separata intäktsben.",
+          "Community kring ett specifikt intresse. Svårare än det ser ut, eftersom värdet uppstår först när det finns medlemmar. Fungerar bäst när det finns ett verktyg som är användbart för en ensam användare — en samling, en logg, en kalender — och där gemenskapen är ett lager ovanpå.",
+        ],
+      },
+      {
+        heading: "9–10: E-handel och AI där det gör nytta",
+        paragraphs: [
+          "Webbshop för produkter som kräver rådgivning. Sortiment där kunden behöver veta att något passar — reservdelar till en specifik modell, produkter med storleksguide, varor som kräver konfiguration. Här räcker inte en standardbutik, och det är precis vad som gör idén värd att bygga.",
+          "AI som gör en avgränsad uppgift, inte allt. De AI-funktioner som faktiskt används löser ett specifikt moment: sammanfatta ett dokument, föreslå en produkttext, klassificera inkommande ärenden. Bygg det som en funktion i en produkt som är värdefull även utan AI. En chattruta ovanpå något ingen ville ha förblir något ingen vill ha.",
+        ],
+      },
+      {
+        heading: "Innan du börjar bygga",
+        paragraphs: [
+          "Prata med fem personer som har problemet. Inte för att fråga om de skulle använda det — det svarar folk artigt ja på — utan för att förstå hur de löser det idag. Om svaret är ett kalkylark har du något. Om svaret är att de inte gör något alls är problemet kanske inte tillräckligt stort.",
+          "Avgränsa till en användare och ett flöde. Bygg det ordentligt. Lägg till resten när någon efterfrågar det.",
+          "Vi hjälper gärna till att skära scopet innan en rad kod skrivs. Läs mer om hur vi jobbar, eller titta på projekt vi byggt.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "soka-i-miljontals-rader-postgres",
+    title: "Så fick vi en sökning över 3,5 miljoner företag från 50 sekunder till 1",
+    excerpt:
+      "Den naiva sökningen fungerar utmärkt i utveckling och kollapsar i produktion. Här är trappan i fyra steg som löste det — utan att byta databas.",
+    description:
+      "Konkret genomgång av hur vi optimerade fritextsökning i PostgreSQL över 3,5 miljoner rader: fyrstegssökning, index, begränsad kandidatmängd och tidsbudget mot databasen.",
+    category: "Tekniska val",
+    tags: ["postgresql", "sökning", "prestanda", "fulltext", "databas", "skalbarhet"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-07-18",
+    author: "VibeDev",
+    heroLabel: "Ur ett kundprojekt",
+    content: [
+      {
+        heading: "Problemet som inte syns i utveckling",
+        paragraphs: [
+          "När vi byggde Bolagsdata API — en sökbar databas över Sveriges företag — fungerade sökningen fint under utvecklingen. Med några tusen testrader svarade allt direkt.",
+          "Med hela registret inläst, 3,5 miljoner företag, tog vissa sökningar närmare en minut. Det är inte långsamt, det är trasigt.",
+          "Det intressanta är varför. Det handlade inte om att databasen var för liten eller fel vald. Det handlade om att vi bad den göra något orimligt.",
+        ],
+      },
+      {
+        heading: "Varför breda sökord fäller en databas",
+        paragraphs: [
+          "En sökning på ett ovanligt ord är billig: databasen hittar tio träffar och är klar. En sökning på ett vanligt ord är dyr på ett sätt som är lätt att underskatta.",
+          "Sök på \"bygg\" i ett svenskt företagsregister och du matchar över 200 000 bolag. Databasen måste då rangordna alla dessa för att kunna visa de tjugo bästa. Användaren kommer aldrig att se träff nummer 4 000 — men arbetet görs ändå.",
+          "Det är den insikten hela lösningen bygger på: att inte göra arbete vars resultat ingen kommer att titta på.",
+        ],
+      },
+      {
+        heading: "Trappan i fyra steg",
+        paragraphs: [
+          "Vi byggde om sökningen som en trappa där varje steg är dyrare än det förra, och där vi slutar så fort vi har tillräckligt.",
+          "Steg 1: ser frågan ut som ett organisationsnummer? Då är det en direktträff mot ett index. Klart på millisekunder, och det täcker en stor andel av verkliga sökningar.",
+          "Steg 2: rena filter. Ort, bolagsform, status — sådant som går mot indexerade kolumner och skär bort merparten av registret innan textsökningen ens börjar.",
+          "Steg 3: fulltextsökning med svensk språkhantering, så att böjningar av samma ord hittar varandra. Detta går mot ett index byggt för ändamålet.",
+          "Steg 4: fuzzy-matchning som fångar felstavningar — men bara om fulltexten gav för få träffar, och bara på första sidan. Det är det överlägset dyraste steget, och det körs därför nästan aldrig.",
+        ],
+      },
+      {
+        heading: "Två knep som gjorde större skillnad än väntat",
+        paragraphs: [
+          "Tak på antal kandidater. Vid rangordning tittar vi på maximalt några tusen träffar. Sökningen på \"bygg\" rangordnar alltså inte 200 000 rader utan ett urval. Resultatet användaren ser blir i praktiken detsamma; arbetet blir en bråkdel.",
+          "Tidsbudget mot databasen. Startsidan hämtar tre listor parallellt med ett tak på några sekunder. Hinner en fråga inte klart visas den kolumnen tom i stället för att hela sidan väntar. En sida som laddar med en tom lista är oändligt mycket bättre än en sida som inte laddar.",
+          "Effekten sammanlagt: tunga sökningar gick från cirka 50 sekunder till ungefär 1. Branschsidor från 69 sekunder till 0,2. Startsidans svarstid från 31 sekunder till 0,06.",
+        ],
+      },
+      {
+        heading: "Vad vi inte gjorde",
+        paragraphs: [
+          "Vi lade inte till en separat sökmotor. Det hade fungerat, men infört ett system till att drifta, synka och hålla i liv — för ett problem som gick att lösa i databasen vi redan hade.",
+          "Vi använde inte heller något ORM-lager för sökningen. Den är skriven som databasfunktioner i ren SQL, eftersom det är där prestandan avgörs och man vill ha exakt kontroll över vad som körs.",
+          "Regeln vi tar med oss: lägg inte till ett system förrän du har konstaterat att det befintliga faktiskt inte räcker. Ofta är svaret att man ber det om fel sak.",
+        ],
+      },
+      {
+        heading: "Om du sitter med något liknande",
+        paragraphs: [
+          "Börja med att mäta vad som faktiskt är långsamt, med produktionslik datamängd. Testdata på några tusen rader döljer precis den här klassen av problem.",
+          "Fråga sedan för varje steg: gör vi arbete vars resultat ingen kommer att se? Det är oftast där tiden ligger.",
+          "Vi hjälper gärna till med prestandaarbete på befintliga system. Läs mer under tjänster eller hör av er.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "personnummer-i-svensk-bolagsdata",
+    title: "Fällan i svensk bolagsdata: organisationsnumret kan vara ett personnummer",
+    excerpt:
+      "Bygger du något på svenska företagsregister sitter du sannolikt på personuppgifter utan att veta om det. Här är varför — och vad som faktiskt krävs.",
+    description:
+      "För enskilda näringsidkare är organisationsnumret ett personnummer. Vad det innebär för dig som bygger på svensk bolagsdata, och hur vi löste det tekniskt.",
+    category: "Tekniska val",
+    tags: ["gdpr", "personuppgifter", "bolagsdata", "öppna data", "databas", "integritet"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-07-15",
+    author: "VibeDev",
+    heroLabel: "Ur ett kundprojekt",
+    content: [
+      {
+        heading: "Detaljen som ändrar allt",
+        paragraphs: [
+          "Svensk företagsdata är offentlig och avgiftsfri. Bolagsverket och SCB publicerar den öppet, och det är fullt tillåtet att bygga produkter på den.",
+          "Men det finns en detalj som är lätt att missa: för enskilda näringsidkare är organisationsnumret personens personnummer. Det är inte ett undantag i marginalen — det rör en stor del av registret.",
+          "Ett register över svenska företag är därmed också ett register över personnummer. Och personnummer är personuppgifter, oavsett att de kommer från en offentlig källa.",
+        ],
+      },
+      {
+        heading: "Varför det inte räcker att dölja i gränssnittet",
+        paragraphs: [
+          "Den intuitiva lösningen är att inte visa numret på sidan. Det räcker inte, av två skäl.",
+          "För det första: om numret finns i svaret från servern spelar det ingen roll att gränssnittet inte visar det. Det går att läsa i webbläsarens utvecklarverktyg, och det följer med i varje anrop mot ett publikt API.",
+          "För det andra: adressen till sidan innehåller ofta numret. En länk som går att dela blir därmed en delad personuppgift — även om själva sidan inte visar något känsligt.",
+        ],
+      },
+      {
+        heading: "Vad vi gjorde i stället",
+        paragraphs: [
+          "Maskering i alla publika svar. Numret kortas ner så att bara den ofarliga delen återstår. Det sker i databasen, inte i applikationskoden — så att samma skydd gäller oavsett vilken väg datan hämtas.",
+          "Slumpade tokens i adresser. I stället för numret ligger en slumpad identifierare i länkar och i sitemapen. Adressen fungerar, går att dela och kan indexeras av sökmotorer — utan att exponera någon personuppgift.",
+          "Behörighet på kolumnnivå. Det här är den bit som är lätt att slarva med. Vanliga radbaserade behörighetsregler i Postgres kan avgöra vilka *rader* någon får se, men de kan inte filtrera bort enskilda *kolumner*. Vi fick därför dra in läsrättigheten på tabellen och dela ut den kolumn för kolumn.",
+        ],
+      },
+      {
+        heading: "En fallgrop i själva behörighetsarbetet",
+        paragraphs: [
+          "En detalj som kostade oss tid: en behörighet på hela tabellen åsidosätter behörigheter på enskilda kolumner. Det räcker alltså inte att lägga till kolumnbehörigheter — den bredare rättigheten måste först tas bort, annars gäller den fortfarande.",
+          "En annan: en kolumn behöver läsrättighet även om den bara används för att filtrera, aldrig visas. Villkoret läser kolumnen, och utan rättighet får du ett felmeddelande som inte alls pekar mot orsaken.",
+          "Ordningen mellan deploy och databasändring blev också viktig. Drar du in rättigheter innan applikationen som slutat använda dem är uppe får du fel i produktion. Vi dokumenterade ordningen direkt i migrationsfilen, eftersom det inte är något man minns om ett halvår.",
+        ],
+      },
+      {
+        heading: "Checklista om du bygger på svensk bolagsdata",
+        paragraphs: [
+          "Kontrollera om ditt dataset innehåller enskilda firmor. Gör det, innehåller det personnummer.",
+          "Utgå från vad som lämnar servern, inte vad som visas i gränssnittet. Granska API-svar, sitemaps, exportfiler och loggar.",
+          "Lägg skyddet så djupt ner som möjligt — helst i databasen. Skydd som ligger i ett enskilt gränssnitt gäller bara det gränssnittet.",
+          "Och tänk på adresserna. De är lätta att glömma och de sprids vidare av sig själva.",
+        ],
+      },
+      {
+        heading: "Offentligt betyder inte fritt fram",
+        paragraphs: [
+          "Att en uppgift är offentlig betyder att den får hämtas. Det betyder inte att den får spridas hur som helst, i vilken volym som helst, i vilket format som helst.",
+          "Skillnaden mellan att slå upp ett enskilt bolag och att kunna ladda ner en miljon personnummer i en fil är hela poängen med dataskyddsreglerna.",
+          "Bygger ni något på öppna data och vill ha ett par ögon på hanteringen? Hör gärna av er.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "hyra-eller-kopa-hemsida",
+    title: "Hyra eller köpa hemsida — vad passar din verksamhet?",
+    excerpt:
+      "Att köpa en hemsida är en investering med en engångskostnad. Att hyra är en driftskostnad med löpande underhåll. Här är skillnaden i praktiken.",
+    description:
+      "Genomgång av skillnaden mellan att köpa och hyra hemsida: kostnadsstruktur, ägande, underhåll och vilka verksamheter som passar för respektive modell.",
+    category: "Produktstrategi",
+    tags: ["hyra hemsida", "hemsida kostnad", "webbyrå", "abonnemang", "drift", "underhåll"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-07-11",
+    author: "VibeDev",
+    heroLabel: "Så tänker vi",
+    content: [
+      {
+        heading: "Två sätt att betala för samma sak",
+        paragraphs: [
+          "När du behöver en ny hemsida finns i grunden två upplägg. Antingen betalar du en engångssumma för att få den byggd och äger den sedan. Eller så betalar du en löpande avgift och får den byggd, driftad och underhållen så länge avtalet gäller.",
+          "Ingen av modellerna är bättre än den andra. De passar olika verksamheter och olika situationer.",
+          "Det som ofta glöms bort i jämförelsen är att en köpt hemsida inte är klar när den är levererad. Den behöver fortfarande hosting, certifikat, uppdateringar, säkerhetsrättningar och backup. De kostnaderna försvinner inte — de flyttar bara till dig.",
+        ],
+      },
+      {
+        heading: "Vad som faktiskt kostar efter lansering",
+        paragraphs: [
+          "En hemsida som ingen rör är en hemsida som långsamt går sönder. Ramverk får säkerhetsuppdateringar. Certifikat ska förnyas. Integrationer ändrar sina gränssnitt. Backup ska tas — och, viktigare, testas.",
+          "För många mindre verksamheter blir det här den verkliga kostnaden. Inte bygget, utan att det inte finns någon som äger sajten efter leverans. Ett år senare är den långsam, ett år till och den slutar fungera.",
+          "Den som köper en hemsida behöver alltså också bestämma vem som sköter den — internt eller inköpt. Räknar man in det blir jämförelsen mellan modellerna mer rättvis.",
+        ],
+      },
+      {
+        heading: "Så ser vår hyrmodell ut",
+        paragraphs: [
+          "Vi har en startavgift på 4 999 kr. Månadsavgiften bestäms av projektets omfattning och anges i offerten — en enkel företagssida och ett större skräddarsytt system är inte samma sak, och vi tycker inte att de ska kosta samma sak.",
+          "I månadsavgiften ingår hosting, SSL, drift och löpande underhåll, backup, support och ett avtalat antal timmar ändringar per månad. Antalet timmar bestäms i offerten.",
+          "Det som kan tillkomma är domän, samt tjänster som kräver egna abonnemang — exempelvis AI-konton eller SMS-utskick.",
+          "Ingen bindningstid, tre månaders uppsägningstid. Vi äger lösningen så länge du hyr den; du äger ditt innehåll, din data och din domän. Utköp är möjligt, och villkoren står i offerten.",
+        ],
+      },
+      {
+        heading: "När hyra passar bättre",
+        paragraphs: [
+          "När du inte har någon som sköter tekniken internt och inte vill ha det. Då är det löpande underhållet inte en extra kostnad utan hela poängen.",
+          "När du vill ha förutsägbara kostnader i stället för en stor engångsutgift. Särskilt i ett tidigt skede, där kapitalet gör mer nytta i verksamheten.",
+          "När sajten behöver ändras löpande. Ingår ett antal timmar varje månad blir småjusteringar en självklarhet i stället för ett litet projekt varje gång.",
+        ],
+      },
+      {
+        heading: "När köpa passar bättre",
+        paragraphs: [
+          "När ni har egen teknisk kompetens och vill äga och vidareutveckla lösningen själva.",
+          "När sajten är en central del av affären och ni vill ha full kontroll över koden, hostingen och takten.",
+          "När ni redan har en förvaltningsbudget och en tydlig plan för vem som gör vad efter lansering.",
+        ],
+      },
+      {
+        heading: "Frågan som avgör",
+        paragraphs: [
+          "Vem sköter sajten om ett år? Har ni ett tydligt svar på den frågan fungerar båda modellerna. Har ni inte det är hyrmodellen sannolikt tryggare — då är underhållet någon annans ansvar i stället för något som glöms bort.",
+          "Vill du veta vad hyrmodellen skulle kosta för just ditt projekt? Skicka en offertförfrågan så räknar vi ut månadskostnaden utifrån omfattningen. Föredrar ni att köpa lösningen tittar vi gärna på det i stället.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "annonser-utan-att-sanka-sajten",
+    title: "Annonser utan att sänka sajten — så byggde vi ett annonssystem som inte förstör prestandan",
+    excerpt:
+      "Annonser gör sidor långsammare och får innehåll att hoppa. Båda sakerna straffas av Google. Så här löste vi det utan att offra intäkten.",
+    description:
+      "Hur vi byggde ett eget annonssystem som varken bryter sidcachen eller orsakar layouthopp: separat edge-endpoint, reserverad höjd och laddning först vid behov.",
+    category: "Tekniska val",
+    tags: ["annonser", "webbprestanda", "core web vitals", "cache", "adsense", "cls"],
+    readingTime: "7 min läsning",
+    publishedAt: "2026-07-08",
+    author: "VibeDev",
+    heroLabel: "Ur ett kundprojekt",
+    content: [
+      {
+        heading: "Konflikten i botten",
+        paragraphs: [
+          "En annonsfinansierad sajt har ett inbyggt problem. Annonser är intäkten — men annonser gör också sidan långsammare och får innehållet att hoppa när de laddas in.",
+          "Båda sakerna påverkar hur Google värderar sidan, och båda gör att besökare lämnar. Ju hårdare man försöker tjäna pengar, desto sämre blir produkten som ska tjäna dem.",
+          "När vi byggde publiceringsplattformen för Powerbike var det här kärnan i uppdraget: annonserna får inte kosta mer i prestanda än de drar in.",
+        ],
+      },
+      {
+        heading: "Problem 1: annonser förstör cachen",
+        paragraphs: [
+          "Snabba sidor bygger på att samma färdiga sida kan skickas till alla besökare. Ingen väntan på databas, ingen rendering per person.",
+          "Annonser vill det motsatta: de ska roteras, olika besökare ska se olika kampanjer, och visningar ska räknas. Gör man annonsvalet när sidan byggs blir varje besökares sida unik — och då försvinner hela cachevinsten.",
+          "Vår lösning var att skilja på de två. Sidan cachas som vanligt och innehåller ingen annonsinformation. Annonsen hämtas separat med en egen, mycket lätt förfrågan som körs nära besökaren. Sidan förblir snabb; bara annonsen är dynamisk.",
+        ],
+      },
+      {
+        heading: "Problem 2: innehåll som hoppar",
+        paragraphs: [
+          "Det klassiska irritationsmomentet: du börjar läsa, en annons laddas in ovanför texten, och allt hoppar nedåt. Google mäter det här måttet direkt och väger in det i rankningen.",
+          "Två saker löser det. Annonsplatsen får en bestämd höjd redan innan annonsen finns — utrymmet är alltså reserverat, och när annonsen dyker upp fylls en yta som redan var tom i stället för att skjuta undan något.",
+          "Dessutom laddas annonsen först när besökaren närmar sig den. Annonser långt ned på sidan hämtas alltså inte alls om ingen scrollar dit, vilket gör att den första sidvisningen blir snabbare.",
+        ],
+      },
+      {
+        heading: "Egna annonser med extern fallback",
+        paragraphs: [
+          "Sajten säljer egna annonsplatser, med betalning via Stripe. Varje position kan ha flera aktiva kampanjer som roteras viktat.",
+          "Finns ingen såld kampanj på en position fylls den automatiskt med ett annonsnätverk. Positionen står alltså aldrig tom — och den egna, mer lönsamma försäljningen har alltid företräde.",
+          "Klick går via en egen adress som räknar och skickar vidare. Det ger statistik utan att tredjepartsskript behöver följa besökaren.",
+        ],
+      },
+      {
+        heading: "Statistik utan cookies",
+        paragraphs: [
+          "Vi räknar artikelvisningar med ett litet anrop som skickas en gång per artikel och besök. Det som skickas är artikelns id — inget om personen.",
+          "Servern räknar upp en dagssiffra. Redaktionen ser vilka artiklar som läses; ingen enskild besökare kan följas.",
+          "Det gör dessutom cookiebanner-frågan enklare: statistik som inte identifierar någon kräver inte samma hantering som spårning som gör det.",
+        ],
+      },
+      {
+        heading: "Vad man tar med sig",
+        paragraphs: [
+          "Det går att ha annonser och en snabb sajt samtidigt, men det kräver att man skiljer på vad som måste vara dynamiskt och vad som inte behöver vara det. Nästan allt på en artikelsida är statiskt. Det är bara annonsen som inte är det.",
+          "Reservera alltid utrymmet innan innehållet finns. Det gäller inte bara annonser utan lika mycket bilder och inbäddat innehåll.",
+          "Driver ni en innehållssajt som tappar i prestanda? Läs mer under tjänster eller hör av er.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "multi-tenant-saas-radsakerhet",
+    title: "Multi-tenant SaaS: så håller du kunders data isolerad på riktigt",
+    excerpt:
+      "Alla kunder i samma databas är standard i SaaS. Frågan är vad som hindrar kund A från att se kund B:s data — och svaret får inte vara \"koden\".",
+    description:
+      "Praktisk genomgång av tenant-isolering i multi-tenant SaaS: radsäkerhet i databasen, varför applikationskoden inte räcker, och hur du testar isoleringen automatiskt.",
+    category: "Tekniska val",
+    tags: ["multi-tenant", "saas", "row level security", "postgresql", "säkerhet", "arkitektur"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-07-04",
+    author: "VibeDev",
+    heroLabel: "Ur ett kundprojekt",
+    content: [
+      {
+        heading: "Frågan varje SaaS måste kunna besvara",
+        paragraphs: [
+          "I en multi-tenant-produkt ligger alla kunder i samma databas. Det är inte en genväg utan det normala — det är så du kan drifta en produkt i stället för hundra.",
+          "Men det ställer en fråga som måste ha ett riktigt svar: vad hindrar kund A från att se kund B:s data?",
+          "Om svaret är \"vi filtrerar på kund-id i koden\" är svaret otillräckligt. Det räcker med ett enda ställe där någon glömmer filtret — en ny endpoint, en rapport, ett exportjobb — så läcker data mellan kunder.",
+        ],
+      },
+      {
+        heading: "Lägg spärren i databasen",
+        paragraphs: [
+          "När vi byggde VIBESHOPS, en multi-tenant e-handelsplattform där varje handlare driver sin egen butik, lade vi isoleringen i databasen i stället för i koden.",
+          "Postgres har radsäkerhet: regler som säger vilka rader en viss anslutning överhuvudtaget får se. Med det på plats blir en glömd `where`-sats inte längre en säkerhetsincident — databasen returnerar helt enkelt inga främmande rader.",
+          "Poängen är att skyddet gäller oavsett vem som frågar och hur. Ny kod, en rapport, ett skript som någon kör manuellt — samma regler.",
+          "Det viktiga är att det gäller samtliga tabeller. En enda tabell utan regler är en väg runt hela skyddet, och det är oftast en oansenlig tabell — loggar, bilagor, utkast — som glöms bort.",
+        ],
+      },
+      {
+        heading: "Testa isoleringen, tro inte på den",
+        paragraphs: [
+          "Radsäkerhet är bara skyddande om reglerna faktiskt är rätt. Det är lätt att skriva en regel som ser rätt ut och som inte täcker det man tror.",
+          "Vi kör därför skarpa korstester automatiskt vid varje kodändring: logga in som kund A, försök läsa kund B:s data, förvänta noll rader. Går testet igenom med data har något gått sönder och bygget stoppas.",
+          "Det här är den enskilt viktigaste investeringen i en multi-tenant-produkt. Reglerna kommer att ändras när nya tabeller tillkommer, och utan test upptäcker du glappet först när någon rapporterar det.",
+        ],
+      },
+      {
+        heading: "Isolering räcker inte — beräkna rätt saker på servern",
+        paragraphs: [
+          "En näraliggande fälla i e-handel: att lita på belopp som kommer från webbläsaren. Priser, rabatter och summor måste räknas på servern, varje gång.",
+          "Vi räknar dessutom alla belopp i heltal öre i stället för decimaltal. Decimaltal i datorer har avrundningsfel som är helt harmlösa i de flesta sammanhang och direkt skadliga i en kassa.",
+          "Kortuppgifter passerar aldrig våra servrar. Det minskar både säkerhetsrisken och regelbördan avsevärt.",
+        ],
+      },
+      {
+        heading: "Egen domän per kund",
+        paragraphs: [
+          "En förväntan i multi-tenant-produkter är att varje kund ska kunna använda sin egen domän. Det låter enkelt och innehåller en del arbete: certifikat måste utfärdas och förnyas per domän, och trafiken ska hitta rätt kund.",
+          "Det finns färdiga tjänster för just detta som gör att man slipper bygga certifikathanteringen själv. Vi använder en sådan, med subdomän direkt från start och möjlighet att koppla egen domän när kunden vill.",
+          "Rådet: bygg inte certifikathantering själv om du inte måste. Det är ett litet problem som växer när kunderna blir många.",
+        ],
+      },
+      {
+        heading: "Checklista",
+        paragraphs: [
+          "Radsäkerhet på samtliga tabeller, inte de flesta. Automatiska korstester som körs vid varje ändring. Beräkningar av pengar på servern, i heltal. Certifikathantering som du inte äger själv.",
+          "Och en regel som är lätt att formulera men kräver disciplin: när en ny tabell läggs till ska den ha regler och test från början, inte i efterhand.",
+          "Bygger ni multi-tenant och vill ha ett par ögon på isoleringen? Hör av er.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "cookie-samtycke-ga4-korrekt",
+    title: "Cookie-samtycke och Google Analytics — så gör du rätt utan att tappa all data",
+    excerpt:
+      "De flesta svenska sajter laddar Analytics innan besökaren har sagt ja. Det är fel ordning, och det är enklare att rätta än man tror.",
+    description:
+      "Praktisk genomgång av hur cookie-samtycke bör fungera med Google Analytics 4 på en svensk sajt: rätt ordning, teknisk implementation och vad som faktiskt kräver samtycke.",
+    category: "Tekniska val",
+    tags: ["cookies", "gdpr", "google analytics", "ga4", "samtycke", "webbanalys"],
+    readingTime: "6 min läsning",
+    publishedAt: "2026-07-01",
+    author: "VibeDev",
+    heroLabel: "Så tänker vi",
+    content: [
+      {
+        heading: "Det vanligaste felet",
+        paragraphs: [
+          "Mönstret känns igen från de flesta svenska sajter: en cookiebanner dyker upp längst ned, och Google Analytics har redan laddats och satt sina cookies innan du hunnit läsa den.",
+          "Det är fel ordning. Poängen med samtycke är att det ska inhämtas innan spårningen börjar, inte informeras om efteråt.",
+          "Bannern är alltså inte problemet — ordningen är. Och den är enklare att rätta än de flesta tror.",
+        ],
+      },
+      {
+        heading: "Vad som faktiskt kräver samtycke",
+        paragraphs: [
+          "Cookies som är nödvändiga för att sajten ska fungera kräver inte samtycke. Det handlar om sådant som håller reda på en inloggning eller innehållet i en varukorg — utan dem går tjänsten helt enkelt inte att använda.",
+          "Cookies för statistik och marknadsföring kräver samtycke. Google Analytics hör dit. Att analysen är anonymiserad ändrar inte att den sätter cookies på besökarens enhet.",
+          "Gränsdragningen är alltså inte \"är detta känsligt\" utan \"behövs detta för att tjänsten ska fungera\". Statistik är värdefullt för dig — men sajten fungerar utan det.",
+        ],
+      },
+      {
+        heading: "Så byggde vi det på den här sajten",
+        paragraphs: [
+          "Analytics-skriptet ligger inte i sidmallen. Det laddas av en komponent som först kontrollerar om besökaren har godkänt statistik. Har hen inte gjort det laddas skriptet aldrig — det finns alltså inget att blockera i efterhand, eftersom det aldrig kommer in.",
+          "Valet sparas lokalt i webbläsaren. Har besökaren redan svarat visas ingen banner igen, och skriptet laddas eller laddas inte utifrån det tidigare valet.",
+          "Bannern har två likvärdiga val: godkänn statistik eller endast nödvändiga. Ett mörkt mönster där \"godkänn\" är en stor knapp och \"neka\" är en grå länk i finstilt är inte ett giltigt samtycke.",
+          "Vi lade dessutom in en funktion för att ändra sitt val i efterhand, eftersom ett samtycke ska gå att ta tillbaka lika enkelt som det gavs.",
+        ],
+      },
+      {
+        heading: "Men förlorar man inte all data?",
+        paragraphs: [
+          "Du förlorar besökarna som säger nej. Hur många det blir varierar, och du får räkna med att siffrorna i Analytics blir lägre än tidigare.",
+          "Två saker gör det mindre dramatiskt än det låter. För det första är trenderna fortfarande användbara även om nivån är lägre — du ser vad som ökar och minskar.",
+          "För det andra kan mycket mätas utan cookies alls. Sidvisningar per artikel, varifrån trafiken kommer och hur många som klickar på en knapp går att räkna på serversidan utan att identifiera någon. Vi har byggt just det åt en kund som ville ha läsarstatistik utan spårning.",
+        ],
+      },
+      {
+        heading: "Kort checklista",
+        paragraphs: [
+          "Ladda inga spårningsskript innan samtycke — blockera dem inte i efterhand, låt bli att ladda dem alls. Gör \"neka\" lika lätt som \"godkänn\". Gör det möjligt att ändra sig senare.",
+          "Beskriv i cookiepolicyn vilka cookies som faktiskt sätts, vad de gör och hur länge de lever. En generisk text som inte stämmer med verkligheten är sämre än ingen alls.",
+          "Osäker på hur er sajt gör idag? Öppna utvecklarverktygen, ladda om sidan och titta på vilka cookies som sätts innan du har klickat på något. Det svarar på frågan direkt.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "oppna-data-som-produkt",
+    title: "Öppna data som produkt — vad som faktiskt krävs för att göra offentlig data användbar",
+    excerpt:
+      "Datan är gratis och tillgänglig för alla. Ändå finns det knappt några bra produkter byggda på den. Här är varför — och vad arbetet består av.",
+    description:
+      "Vad som krävs för att bygga en produkt på svenska öppna data: filformat, teckenkodning, importer som tål avbrott och varför själva datan är den enkla delen.",
+    category: "Tekniska val",
+    tags: ["öppna data", "bolagsverket", "scb", "datapipeline", "import", "ixbrl"],
+    readingTime: "8 min läsning",
+    publishedAt: "2026-06-26",
+    author: "VibeDev",
+    heroLabel: "Ur ett kundprojekt",
+    content: [
+      {
+        heading: "Gratis är inte samma sak som lättanvänt",
+        paragraphs: [
+          "Sverige publicerar stora mängder offentlig data avgiftsfritt. Bolagsverket lägger ut företagsregistret, SCB lägger ut branschklassificeringar, och årsredovisningar finns att hämta i maskinläsbart format.",
+          "Ändå möts den som vill använda företagsinformation nästan alltid av betalväggar och säljsamtal. Frågan är varför, om datan är fri.",
+          "Svaret är att datan är fri men obekväm. Den kommer i stora bulkfiler, i flera format, med olika teckenkodning — och att göra den användbar är faktiskt ett arbete. Det arbetet är produkten.",
+        ],
+      },
+      {
+        heading: "Vad du möts av i praktiken",
+        paragraphs: [
+          "Filerna är stora och packade. Att packa upp dem till disk innan man läser dem fungerar på en laptop och inte på en server med begränsat utrymme. Man vill läsa dem strömmande, rakt ur arkivet.",
+          "Formaten varierar. Vi byggde en läsare som hanterar XML, CSV, TSV och radbaserad JSON genom samma kodväg och som upptäcker avgränsare automatiskt, eftersom det annars blir en separat importrutin per källa.",
+          "Teckenkodningen varierar också — Bolagsverket levererar i ett format och SCB i ett annat. Läser man fel blir svenska tecken förstörda, och det upptäcker man ofta först när en användare söker på ett företagsnamn som inte går att hitta.",
+          "Årsredovisningarna är egna djuret: ett maskinläsbart format där varje bolags bokslut ligger i en egen fil, packad i tusentals arkiv. Vi mappade ett trettiotal begrepp ur standarden till kolumner för att få ut nyckeltal.",
+        ],
+      },
+      {
+        heading: "Importer som tål att gå sönder",
+        paragraphs: [
+          "En import som tar timmar kommer att avbrytas. Nätverket glappar, servern startas om, någon trycker fel. Frågan är inte om utan hur ofta.",
+          "Därför skrev vi importen så att den kan köras om utan att skapa dubbletter, och så att den efter ett avbrott hoppar förbi det som redan är inläst i stället för att börja från början.",
+          "Vi skriver i batchar med gradvis längre väntetid vid problem, eftersom en import som hamrar på databasen kan göra den långsam för alla andra samtidigt.",
+          "För årsredovisningarna bokförs varje färdig fil. En import som kraschar vid fil 600 av nästan 800 fortsätter där den slutade — inte om från noll.",
+        ],
+      },
+      {
+        heading: "Datakvalitet är en produktfråga",
+        paragraphs: [
+          "Öppna data innehåller fel. Ett konkret exempel: enstaka bokslut har belopp angivna i fel storleksordning, vilket gör att ett litet bolag plötsligt ser ut att omsätta hundratals miljoner.",
+          "Visar man en topplista utan filter hamnar de här felen överst — och då ser hela produkten opålitlig ut, även om resten av datan är korrekt.",
+          "Vi lade därför in rimlighetsfilter på de listor som visas publikt. Det är inte att dölja data; det är att inte låta uppenbara inmatningsfel definiera förstaintrycket.",
+          "En annan detalj: olika källor formaterar text olika. SCB levererar företagsnamn i versaler medan Bolagsverket har korrekt skiftläge. Vi normaliserar det som behöver normaliseras, utan att förstöra det som redan är rätt.",
+        ],
+      },
+      {
+        heading: "Skalan ställer egna krav",
+        paragraphs: [
+          "3,5 miljoner företag betyder potentiellt miljontals sidor. En sitemap kan innehålla ett begränsat antal adresser, så det behövs ett index som pekar på flera delfiler.",
+          "Att räkna exakt antal rader i en tabell med miljontals poster tar längre tid än vad en sökmotor väntar. Vi uppskattar antalet ur databasens egen statistik i stället, vilket är tillräckligt bra för ändamålet och tar millisekunder.",
+          "Poängen: vid den här storleken behöver även triviala saker som en sitemap tänkas igenom.",
+        ],
+      },
+      {
+        heading: "Var värdet ligger",
+        paragraphs: [
+          "Inte i datan — den har alla tillgång till. Värdet ligger i att göra den sökbar, begriplig och pålitlig. Det är importarbetet, sökningen, datakvaliteten och presentationen.",
+          "Det är också därför öppna data är en rimlig grund för en produkt: konkurrensen sker på hantverket, inte på tillgången till råvaran.",
+          "Sitter ni på data — offentlig eller egen — som borde vara sökbar? Vi hjälper gärna till. Läs mer under tjänster eller hör av er.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "claude-opus-5-vad-det-betyder",
     title: "Claude Opus 5 är här — vad det faktiskt betyder för dig som bygger produkt",
     excerpt:
