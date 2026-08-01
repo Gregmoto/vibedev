@@ -12,6 +12,12 @@
   "observability": {
     "enabled": true
   },
+  "r2_buckets": [
+    {
+      "binding": "TICKET_ATTACHMENTS",
+      "bucket_name": "vibedev-ticket-attachments"
+    }
+  ],
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",

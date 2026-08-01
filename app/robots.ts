@@ -9,7 +9,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/admin/", "/api/"],
+        // /arende/ nås med en hemlig token i länken — den ska varken följas
+        // eller indexeras, oavsett hur någon råkar dela länken vidare.
+        disallow: ["/admin", "/admin/", "/api/", "/arende/"],
       },
     ],
     host: settings.siteUrl,

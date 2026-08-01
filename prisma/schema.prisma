@@ -168,21 +168,21 @@ model Page {
 }
 
 model SiteSettings {
-  id                               String   @id @default(cuid())
-  siteName                         String   @default("VibeDev")
-  siteUrl                          String   @default("https://vibedev.se")
-  contactEmail                     String?
-  phone                            String?
-  address                          String?
-  footerText                       String?
-  socialLinks                      Json?
-  defaultSeoTitle                  String?
-  defaultMetaDescription           String?
-  ga4MeasurementId                 String?
-  ga4CustomScript                  String?
-  googleSearchConsoleVerification  String?
-  createdAt                        DateTime @default(now())
-  updatedAt                        DateTime @updatedAt
+  id                              String   @id @default(cuid())
+  siteName                        String   @default("VibeDev")
+  siteUrl                         String   @default("https://vibedev.se")
+  contactEmail                    String?
+  phone                           String?
+  address                         String?
+  footerText                      String?
+  socialLinks                     Json?
+  defaultSeoTitle                 String?
+  defaultMetaDescription          String?
+  ga4MeasurementId                String?
+  ga4CustomScript                 String?
+  googleSearchConsoleVerification String?
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
 }
 
 model ContactSubmission {
@@ -192,8 +192,8 @@ model ContactSubmission {
   phone     String?
   company   String?
   message   String   @db.Text
-  type      String   // "contact" | "booking"
-  metadata  Json?    // extra fält för booking (projectType, budget, timeline osv.)
+  type      String // "contact" | "booking"
+  metadata  Json? // extra fält för booking (projectType, budget, timeline osv.)
   status    String   @default("new") // "new" | "read" | "replied"
   createdAt DateTime @default(now())
 
@@ -205,10 +205,119 @@ model ContactSubmission {
 model LeadMagnetSubscriber {
   id        String   @id @default(cuid())
   email     String   @unique
-  source    String   // "vibecoding-guide"
+  source    String // "vibecoding-guide"
   confirmed Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@index([createdAt])
   @@index([source])
+}
+
+// ── Ärendehantering (ticketsystem) ───────────────────────────────────────────
+
+/// Ett konto motsvarar en inkorg: egen inbound-adress och egen svarsadress.
+/// Flera konton kan finnas parallellt och hanteras från adminpanelen.
+model TicketAccount {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  /// Adressen kunder mejlar, t.ex. "vibedev@inbound.vibedev.se"
+  inboundEmail   String   @unique
+  /// Avsändare för svar. Bör vara samma adress så att kundens svar kommer tillbaka hit.
+  replyFromName  String
+  replyFromEmail String
+  /// Valfri påskrift som läggs sist i utgående svar
+  signature      String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tickets Ticket[]
+
+  @@index([isActive])
+}
+
+enum TicketStatus {
+  OPEN
+  PENDING
+  CLOSED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+model Ticket {
+  /// Löpnummer som visas för kunden, t.ex. #1042
+  number    Int           @unique @default(autoincrement())
+  id        String        @id @default(cuid())
+  accountId String
+  account   TicketAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  subject String
+  status  TicketStatus @default(OPEN)
+
+  customerEmail String
+  customerName  String?
+  /// Språk som upptäckts i kundens första mejl (ISO 639-1), styr autosvar
+  language      String  @default("sv")
+
+  /// Hemlig token för kundsidan — länken i mejlet är nyckeln
+  publicToken String @unique
+
+  /// Kort nyckel i svarsadressen, t.ex. "support+k3f9a2@inbound.vibedev.se".
+  /// Medvetet skild från publicToken: svarsadressen syns i headers på varje
+  /// vidarebefordrat mejl, och får därför inte vara nyckeln till kundportalen.
+  replyKey String @unique
+
+  lastMessageAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  messages TicketMessage[]
+
+  @@index([accountId, status, lastMessageAt])
+  @@index([customerEmail])
+}
+
+model TicketMessage {
+  id       String @id @default(cuid())
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  direction MessageDirection
+  fromEmail String
+  fromName  String?
+  bodyText  String
+  bodyHtml  String?
+
+  /// Resends id för inkommande mejl (hämtning av innehåll/bilagor) resp. utgående utskick
+  resendEmailId   String?
+  /// Message-ID från mejlet, används för trådning
+  messageIdHeader String?
+
+  createdAt DateTime @default(now())
+
+  attachments TicketAttachment[]
+
+  @@index([ticketId, createdAt])
+  @@index([resendEmailId])
+}
+
+model TicketAttachment {
+  id        String        @id @default(cuid())
+  messageId String
+  message   TicketMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  filename           String
+  contentType        String
+  sizeBytes          Int
+  /// Antingen nyckel i egen lagring, eller Resends attachment-id för inkommande
+  storageKey         String?
+  resendAttachmentId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([messageId])
 }
