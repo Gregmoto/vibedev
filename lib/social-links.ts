@@ -43,11 +43,14 @@ export function parseSocialLinksInput(value: string): SocialLink[] {
 }
 
 export function readSocialLinks(value: Prisma.JsonValue | null | undefined): SocialLink[] {
+  // null/undefined = aldrig konfigurerat -> visa standardlänkarna.
+  // En array (även tom) = ett medvetet val i adminpanelen -> respektera den.
+  // Utan den skillnaden kommer borttagna länkar tillbaka vid nästa sidladdning.
   if (!Array.isArray(value)) {
     return DEFAULT_SOCIAL_LINKS;
   }
 
-  const links = value
+  return value
     .map((item) => {
       if (!item || typeof item !== "object") {
         return null;
@@ -59,8 +62,6 @@ export function readSocialLinks(value: Prisma.JsonValue | null | undefined): Soc
       return label && url && isSafeHttpUrl(url) ? { label, url } : null;
     })
     .filter((item): item is SocialLink => Boolean(item));
-
-  return links.length > 0 ? links : DEFAULT_SOCIAL_LINKS;
 }
 
 export function formatSocialLinks(value: unknown) {

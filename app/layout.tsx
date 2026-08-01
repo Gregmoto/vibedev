@@ -61,12 +61,18 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           dangerouslySetInnerHTML={{
             __html: JSON.stringify([
               getOrganizationSchema({
-                siteName: settings.siteName,
-                siteUrl:  settings.siteUrl,
+                siteName:     settings.siteName,
+                siteUrl:      settings.siteUrl,
+                socialLinks:  settings.socialLinks,
+                contactEmail: settings.contactEmail,
+                phone:        settings.phone,
               }),
               getLocalBusinessSchema({
-                siteName: settings.siteName,
-                siteUrl:  settings.siteUrl,
+                siteName:     settings.siteName,
+                siteUrl:      settings.siteUrl,
+                socialLinks:  settings.socialLinks,
+                contactEmail: settings.contactEmail,
+                phone:        settings.phone,
               }),
               websiteSchema({
                 siteName: settings.siteName,

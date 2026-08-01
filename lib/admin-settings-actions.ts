@@ -60,16 +60,20 @@ function toData(parsed: z.infer<typeof settingsSchema>): Prisma.SiteSettingsUnch
   return {
     siteName: parsed.siteName,
     siteUrl: parsed.siteUrl,
-    contactEmail: parsed.contactEmail || null,
-    phone: parsed.phone || null,
-    address: parsed.address || null,
-    footerText: parsed.footerText || null,
-    socialLinks: parsed.socialLinks ? parseSocialLinksInput(parsed.socialLinks) : Prisma.JsonNull,
-    defaultSeoTitle: parsed.defaultSeoTitle || null,
-    defaultMetaDescription: parsed.defaultMetaDescription || null,
-    ga4MeasurementId: parsed.ga4MeasurementId || null,
+    // Tomma fält sparas som tom sträng, inte null. null betyder "aldrig satt" och
+    // ger standardvärdet vid läsning — sparar vi null försvinner det man just tömt
+    // och kommer tillbaka vid nästa sidladdning.
+    contactEmail: parsed.contactEmail ?? "",
+    phone: parsed.phone ?? "",
+    address: parsed.address ?? "",
+    footerText: parsed.footerText ?? "",
+    // Tom lista är ett giltigt val (inga sociala länkar), till skillnad från JsonNull.
+    socialLinks: parseSocialLinksInput(parsed.socialLinks ?? ""),
+    defaultSeoTitle: parsed.defaultSeoTitle ?? "",
+    defaultMetaDescription: parsed.defaultMetaDescription ?? "",
+    ga4MeasurementId: parsed.ga4MeasurementId ?? "",
     ga4CustomScript: parsed.ga4CustomScript || null,
-    googleSearchConsoleVerification: parsed.googleSearchConsoleVerification || null,
+    googleSearchConsoleVerification: parsed.googleSearchConsoleVerification ?? "",
   };
 }
 

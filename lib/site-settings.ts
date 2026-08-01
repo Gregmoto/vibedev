@@ -75,19 +75,42 @@ export async function getResolvedSiteSettings(): Promise<ResolvedSiteSettings> {
   return mergeSiteSettings(settings);
 }
 
+/**
+ * null/undefined = fältet har aldrig satts -> använd standardvärdet.
+ * Tom sträng = admin har medvetet tömt fältet -> respektera det.
+ *
+ * Skillnaden är hela poängen: med `||` är "" falsy, så varje tömt fält
+ * återgick till sitt standardvärde nästa gång sidan lästes in.
+ */
+function resolveText(
+  value: string | null | undefined,
+  fallback: string | null,
+): string | null {
+  return value === null || value === undefined ? fallback : value.trim();
+}
+
 export function mergeSiteSettings(settings?: SiteSettings | null): ResolvedSiteSettings {
   return {
+    // siteName och siteUrl måste ha ett värde — en tom siteUrl kraschar
+    // metadataBase och canonical-länkar. De faller därför alltid tillbaka.
     siteName: settings?.siteName?.trim() || defaultSiteSettings.siteName,
     siteUrl: settings?.siteUrl?.trim() || defaultSiteSettings.siteUrl,
-    contactEmail: settings?.contactEmail?.trim() || defaultSiteSettings.contactEmail,
-    phone: settings?.phone?.trim() || defaultSiteSettings.phone,
-    address: settings?.address?.trim() || defaultSiteSettings.address,
-    footerText: settings?.footerText?.trim() || defaultSiteSettings.footerText,
+
+    contactEmail: resolveText(settings?.contactEmail, defaultSiteSettings.contactEmail),
+    phone: resolveText(settings?.phone, defaultSiteSettings.phone),
+    address: resolveText(settings?.address, defaultSiteSettings.address),
+    footerText: resolveText(settings?.footerText, defaultSiteSettings.footerText),
     socialLinks: readSocialLinks(settings?.socialLinks),
-    defaultSeoTitle: settings?.defaultSeoTitle?.trim() || defaultSiteSettings.defaultSeoTitle,
-    defaultMetaDescription:
-      settings?.defaultMetaDescription?.trim() || defaultSiteSettings.defaultMetaDescription,
-    ga4MeasurementId: settings?.ga4MeasurementId?.trim() || defaultSiteSettings.ga4MeasurementId,
+    defaultSeoTitle: resolveText(settings?.defaultSeoTitle, defaultSiteSettings.defaultSeoTitle),
+    defaultMetaDescription: resolveText(
+      settings?.defaultMetaDescription,
+      defaultSiteSettings.defaultMetaDescription,
+    ),
+    // Tömd GA4-kod ska stänga av spårningen, inte återgå till standard-id:t.
+    ga4MeasurementId:
+      settings?.ga4MeasurementId === null || settings?.ga4MeasurementId === undefined
+        ? defaultSiteSettings.ga4MeasurementId
+        : settings.ga4MeasurementId.trim() || null,
     ga4CustomScript: normalizeScriptContent(settings?.ga4CustomScript),
     googleSearchConsoleVerification: settings?.googleSearchConsoleVerification?.trim() || null,
   };

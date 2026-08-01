@@ -11,13 +11,41 @@ import { siteConfig } from "@/lib/metadata";
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
-type SiteContext = { siteName?: string; siteUrl?: string };
+type SiteContext = {
+  siteName?: string;
+  siteUrl?: string;
+  /* Värden som styrs från adminpanelen. Utelämnade = använd konstanterna. */
+  socialLinks?: { label: string; url: string }[];
+  contactEmail?: string | null;
+  phone?: string | null;
+};
 
 function resolvedName(ctx?: SiteContext) {
   return ctx?.siteName ?? siteConfig.name;
 }
 function resolvedUrl(ctx?: SiteContext) {
   return ctx?.siteUrl ?? siteConfig.url;
+}
+function resolvedPhone(ctx?: SiteContext) {
+  return ctx?.phone ?? CONTACT.phone;
+}
+function resolvedEmail(ctx?: SiteContext) {
+  return ctx?.contactEmail ?? CONTACT.email;
+}
+
+/**
+ * sameAs speglar de sociala länkarna i adminpanelen. Har admin tagit bort alla
+ * ska fältet utelämnas helt — schema.org tillåter inte ett tomt sameAs, och att
+ * falla tillbaka på konstanterna vore samma bugg som i footern.
+ */
+function resolvedSameAs(ctx?: SiteContext): string[] | undefined {
+  const links = ctx?.socialLinks;
+
+  if (!links) {
+    return [CONTACT.social.linkedin, CONTACT.social.instagram];
+  }
+
+  return links.length > 0 ? links.map((link) => link.url) : undefined;
 }
 
 /* ── Organization ────────────────────────────────────────────────────────── */
@@ -32,11 +60,11 @@ export function getOrganizationSchema(ctx?: SiteContext) {
     name,
     url,
     logo:    `${url}/logo.svg`,
-    sameAs:  [CONTACT.social.linkedin, CONTACT.social.instagram],
+    sameAs:  resolvedSameAs(ctx),
     contactPoint: {
       "@type":            "ContactPoint",
-      telephone:           CONTACT.phone,
-      email:               CONTACT.email,
+      telephone:           resolvedPhone(ctx),
+      email:               resolvedEmail(ctx),
       contactType:         "customer service",
       areaServed:          "SE",
       availableLanguage:   "Swedish",
@@ -61,10 +89,10 @@ export function getLocalBusinessSchema(ctx?: SiteContext) {
     name,
     url,
     logo:        `${url}/logo.svg`,
-    telephone:   CONTACT.phone,
-    email:       CONTACT.email,
+    telephone:   resolvedPhone(ctx),
+    email:       resolvedEmail(ctx),
     priceRange:  "$$$$",
-    sameAs:      [CONTACT.social.linkedin, CONTACT.social.instagram],
+    sameAs:      resolvedSameAs(ctx),
     address: {
       "@type":          "PostalAddress",
       addressLocality:  CONTACT.address.city,
