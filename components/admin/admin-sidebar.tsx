@@ -7,8 +7,27 @@ import { cn } from "@/lib/utils";
 
 const ADMIN_VERSION = "2.1";
 
-export function AdminSidebar() {
+type AdminSidebarProps = {
+  /** Antal olästa ärenden. Visas som en siffra bredvid "Ärenden". */
+  unreadTickets?: number;
+};
+
+function UnreadBadge({ count }: { count: number }) {
+  return (
+    <span
+      aria-label={`${count} olästa ärenden`}
+      className="ml-2 inline-flex min-w-[1.5rem] items-center justify-center rounded-full bg-brand px-2 py-0.5 text-xs font-bold text-bg"
+    >
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
+export function AdminSidebar({ unreadTickets = 0 }: AdminSidebarProps) {
   const pathname = usePathname();
+
+  const badgeFor = (href: string) =>
+    href === "/admin/arenden" && unreadTickets > 0 ? <UnreadBadge count={unreadTickets} /> : null;
 
   return (
     <>
@@ -33,6 +52,7 @@ export function AdminSidebar() {
                 )}
               >
                 {item.label}
+                {badgeFor(item.href)}
               </Link>
             );
           })}
@@ -55,6 +75,7 @@ export function AdminSidebar() {
                 )}
               >
                 {item.label}
+                {badgeFor(item.href)}
               </Link>
             );
           })}

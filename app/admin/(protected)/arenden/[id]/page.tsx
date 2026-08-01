@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { TicketAutoReplyRetry } from "@/components/admin/ticket-auto-reply-retry";
 import { TicketReplyForm } from "@/components/admin/ticket-reply-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
-import { deleteTicketAction, updateTicketStatusAction } from "@/lib/admin-ticket-actions";
+import {
+  deleteTicketAction,
+  markTicketReadAction,
+  markTicketUnreadAction,
+  updateTicketStatusAction,
+} from "@/lib/admin-ticket-actions";
 import { db } from "@/lib/db";
 import { buildReplyAddress } from "@/lib/tickets/addressing";
+import { getOtherTicketsForCustomer } from "@/lib/tickets/queries";
 import { buildPortalUrl } from "@/lib/tickets/service";
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 import { stripQuotedReply } from "@/lib/tickets/text";
@@ -62,7 +69,10 @@ export default async function AdminTicketDetailPage({
     notFound();
   }
 
-  const { siteUrl } = await getResolvedSiteSettings();
+  const [{ siteUrl }, otherTickets] = await Promise.all([
+    getResolvedSiteSettings(),
+    getOtherTicketsForCustomer(ticket.customerEmail, ticket.id),
+  ]);
   const portalUrl = buildPortalUrl(siteUrl.replace(/\/$/, ""), ticket.publicToken);
 
   return (
@@ -78,6 +88,7 @@ export default async function AdminTicketDetailPage({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <Badge tone={STATUS_TONE[ticket.status]}>{STATUS_LABEL[ticket.status]}</Badge>
+            {ticket.readAt ? null : <Badge tone="accent">Oläst</Badge>}
             <span className="text-xs uppercase tracking-[0.14em] text-muted">
               Språk: {ticket.language}
             </span>
@@ -85,6 +96,13 @@ export default async function AdminTicketDetailPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <form action={ticket.readAt ? markTicketUnreadAction : markTicketReadAction}>
+              <input type="hidden" name="id" value={ticket.id} />
+              <Button type="submit" variant="secondary" size="sm">
+                {ticket.readAt ? "Markera som oläst" : "Markera som läst"}
+              </Button>
+            </form>
+
             {(["OPEN", "PENDING", "CLOSED"] as const)
               .filter((status) => status !== ticket.status)
               .map((status) => (
@@ -125,6 +143,38 @@ export default async function AdminTicketDetailPage({
           </div>
         </dl>
       </section>
+
+      {ticket.autoReplyError ? (
+        <TicketAutoReplyRetry ticketId={ticket.id} errorMessage={ticket.autoReplyError} />
+      ) : null}
+
+      {otherTickets.length > 0 ? (
+        <section className="surface p-6">
+          <h2 className="text-sm font-semibold text-text">
+            {otherTickets.length === 1
+              ? "1 tidigare ärende från samma kund"
+              : `${otherTickets.length} andra ärenden från samma kund`}
+          </h2>
+          <p className="mt-1 text-xs text-muted">Matchat på {ticket.customerEmail}</p>
+
+          <ul className="mt-4 divide-y divide-white/5">
+            {otherTickets.map((other) => (
+              <li key={other.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <Link
+                  href={`/admin/arenden/${other.id}`}
+                  className="text-sm text-text transition hover:text-brand"
+                >
+                  #{other.number} · {other.subject}
+                </Link>
+                <div className="flex items-center gap-3">
+                  <Badge tone={STATUS_TONE[other.status]}>{STATUS_LABEL[other.status]}</Badge>
+                  <span className="text-xs text-muted">{formatDateTime(other.lastMessageAt)}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="space-y-4">
         {ticket.messages.map((message) => {

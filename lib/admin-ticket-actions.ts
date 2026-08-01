@@ -10,7 +10,8 @@ import {
 } from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
 import { INBOUND_DOMAIN } from "@/lib/tickets/addressing";
-import { sendAgentReply } from "@/lib/tickets/service";
+import { isVerifiedSendingDomain } from "@/lib/tickets/resend-inbound";
+import { retryAutoReply, sendAgentReply } from "@/lib/tickets/service";
 import { deleteAttachments } from "@/lib/tickets/storage";
 
 export type TicketFormState = {
@@ -68,6 +69,17 @@ export async function saveTicketAccountAction(
 
   if (clash) {
     return { error: `Adressnamnet "${slug}" används redan av ett annat konto.` };
+  }
+
+  // Fångar felet som annars uppstår först när ett riktigt kundmejl kommit in:
+  // Resend avvisar utskick från en overifierad domän med 403, ärendet skapas
+  // ändå, och kunden får aldrig sin kvittens.
+  const verified = await isVerifiedSendingDomain(rest.replyFromEmail);
+  if (verified === false) {
+    const domain = rest.replyFromEmail.split("@")[1];
+    return {
+      error: `Domänen ${domain} är inte verifierad för utskick i Resend, så autosvar från den adressen kommer att avvisas. Verifiera domänen på resend.com/domains, eller använd en avsändare på en redan verifierad domän.`,
+    };
   }
 
   const data = { ...rest, slug, inboundEmail, signature: signature || null };
@@ -145,6 +157,62 @@ export async function replyToTicketAction(
   revalidatePath("/admin/arenden");
 
   return { success: "Svaret skickades till kunden." };
+}
+
+/** Markerar ärendet som läst så att det försvinner ur siffran i menyn. */
+export async function markTicketReadAction(formData: FormData): Promise<void> {
+  await requireAdminAction();
+
+  const id = normalizeEmpty(formData.get("id"));
+  if (!id) {
+    return;
+  }
+
+  await db.ticket.update({ where: { id }, data: { readAt: new Date() } });
+
+  revalidatePath(`/admin/arenden/${id}`);
+  revalidatePath("/admin/arenden");
+  // Siffran ligger i adminlayouten och syns på varje sida.
+  revalidatePath("/admin", "layout");
+}
+
+export async function markTicketUnreadAction(formData: FormData): Promise<void> {
+  await requireAdminAction();
+
+  const id = normalizeEmpty(formData.get("id"));
+  if (!id) {
+    return;
+  }
+
+  await db.ticket.update({ where: { id }, data: { readAt: null } });
+
+  revalidatePath(`/admin/arenden/${id}`);
+  revalidatePath("/admin/arenden");
+  revalidatePath("/admin", "layout");
+}
+
+export async function retryAutoReplyAction(
+  _prevState: TicketFormState,
+  formData: FormData,
+): Promise<TicketFormState> {
+  await requireAdminAction();
+
+  const id = normalizeEmpty(formData.get("id"));
+  if (!id) {
+    return { error: "Ärende saknas." };
+  }
+
+  try {
+    await retryAutoReply(id);
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Autosvaret kunde inte skickas.",
+    };
+  }
+
+  revalidatePath(`/admin/arenden/${id}`);
+
+  return { success: "Autosvaret skickades till kunden." };
 }
 
 export async function updateTicketStatusAction(formData: FormData): Promise<void> {

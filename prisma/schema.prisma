@@ -271,6 +271,15 @@ model Ticket {
   /// vidarebefordrat mejl, och får därför inte vara nyckeln till kundportalen.
   replyKey String @unique
 
+  /// null = oläst. Sätts när handläggaren markerar ärendet som läst, och
+  /// nollställs igen så snart kunden skickar ett nytt meddelande.
+  readAt DateTime?
+
+  /// Senaste felet från autosvaret, t.ex. en avsändardomän som inte är
+  /// verifierad. Sparas för att ett misslyckat autosvar annars bara syns i
+  /// serverloggen — kunden får inget mejl och ingen märker det.
+  autoReplyError String?
+
   lastMessageAt DateTime @default(now())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -279,6 +288,7 @@ model Ticket {
 
   @@index([accountId, status, lastMessageAt])
   @@index([customerEmail])
+  @@index([readAt])
 }
 
 model TicketMessage {

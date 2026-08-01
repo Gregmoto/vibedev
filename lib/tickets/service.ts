@@ -130,6 +130,9 @@ export async function ingestInboundEmail(event: InboundWebhookEvent): Promise<In
         // Kundens svar öppnar ett avslutat ärende igen — annars försvinner
         // uppföljningen tyst.
         status: "OPEN",
+        // Ett nytt kundmeddelande gör ärendet oläst igen, även om det lästs
+        // tidigare. Annars syns aldrig följdfrågor i räknaren.
+        readAt: null,
         lastMessageAt: new Date(),
       },
     });
@@ -269,9 +272,52 @@ async function sendAutoReply(
         resendEmailId: id,
       },
     });
+
+    await db.ticket.update({ where: { id: ticket.id }, data: { autoReplyError: null } });
   } catch (err) {
-    // Ärendet finns redan sparat — autosvaret är en bekvämlighet, inte ett krav.
+    // Ärendet är redan sparat — det får inte gå förlorat bara för att mejlet
+    // studsade. Men felet måste synas i adminpanelen: tyst i loggen betyder
+    // att kunden aldrig får sin kvittens och att ingen upptäcker det.
+    const message = err instanceof Error ? err.message : String(err);
     console.error(`[tickets] Autosvar för ärende #${ticket.number} misslyckades:`, err);
+
+    await db.ticket.update({
+      where: { id: ticket.id },
+      data: { autoReplyError: message.slice(0, 500) },
+    });
+  }
+}
+
+/**
+ * Skickar autosvaret på nytt, t.ex. efter att en avsändardomän verifierats.
+ * Kastar vid fel så att adminpanelen kan visa orsaken direkt.
+ */
+export async function retryAutoReply(ticketId: string): Promise<void> {
+  const ticket = await db.ticket.findUnique({
+    where: { id: ticketId },
+    include: {
+      account: true,
+      messages: {
+        where: { direction: "INBOUND" },
+        orderBy: { createdAt: "asc" },
+        take: 1,
+      },
+    },
+  });
+
+  if (!ticket) {
+    throw new Error("Ärendet finns inte.");
+  }
+
+  await sendAutoReply(ticket, ticket.account, ticket.messages[0]?.messageIdHeader ?? null);
+
+  const updated = await db.ticket.findUnique({
+    where: { id: ticketId },
+    select: { autoReplyError: true },
+  });
+
+  if (updated?.autoReplyError) {
+    throw new Error(updated.autoReplyError);
   }
 }
 

@@ -64,91 +64,135 @@ export default async function TicketPortalPage({
   });
 
   return (
-    <Container>
-      <div className="mx-auto max-w-3xl py-14">
-        <header className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-            {copy.portalTitle}
-          </p>
-          <h1 className="heading-lg text-3xl">
-            #{ticket.number} · {ticket.subject}
-          </h1>
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-muted">{copy.portalStatusLabel}:</span>
-            <Badge tone={STATUS_TONE[ticket.status]}>{copy.portalStatus[ticket.status]}</Badge>
-          </div>
-        </header>
-
-        {ticket.status === "CLOSED" ? (
-          <p className="mt-6 rounded-2xl border border-line bg-panel px-5 py-4 text-sm text-muted">
-            {copy.portalClosedNotice}
-          </p>
-        ) : null}
-
-        <section className="mt-10 space-y-4">
-          {ticket.messages.map((message) => {
-            const fromUs = message.direction === "OUTBOUND";
-
-            return (
-              <article
-                key={message.id}
-                className={
-                  fromUs
-                    ? "rounded-2xl border border-brand/20 bg-brand/[0.04] p-6"
-                    : "rounded-2xl border border-line bg-panel p-6"
-                }
+    <>
+      {/* Eget sidhuvud i stället för sajtens meny: kunden kommer hit från ett
+          kvittensmejl och ska mötas av ärendesystemet, inte av en säljsida.
+          Namnet följer kontot, så en Powerbike-kund ser Powerbike. */}
+      <header className="border-b border-line bg-panel">
+        <Container>
+          <div className="flex items-center gap-3 py-5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand/10 text-brand">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+                aria-hidden="true"
               >
-                <header className="flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-sm font-semibold text-text">
-                    {fromUs ? ticket.account.name : copy.portalYou}
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-sm font-semibold leading-tight text-text">
+                {ticket.account.name}
+              </p>
+              <p className="text-xs leading-tight text-muted">
+                {copy.portalBrandSuffix}
+              </p>
+            </div>
+          </div>
+        </Container>
+      </header>
+
+      <Container>
+        <div className="mx-auto max-w-3xl py-14">
+          <header className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+              {copy.portalTitle}
+            </p>
+            <h1 className="heading-lg text-3xl">
+              #{ticket.number} · {ticket.subject}
+            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm text-muted">
+                {copy.portalStatusLabel}:
+              </span>
+              <Badge tone={STATUS_TONE[ticket.status]}>
+                {copy.portalStatus[ticket.status]}
+              </Badge>
+            </div>
+          </header>
+
+          {ticket.status === "CLOSED" ? (
+            <p className="mt-6 rounded-2xl border border-line bg-panel px-5 py-4 text-sm text-muted">
+              {copy.portalClosedNotice}
+            </p>
+          ) : null}
+
+          <section className="mt-10 space-y-4">
+            {ticket.messages.map((message) => {
+              const fromUs = message.direction === "OUTBOUND";
+
+              return (
+                <article
+                  key={message.id}
+                  className={
+                    fromUs
+                      ? "rounded-2xl border border-brand/20 bg-brand/[0.04] p-6"
+                      : "rounded-2xl border border-line bg-panel p-6"
+                  }
+                >
+                  <header className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-sm font-semibold text-text">
+                      {fromUs ? ticket.account.name : copy.portalYou}
+                    </p>
+                    <p className="text-xs text-muted">
+                      {dateFormatter.format(message.createdAt)}
+                    </p>
+                  </header>
+
+                  <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text">
+                    {stripQuotedReply(message.bodyText)}
                   </p>
-                  <p className="text-xs text-muted">{dateFormatter.format(message.createdAt)}</p>
-                </header>
 
-                <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text">
-                  {stripQuotedReply(message.bodyText)}
-                </p>
-
-                {message.attachments.length > 0 ? (
-                  <ul className="mt-4 flex flex-wrap gap-2">
-                    {message.attachments.map((attachment) => (
-                      <li key={attachment.id}>
-                        {attachment.storageKey ? (
-                          <a
-                            href={`/api/tickets/attachments/${attachment.id}?token=${ticket.publicToken}`}
-                            className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs text-muted transition hover:text-text"
-                          >
-                            {attachment.filename}
-                            <span className="text-[10px] uppercase tracking-[0.1em]">
-                              {formatBytes(attachment.sizeBytes)}
+                  {message.attachments.length > 0 ? (
+                    <ul className="mt-4 flex flex-wrap gap-2">
+                      {message.attachments.map((attachment) => (
+                        <li key={attachment.id}>
+                          {attachment.storageKey ? (
+                            <a
+                              href={`/api/tickets/attachments/${attachment.id}?token=${ticket.publicToken}`}
+                              className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs text-muted transition hover:text-text"
+                            >
+                              {attachment.filename}
+                              <span className="text-[10px] uppercase tracking-[0.1em]">
+                                {formatBytes(attachment.sizeBytes)}
+                              </span>
+                            </a>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 rounded-full border border-dashed border-line px-3 py-1.5 text-xs text-muted">
+                              {attachment.filename}
                             </span>
-                          </a>
-                        ) : (
-                          <span className="inline-flex items-center gap-2 rounded-full border border-dashed border-line px-3 py-1.5 text-xs text-muted">
-                            {attachment.filename}
-                          </span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </article>
-            );
-          })}
-        </section>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </article>
+              );
+            })}
+          </section>
 
-        <section className="mt-10 rounded-2xl border border-line bg-panel p-6">
-          <TicketPortalForm
-            token={ticket.publicToken}
-            labels={{
-              replyLabel: copy.portalReplyLabel,
-              replyPlaceholder: copy.portalReplyPlaceholder,
-              attachmentsLabel: copy.portalAttachmentsLabel,
-              submit: copy.portalSubmit,
-            }}
-          />
-        </section>
-      </div>
-    </Container>
+          <section className="mt-10 rounded-2xl border border-line bg-panel p-6">
+            <TicketPortalForm
+              token={ticket.publicToken}
+              labels={{
+                replyLabel: copy.portalReplyLabel,
+                replyPlaceholder: copy.portalReplyPlaceholder,
+                attachmentsLabel: copy.portalAttachmentsLabel,
+                submit: copy.portalSubmit,
+              }}
+            />
+          </section>
+
+          <p className="mt-10 border-t border-line pt-6 text-center text-xs text-muted">
+            {ticket.account.name} · {copy.portalBrandSuffix}
+          </p>
+        </div>
+      </Container>
+    </>
   );
 }

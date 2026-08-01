@@ -101,6 +101,40 @@ export async function fetchReceivedEmail(emailId: string): Promise<ReceivedEmail
   };
 }
 
+/**
+ * Kontrollerar att avsändardomänen är verifierad för utskick i Resend.
+ *
+ * Utan kontrollen går ett konto att spara med en avsändare som Resend sedan
+ * avvisar med 403 — ärenden skapas men kunden får aldrig sin kvittens, och
+ * felet syns först långt senare. Vi vill hellre säga ifrån direkt i formuläret.
+ *
+ * Returnerar null när vi inte kunde avgöra saken (t.ex. API:t svarar inte);
+ * då blockerar vi inte sparandet på en gissning.
+ */
+export async function isVerifiedSendingDomain(email: string): Promise<boolean | null> {
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (!domain) {
+    return false;
+  }
+
+  try {
+    const { data, error } = await getResend().domains.list();
+    if (error) {
+      return null;
+    }
+
+    const items = Array.isArray(data) ? data : ((data as { data?: unknown[] } | null)?.data ?? []);
+    const verified = (items as Record<string, unknown>[])
+      .filter((item) => item.status === "verified")
+      .map((item) => String(item.name ?? "").toLowerCase());
+
+    return verified.includes(domain);
+  } catch (err) {
+    console.error("[tickets] Kunde inte hämta verifierade domäner från Resend:", err);
+    return null;
+  }
+}
+
 export type InboundAttachment = {
   id: string;
   filename: string;

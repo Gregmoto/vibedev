@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { CookieConsent } from "@/components/consent/cookie-consent";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { StickyCta } from "@/components/layout/sticky-cta";
 import { StickyMobileCta } from "@/components/conversion/sticky-mobile-cta";
 import { createMetadata } from "@/lib/metadata";
@@ -81,16 +82,24 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             ]),
           }}
         />
-        {/* GA4 laddas först efter cookie-samtycke — bannern hanterar valet */}
-        <CookieConsent
-          ga4MeasurementId={settings.ga4MeasurementId}
-          ga4CustomScript={settings.ga4CustomScript}
-        />
-        <Navbar />
+        {/* GA4 laddas först efter cookie-samtycke — bannern hanterar valet.
+            Varken adminpanelen eller kundens ärendesida spåras: där finns inget
+            att mäta, och en supporttråd hör inte hemma i webbanalysen. */}
+        <SiteChrome>
+          <CookieConsent
+            ga4MeasurementId={settings.ga4MeasurementId}
+            ga4CustomScript={settings.ga4CustomScript}
+          />
+        </SiteChrome>
+        <SiteChrome>
+          <Navbar />
+        </SiteChrome>
         <main id="main-content">{children}</main>
-        <Footer />
-        <StickyCta />
-        <StickyMobileCta />
+        <SiteChrome>
+          <Footer />
+          <StickyCta />
+          <StickyMobileCta />
+        </SiteChrome>
       </body>
     </html>
   );

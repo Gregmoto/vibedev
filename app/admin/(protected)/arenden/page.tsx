@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
 import { db } from "@/lib/db";
+import { countTicketsByCustomer } from "@/lib/tickets/queries";
 import { toPreview } from "@/lib/tickets/text";
 
 export const dynamic = "force-dynamic";
@@ -28,14 +29,14 @@ function formatDate(value: Date): string {
   }).format(value);
 }
 
-type SearchParams = { status?: string; konto?: string };
+type SearchParams = { status?: string; konto?: string; kund?: string };
 
 export default async function AdminTicketsPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { status, konto } = await searchParams;
+  const { status, konto, kund } = await searchParams;
 
   if (!hasDatabaseUrl()) {
     return (
@@ -55,6 +56,7 @@ export default async function AdminTicketsPage({
       where: {
         ...(statusFilter ? { status: statusFilter } : {}),
         ...(konto ? { account: { slug: konto } } : {}),
+        ...(kund ? { customerEmail: { equals: kund, mode: "insensitive" as const } } : {}),
       },
       orderBy: { lastMessageAt: "desc" },
       take: 200,
@@ -70,8 +72,14 @@ export default async function AdminTicketsPage({
     db.ticketAccount.findMany({ orderBy: { name: "asc" } }),
   ]);
 
+  // Antal ärenden per kundadress, så återkommande kunder syns direkt i listan
+  // i stället för att man måste öppna varje ärende för att upptäcka det.
+  const ticketsPerCustomer = await countTicketsByCustomer(
+    [...new Set(tickets.map((ticket) => ticket.customerEmail))],
+  );
+
   const filters = [
-    { label: "Alla", href: "/admin/arenden", active: !statusFilter },
+    { label: "Alla", href: "/admin/arenden", active: !statusFilter && !kund },
     { label: "Öppna", href: "/admin/arenden?status=OPEN", active: statusFilter === "OPEN" },
     { label: "Väntar på kund", href: "/admin/arenden?status=PENDING", active: statusFilter === "PENDING" },
     { label: "Avslutade", href: "/admin/arenden?status=CLOSED", active: statusFilter === "CLOSED" },
@@ -82,6 +90,17 @@ export default async function AdminTicketsPage({
       title="Ärenden"
       description="Inkommande kundmejl samlade som ärenden, med svar i samma tråd."
     >
+      {kund ? (
+        <div className="surface flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+          <p className="text-sm text-text">
+            Visar bara ärenden från <span className="font-medium">{kund}</span>
+          </p>
+          <Link href="/admin/arenden" className="text-sm text-brand transition hover:underline">
+            Rensa filtret
+          </Link>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-2">
         {filters.map((filter) => (
           <Link
@@ -145,12 +164,26 @@ export default async function AdminTicketsPage({
             header: "Ärende",
             render: (row) => (
               <div className="space-y-1">
-                <Link
-                  href={`/admin/arenden/${row.id}`}
-                  className="font-medium text-text transition hover:text-brand"
-                >
-                  #{row.number} · {row.subject}
-                </Link>
+                <div className="flex items-center gap-2">
+                  {/* Olästa ärenden ska gå att hitta med ögat, inte bara via siffran i menyn. */}
+                  {row.readAt ? null : (
+                    <span
+                      aria-label="Oläst"
+                      title="Oläst"
+                      className="h-2 w-2 shrink-0 rounded-full bg-brand"
+                    />
+                  )}
+                  <Link
+                    href={`/admin/arenden/${row.id}`}
+                    className={
+                      row.readAt
+                        ? "font-medium text-text transition hover:text-brand"
+                        : "font-bold text-text transition hover:text-brand"
+                    }
+                  >
+                    #{row.number} · {row.subject}
+                  </Link>
+                </div>
                 <p className="max-w-md text-xs text-muted">
                   {row.messages[0] ? toPreview(row.messages[0].bodyText) : "—"}
                 </p>
@@ -160,12 +193,26 @@ export default async function AdminTicketsPage({
           {
             key: "customer",
             header: "Kund",
-            render: (row) => (
-              <div className="space-y-1">
-                <p className="text-sm text-text">{row.customerName || row.customerEmail}</p>
-                {row.customerName ? <p className="text-xs text-muted">{row.customerEmail}</p> : null}
-              </div>
-            ),
+            render: (row) => {
+              const total = ticketsPerCustomer.get(row.customerEmail) ?? 1;
+
+              return (
+                <div className="space-y-1">
+                  <p className="text-sm text-text">{row.customerName || row.customerEmail}</p>
+                  {row.customerName ? (
+                    <p className="text-xs text-muted">{row.customerEmail}</p>
+                  ) : null}
+                  {total > 1 ? (
+                    <Link
+                      href={`/admin/arenden?kund=${encodeURIComponent(row.customerEmail)}`}
+                      className="inline-block text-xs text-brand transition hover:underline"
+                    >
+                      {total} ärenden från denna kund
+                    </Link>
+                  ) : null}
+                </div>
+              );
+            },
           },
           {
             key: "account",

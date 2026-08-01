@@ -16,6 +16,8 @@ export type TicketCopy = {
   replyHint: string;
   closing: string;
   /* Kundportalen */
+  /** Visas i sidhuvudet på kundsidan, efter kontots namn. */
+  portalBrandSuffix: string;
   portalTitle: string;
   portalStatusLabel: string;
   portalStatus: Record<"OPEN" | "PENDING" | "CLOSED", string>;
@@ -40,6 +42,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Öppna ärendet",
     replyHint: "Du kan också svara direkt på det här mejlet – svaret hamnar i samma ärende.",
     closing: "Vänliga hälsningar",
+    portalBrandSuffix: "Ärendesystem",
     portalTitle: "Ditt ärende",
     portalStatusLabel: "Status",
     portalStatus: { OPEN: "Öppet", PENDING: "Väntar på dig", CLOSED: "Avslutat" },
@@ -62,6 +65,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Open the ticket",
     replyHint: "You can also reply directly to this email – your reply lands in the same ticket.",
     closing: "Best regards",
+    portalBrandSuffix: "Ticket system",
     portalTitle: "Your ticket",
     portalStatusLabel: "Status",
     portalStatus: { OPEN: "Open", PENDING: "Waiting for you", CLOSED: "Closed" },
@@ -84,6 +88,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Åpne saken",
     replyHint: "Du kan også svare direkte på denne e-posten – svaret havner i samme sak.",
     closing: "Vennlig hilsen",
+    portalBrandSuffix: "Sakssystem",
     portalTitle: "Saken din",
     portalStatusLabel: "Status",
     portalStatus: { OPEN: "Åpen", PENDING: "Venter på deg", CLOSED: "Avsluttet" },
@@ -106,6 +111,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Åbn sagen",
     replyHint: "Du kan også svare direkte på denne e-mail – svaret havner i samme sag.",
     closing: "Venlig hilsen",
+    portalBrandSuffix: "Sagssystem",
     portalTitle: "Din sag",
     portalStatusLabel: "Status",
     portalStatus: { OPEN: "Åben", PENDING: "Venter på dig", CLOSED: "Afsluttet" },
@@ -128,6 +134,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Vorgang öffnen",
     replyHint: "Sie können auch direkt auf diese E-Mail antworten – Ihre Antwort landet im selben Vorgang.",
     closing: "Mit freundlichen Grüßen",
+    portalBrandSuffix: "Ticketsystem",
     portalTitle: "Ihr Vorgang",
     portalStatusLabel: "Status",
     portalStatus: { OPEN: "Offen", PENDING: "Wartet auf Sie", CLOSED: "Abgeschlossen" },
@@ -150,6 +157,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Ouvrir le dossier",
     replyHint: "Vous pouvez aussi répondre directement à cet e-mail – votre réponse rejoindra le même dossier.",
     closing: "Cordialement",
+    portalBrandSuffix: "Suivi des demandes",
     portalTitle: "Votre dossier",
     portalStatusLabel: "Statut",
     portalStatus: { OPEN: "Ouvert", PENDING: "En attente de votre réponse", CLOSED: "Clôturé" },
@@ -172,6 +180,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Abrir el caso",
     replyHint: "También puedes responder directamente a este correo: tu respuesta llegará al mismo caso.",
     closing: "Un saludo",
+    portalBrandSuffix: "Sistema de casos",
     portalTitle: "Tu caso",
     portalStatusLabel: "Estado",
     portalStatus: { OPEN: "Abierto", PENDING: "Esperando tu respuesta", CLOSED: "Cerrado" },
@@ -194,6 +203,7 @@ const COPY: Record<SupportedLanguage, TicketCopy> = {
     followLinkLabel: "Avaa asia",
     replyHint: "Voit myös vastata suoraan tähän sähköpostiin – vastauksesi päätyy samaan asiaan.",
     closing: "Ystävällisin terveisin",
+    portalBrandSuffix: "Asiointijärjestelmä",
     portalTitle: "Asiasi",
     portalStatusLabel: "Tila",
     portalStatus: { OPEN: "Avoin", PENDING: "Odottaa sinua", CLOSED: "Suljettu" },

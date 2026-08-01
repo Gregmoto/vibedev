@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 import { auth } from "@/auth";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
+import { getUnreadTicketCount } from "@/lib/tickets/queries";
 
 type AdminShellProps = {
   title: string;
@@ -18,10 +19,12 @@ export async function AdminShell({ title, description, children }: AdminShellPro
     redirect("/admin/login");
   }
 
+  const unreadTickets = await getUnreadTicketCount();
+
   return (
     <div className="container-shell py-6 sm:py-8">
       <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <AdminSidebar />
+        <AdminSidebar unreadTickets={unreadTickets} />
         <div className="space-y-8">
           <AdminTopbar title={title} description={description} />
           {children}
