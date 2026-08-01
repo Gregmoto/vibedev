@@ -225,6 +225,23 @@ export default async function HomePage() {
       {/* ── Paket / tre sätt att starta ──────────────────────────────────────── */}
       <PackagesSection />
 
+      {/* ── Hyrmodellen ──────────────────────────────────────────────────────── */}
+      <Section size="tight">
+        <div className="surface-elevated flex flex-col gap-6 px-7 py-9 sm:px-10 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <p className="eyebrow">HYRMODELL</p>
+            <h2 className="heading-md mt-2">Hyr din hemsida i stället för att köpa den</h2>
+            <p className="body-md mt-4">
+              Startavgift och en månadsavgift som sätts efter omfattningen. Hosting, SSL,
+              drift, backup och support ingår — utan bindningstid.
+            </p>
+          </div>
+          <LinkButton href="/hyr" className="shrink-0">
+            Läs om hyrmodellen →
+          </LinkButton>
+        </div>
+      </Section>
+
       <Section>
         <SectionHeading
           eyebrow="Varför välja oss"

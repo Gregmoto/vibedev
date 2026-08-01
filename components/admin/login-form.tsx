@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { loginAction } from "@/lib/auth-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,13 @@ export function LoginForm() {
       <Button type="submit" size="lg" className="w-full" disabled={isPending}>
         {isPending ? "Loggar in..." : "Logga in"}
       </Button>
+
+      <Link
+        href="/admin/losenord"
+        className="block text-center text-sm text-muted transition hover:text-brand"
+      >
+        Glömt lösenordet?
+      </Link>
     </form>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
-import { CalEmbed } from "@/components/booking/cal-embed";
+import { ProjectInquiryForm } from "@/components/forms/project-inquiry-form";
 import { LinkButton } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { createMetadataForStandardPage } from "@/lib/cms-public";
@@ -34,14 +33,6 @@ function CheckIcon() {
     >
       <polyline points="2.5 8 6.5 12 13.5 4" />
     </svg>
-  );
-}
-
-/* ── Cal skeleton (Suspense fallback shown during SSR/prerender) ─────────── */
-
-function CalSuspenseFallback() {
-  return (
-    <div className="min-h-[600px] animate-pulse rounded-2xl border border-line bg-[#F4F5F8]" />
   );
 }
 
@@ -121,15 +112,19 @@ export default function BookMeetingPage() {
 
           </div>
 
-          {/* ── Right column (60 %) — Cal.com embed ────────────────────────── */}
-          {/*
-           * Wrapped in Suspense because CalEmbed uses useSearchParams(),
-           * which opts that subtree out of static prerendering.
-           * The fallback shows a size-matched skeleton so there is no CLS.
-           */}
-          <Suspense fallback={<CalSuspenseFallback />}>
-            <CalEmbed />
-          </Suspense>
+          {/* ── Right column (60 %) — förfrågningsformulär ──────────────────── */}
+          <div className="surface-elevated px-6 py-8 sm:px-8">
+            <h2 className="font-display text-xl font-bold tracking-tight text-text sm:text-2xl">
+              Berätta kort om ert projekt
+            </h2>
+            <p className="body-md mt-3">
+              Fyll i formuläret så återkommer vi inom 24 timmar med förslag på en tid som
+              passar. Helt kostnadsfritt och utan förbindelse.
+            </p>
+            <div className="mt-7">
+              <ProjectInquiryForm />
+            </div>
+          </div>
 
         </div>
       </Section>

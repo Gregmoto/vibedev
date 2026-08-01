@@ -14,3 +14,11 @@ build/
 
 # Logs
 *.log
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
+.dev.vars

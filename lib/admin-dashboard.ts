@@ -1,5 +1,5 @@
 import { ContentStatus } from "@prisma/client";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 
 type ContentSummaryItem = {
@@ -43,7 +43,7 @@ export type AdminDashboardData = {
 };
 
 function hasDatabaseUrl() {
-  return Boolean(process.env.DATABASE_URL?.trim());
+  return hasDatabase();
 }
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {

@@ -17,7 +17,14 @@ export type SeoFields = {
 };
 
 function toSiteTitle(title: string, baseSiteName: string) {
-  return title === baseSiteName ? baseSiteName : `${title} | ${baseSiteName}`;
+  if (
+    title === baseSiteName ||
+    title.endsWith(`| ${baseSiteName}`) ||
+    title.endsWith(`— ${baseSiteName}`)
+  ) {
+    return title;
+  }
+  return `${title} | ${baseSiteName}`;
 }
 
 function resolveCanonical(canonicalUrl: string | undefined, path: string, baseSiteUrl: string) {

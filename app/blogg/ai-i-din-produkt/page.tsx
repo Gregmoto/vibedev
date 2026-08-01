@@ -54,6 +54,7 @@ export default function AiIdinProduktPage() {
     path: `/blogg/${slug}`,
     publishedAt,
     keywords: ["ai i produkt", "ai produktutveckling", "ai beslutsmodell", "ai use cases"],
+    type: "BlogPosting",
   });
 
   const breadcrumb = getBreadcrumbSchema([

@@ -116,7 +116,7 @@ export function PackagesSection() {
           >
             {/* "Populärt val" floating badge */}
             {pkg.highlighted && pkg.badge ? (
-              <div className="absolute -top-[1.0625rem] right-6" aria-label={pkg.badge}>
+              <div className="absolute -top-[1.0625rem] right-6">
                 <span className="rounded-full bg-brand px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-bg shadow-sm">
                   {pkg.badge}
                 </span>

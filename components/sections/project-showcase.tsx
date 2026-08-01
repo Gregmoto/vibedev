@@ -22,6 +22,39 @@ type Project = {
 const PROJECTS: Project[] = [
   {
     status:      "Lanserad",
+    industryTag: "SAAS / E-HANDEL",
+    name:        "VIBESHOPS",
+    domain:      "vibeshops.se",
+    description:
+      "Multi-tenant e-handelsplattform där svenska handlare får en komplett webbutik — multishop, Swish/Klarna-kassa, moms som stämmer, lager i realtid och SEO ur lådan. Utan provision, utan inlåsning.",
+    tech:      ["Next.js", "TypeScript", "Supabase", "Cloudflare Workers"],
+    caseHref:  "/case-studies/vibeshops",
+    siteHref:  "https://vibeshops.se",
+  },
+  {
+    status:      "Lanserad",
+    industryTag: "DATA / API",
+    name:        "Bolagsdata API",
+    domain:      "bolagsdataapi.se",
+    description:
+      "Sökbar databas över Sveriges 3,5 miljoner företag med öppet API, byggd på avgiftsfria data från Bolagsverket och SCB. 360 000+ årsredovisningar tolkade ur iXBRL — gratis, utan betalvägg.",
+    tech:      ["Next.js 15", "Supabase", "Cloudflare Pages", "TypeScript"],
+    caseHref:  "/case-studies/bolagsdata-api",
+    siteHref:  "https://bolagsdataapi.se",
+  },
+  {
+    status:      "Lanserad",
+    industryTag: "MEDIA",
+    name:        "Powerbike",
+    domain:      "powerbike.nu",
+    description:
+      "Svenskt motormagasin om MC, moped, ATV, snöskoter och cykel — flyttat från WordPress till egen plattform med annonssystem, företagsregister och AI-stöd i redaktionen.",
+    tech:      ["Next.js 15", "Supabase", "Cloudflare Workers", "Stripe"],
+    caseHref:  "/case-studies/powerbike",
+    siteHref:  "https://powerbike.nu",
+  },
+  {
+    status:      "Lanserad",
     industryTag: "E-HANDEL",
     name:        "CMS Online",
     domain:      "cmsonline.se",

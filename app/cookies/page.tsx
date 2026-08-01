@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { Container } from "@/components/ui/container";
 import { createMetadata } from "@/lib/metadata";
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = createMetadata(
 
 export default function CookiesPage() {
   return (
-    <main id="main-content" className="py-20">
+    <div className="py-20">
       <Container>
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-text">
@@ -91,15 +92,14 @@ export default function CookiesPage() {
                   </tbody>
                 </table>
               </div>
-              {/* TODO: implementera cookie-banner med samtycke innan GA4 aktiveras */}
             </section>
 
             <section>
               <h2 className="mb-3 text-xl font-semibold text-text">Tredjepartscookies</h2>
               <p>
-                Tjänster inbäddade på webbplatsen (t.ex. Cal.com för bokning) kan sätta
-                egna cookies. Vi har ingen kontroll över dessa och hänvisar till respektive
-                leverantörs sekretesspolicy.
+                Utöver Google Analytics ovan bäddar vi inte in några tredjepartstjänster som
+                sätter egna cookies. Skulle vi lägga till en sådan tjänst framöver uppdaterar vi
+                den här sidan innan den aktiveras.
               </p>
             </section>
 
@@ -110,6 +110,9 @@ export default function CookiesPage() {
                 cookie-bannern på webbplatsen, eller genom att rensa cookies i din webbläsare.
                 Observera att om du avaktiverar alla cookies kan vissa funktioner sluta fungera.
               </p>
+              <div className="mt-4">
+                <CookieSettingsButton />
+              </div>
               <p className="mt-3">
                 Läs mer om hur du hanterar cookies i din webbläsare:
               </p>
@@ -146,6 +149,6 @@ export default function CookiesPage() {
           </div>
         </div>
       </Container>
-    </main>
+    </div>
   );
 }

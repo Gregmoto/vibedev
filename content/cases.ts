@@ -4,6 +4,8 @@ export type CaseStudy = {
   industry: string;
   /** "published" = live product, "ongoing" = active build */
   status: "published" | "ongoing";
+  /** Overrides the default status badge text on listing cards */
+  statusLabel?: string;
   /** External product URL — opens in new tab */
   websiteUrl?: string;
   /** Short tagline shown on listing cards */
@@ -22,6 +24,120 @@ export type CaseStudy = {
 };
 
 export const caseStudies: CaseStudy[] = [
+  {
+    slug: "powerbike",
+    projectName: "Powerbike",
+    industry: "Media / Publishing",
+    status: "published",
+    websiteUrl: "https://powerbike.nu",
+    summary:
+      "Svenskt motormagasin flyttat från WordPress till en egen publiceringsplattform — med annonssystem, företagsregister och AI i redaktionen.",
+    customerProblem:
+      "Powerbike publicerar nyheter, tester och guider om MC, moped, ATV, snöskoter och cykel. Sajten låg på WordPress, och intäkterna byggde på annonser — en kombination som drar åt olika håll: annonsskript och plugins gör sidorna långsamma, och en långsam sajt tappar både läsare och annonsvärde. Dessutom fanns ingen egen struktur för de saker som faktiskt tjänar pengar: annonsförsäljning, betalt företagsregister och affiliatelänkar sköttes vid sidan av systemet.",
+    solution:
+      "Vi byggde en egen publiceringsplattform på Next.js och Cloudflare Workers, med redaktionsverktyg, annonssystem och företagsregister i samma produkt. Hela WordPress-innehållet migrerades med bevarade länkar, och AI används i redaktionen — men aldrig utan en människa som godkänner.",
+    process: [
+      "Egen artikelmotor med blockbaserad editor: text, bilder, citat, faktarutor, annonsplatser och affiliatelänkar",
+      "Testartiklar med strukturerad betygsdata som blir Product- och Review-schema för Google",
+      "Eget annonssystem med Stripe-betalning, viktad rotation och klickspårning — med AdSense som fallback",
+      "Betalt företagsregister för handlare, verkstäder och klubbar, med geokodning och öppettider",
+      "AI-stöd i redaktionen: RSS-flöden blir utkast som alltid passerar en granskningskö innan publicering",
+      "Nyhetsbrev med dubbel opt-in, samt cookiefri egen statistik utan tredjepartsspårning",
+      "Migrering av allt WordPress-innehåll med 399 redirects så att inga gamla länkar dog",
+    ],
+    results: [
+      "Ett komplett motormagasin i produktion med fyra egna intäktsflöden — och en annonslösning som inte får sidorna att hoppa eller ladda långsammare.",
+    ],
+    techStack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+      "Supabase/PostgreSQL",
+      "Cloudflare Workers",
+      "Stripe",
+      "Claude (Anthropic)",
+    ],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
+    slug: "bolagsdata-api",
+    projectName: "Bolagsdata API",
+    industry: "Data / API",
+    status: "published",
+    websiteUrl: "https://bolagsdataapi.se",
+    summary:
+      "Sökbar databas över Sveriges 3,5 miljoner företag — med ett öppet API, byggt på avgiftsfria offentliga datakällor.",
+    customerProblem:
+      "Svensk företagsinformation ligger i praktiken bakom betalväggar och säljsamtal, trots att grunddatan är offentlig och avgiftsfri. Journalisten som granskar, säljaren som prospekterar, utvecklaren som bygger och privatpersonen som vill kolla upp en motpart möts alla av samma sak: registrera dig, prata med säljare, teckna avtal. Datan finns hos Bolagsverket och SCB — men i bulkfiler som ingen orkar bearbeta, i tre olika format och två teckenkodningar.",
+    solution:
+      "Vi byggde en sökbar företagsdatabas ovanpå Bolagsverkets och SCB:s öppna datamängder, plus 360 000+ årsredovisningar tolkade ur iXBRL. Sök och API är gratis — tjänsten finansieras av annonsering och företag som uppgraderar sin profil, inte av betalväggar.",
+    process: [
+      "Sökning över 3,5 miljoner företag med filter på ort, status, bolagsform och SNI-bransch",
+      "Öppet REST-API med tre endpoints: sök, enskilt bolag och bulkexport med keyset-paginering",
+      "API-nycklar med atomisk kvotmätning — 500 anrop per dygn, utan risk för race conditions",
+      "Importpipeline som streamar Bolagsverkets och SCB:s bulkfiler oavsett XML, CSV, TSV eller NDJSON",
+      "360 000+ årsredovisningar tolkade ur iXBRL, med 32 taxonomibegrepp mappade till nyckeltal",
+      "Bevakningslistor med notiser vid ändring, CSV-export och egen företagsprofil för bolagsägare",
+      "Sitemap-arkitektur som indexerar miljontals bolagssidor utan att fälla databasen",
+    ],
+    results: [
+      "En gratis, öppen företagsdatabas i produktion — 3,5 miljoner bolag och 360 000+ bokslut, sökbara på under en sekund där tunga frågor tidigare tog nästan en minut.",
+    ],
+    techStack: [
+      "Next.js 15",
+      "React 19",
+      "TypeScript",
+      "Supabase/PostgreSQL",
+      "Cloudflare Pages (edge)",
+      "Node-pipeline",
+    ],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
+  {
+    slug: "vibeshops",
+    projectName: "VIBESHOPS",
+    industry: "SaaS / E-handel",
+    status: "published",
+    statusLabel: "Lanserad — vidare utveckling pågår",
+    websiteUrl: "https://vibeshops.se",
+    summary:
+      "Multi-tenant e-handelsplattform där svenska handlare får en komplett webbutik — utan provision och utan inlåsning.",
+    customerProblem:
+      "Svenska handlare som vill sälja online har i praktiken två val: en internationell plattform som Shopify — där du betalar provision på varje order och tvingas in i deras kassa — eller en äldre svensk lösning som visserligen förstår Swish, moms och Fortnox men känns byggd för ett annat årtionde. Ingen av dem löser svensk verklighet, modern prestanda och ärlig prissättning i samma produkt.",
+    solution:
+      "Vi byggde en multi-tenant e-handelsplattform där svensk regelefterlevnad, modern prestanda och provisionsfri prissättning finns i samma produkt — och där en handlare kan driva flera butiker på flera marknader utan att något av det blir en integrationsövning.",
+    process: [
+      "Multi-tenant kärna med vattentät isolering — RLS på samtliga tabeller, verifierat med skarpa isolationstester i CI",
+      "Multishop — flera butiker, marknader, språk och valutor från ett konto, med delad katalog och delat lager men eget sortiment per butik",
+      "Svensk kassa — Swish, Klarna, kort och Qliro med serverside-beräkning av alla belopp i heltal öre",
+      "Moms som faktiskt stämmer — destinationsmoms för EU-B2C (OSS), omvänd skattskyldighet och nollmoms vid export",
+      "Lager i realtid — flera lagerställen, atomisk reservation vid köp och hämta i butik",
+      "AI där den gör nytta — produkttexter och översättningar på svenska med förhandsgranskning innan de sparas",
+      "Omnibus och GDPR ur lådan — prishistorik loggas från dag ett, cookie-samtycke gatar all spårning",
+      "Integrationer — Fortnox, Google Shopping, Meta, Omdio och fraktbokning mot flera transportörer",
+    ],
+    results: [
+      "Lanserad och i drift med GregMoto som första tenant, plus en publik demo på demo.vibeshops.se. Tenant-isoleringen är verifierad med cross-tenant-tester i CI. Vidareutvecklingen fortsätter med nya funktioner och fler butiker.",
+    ],
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "Supabase/PostgreSQL",
+      "Row Level Security",
+      "Cloudflare Workers",
+      "Stripe",
+    ],
+    cta: {
+      label: "Boka möte om liknande projekt",
+      href: "/boka-mote",
+    },
+  },
   {
     slug: "cms-online",
     projectName: "CMS Online",

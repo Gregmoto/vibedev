@@ -132,6 +132,24 @@ export default function ServicesPage() {
         </div>
       </Section>
 
+      {/* ── Hyrmodellen ───────────────────────────────────────────────────── */}
+      <Section size="tight">
+        <div className="rounded-2xl border border-line bg-bg px-7 py-8 sm:px-9">
+          <p className="eyebrow">ALTERNATIV</p>
+          <h2 className="heading-md mt-2">Vill ni hellre hyra än köpa?</h2>
+          <p className="body-md mt-4 max-w-2xl">
+            Vi bygger och driftar lösningen mot en fast månadsavgift som sätts efter
+            omfattningen — allt från en enkel företagssida till större skräddarsydda system.
+            Hosting, SSL, drift, backup och support ingår.
+          </p>
+          <div className="mt-6">
+            <LinkButton href="/hyr" variant="secondary">
+              Läs om hyrmodellen →
+            </LinkButton>
+          </div>
+        </div>
+      </Section>
+
       {/* ── End CTA ───────────────────────────────────────────────────────── */}
       <Section>
         <div className="surface-elevated px-6 py-12 sm:px-10">

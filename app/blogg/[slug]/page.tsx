@@ -76,6 +76,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               keywords: post.tags,
               siteName: settings.siteName,
               siteUrl: settings.siteUrl,
+              type: "BlogPosting",
             }),
           ),
         }}

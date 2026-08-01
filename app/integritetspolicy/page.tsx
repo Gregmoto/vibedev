@@ -12,7 +12,7 @@ export const metadata: Metadata = createMetadata(
 
 export default function IntegritetspolicyPage() {
   return (
-    <main id="main-content" className="py-20">
+    <div className="py-20">
       <Container>
         <div className="mx-auto max-w-3xl">
           <h1 className="mb-4 text-4xl font-bold tracking-tight text-text">
@@ -56,8 +56,8 @@ export default function IntegritetspolicyPage() {
                   Analytics 4 (om aktiverat). Inga cookies sätts utan ditt samtycke.
                 </li>
                 <li>
-                  <strong>Cal.com-bokningar:</strong> de uppgifter du anger i bokningsformuläret
-                  (namn, e-postadress, eventuellt företag).
+                  <strong>Bokningsförfrågningar:</strong> de uppgifter du anger i formuläret på
+                  /boka-mote (namn, e-postadress, eventuellt företag och projektbeskrivning).
                 </li>
               </ul>
             </section>
@@ -114,10 +114,7 @@ export default function IntegritetspolicyPage() {
                   (USA, Standard Contractual Clauses).
                 </li>
                 <li>
-                  <strong>Cal.com</strong> — bokningsplattform (EU/USA, Standard Contractual Clauses).
-                </li>
-                <li>
-                  <strong>Vercel</strong> — webbhosting (USA, Standard Contractual Clauses).
+                  <strong>Cloudflare</strong> — webbhosting (EU/USA, Standard Contractual Clauses).
                 </li>
                 <li>
                   <strong>Google Analytics 4</strong> — webbanalys, om du har givit samtycke
@@ -181,6 +178,6 @@ export default function IntegritetspolicyPage() {
           </div>
         </div>
       </Container>
-    </main>
+    </div>
   );
 }

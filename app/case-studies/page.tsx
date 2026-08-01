@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     routePath: "/case-studies",
     fallbackTitle: "Case studies — Plattformar och produkter vi byggt | VibeDev",
     fallbackDescription:
-      "Konkreta exempel: CMS Online, Bookiz, Mittbrottmål, Min Odling, Omdio, Cultio och Endoo. Se hur strategi, design och utveckling skapar riktiga produkter.",
+      "Konkreta exempel: VIBESHOPS, Bolagsdata API, Powerbike, CMS Online, Bookiz, Mittbrottmål, Omdio och Cultio. Se hur strategi, design och utveckling skapar riktiga produkter.",
     keywords: ["case studies", "produktexempel", "mvp", "apputveckling", "webbapp", "ai-lösning"],
   });
 }
@@ -63,7 +63,7 @@ function CaseCard({ cs, index }: { cs: (typeof caseStudies)[number]; index: numb
         {/* Status + industry badges */}
         <div className="flex flex-wrap gap-2">
           <Badge tone={isOngoing ? "neutral" : "success"}>
-            {isOngoing ? "Pågående — lansering 2026" : "Lanserad"}
+            {cs.statusLabel ?? (isOngoing ? "Pågående — lansering 2026" : "Lanserad")}
           </Badge>
           <Badge tone="accent">{cs.industry}</Badge>
         </div>
@@ -180,7 +180,7 @@ export default function CaseStudiesPage() {
       <Section>
         <SectionHeading
           eyebrow="PROJEKT"
-          title="Sju lanserade produkter + två pågående."
+          title="Tio lanserade produkter + två pågående."
           description="Oavsett bransch är mönstret detsamma: rätt scope, rätt teknik och ett team som tar ägarskap hela vägen till lansering."
           className="mb-10"
         />

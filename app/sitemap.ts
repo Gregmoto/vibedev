@@ -8,9 +8,11 @@ import {
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 
 const staticPriority: Record<string, number> = {
-  "":              1.0,
-  "/tjanster":     0.9,
-  "/vibecoding":   0.8,
+  "":                  1.0,
+  "/tjanster":         0.9,
+  "/gratis-hemsida":   0.9,
+  "/hyr":              0.9,
+  "/vibecoding":       0.8,
 };
 
 /* Article-level priority overrides (keyed by /blogg/<slug>) */
@@ -21,6 +23,8 @@ const articlePriority: Record<string, number> = {
 const routes = [
   "",
   "/tjanster",
+  "/gratis-hemsida",
+  "/hyr",
   "/om-oss",
   "/blogg",
   "/podcast",

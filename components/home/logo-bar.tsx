@@ -10,6 +10,24 @@ type Client = {
 
 const clients: Client[] = [
   {
+    name:    "VIBESHOPS",
+    slug:    "vibeshops",
+    color:   "#2563EB",
+    tagline: "SaaS / E-handel",
+  },
+  {
+    name:    "Bolagsdata API",
+    slug:    "bolagsdata-api",
+    color:   "#0F766E",
+    tagline: "Data / API",
+  },
+  {
+    name:    "Powerbike",
+    slug:    "powerbike",
+    color:   "#D92B1C",
+    tagline: "Media / Publishing",
+  },
+  {
     name:    "CMS Online",
     slug:    "cms-online",
     color:   "#0066CC",
