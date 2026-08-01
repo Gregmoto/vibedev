@@ -97,9 +97,9 @@ export default function CookiesPage() {
             <section>
               <h2 className="mb-3 text-xl font-semibold text-text">Tredjepartscookies</h2>
               <p>
-                Tjänster inbäddade på webbplatsen (t.ex. Cal.com för bokning) kan sätta
-                egna cookies. Vi har ingen kontroll över dessa och hänvisar till respektive
-                leverantörs sekretesspolicy.
+                Utöver Google Analytics ovan bäddar vi inte in några tredjepartstjänster som
+                sätter egna cookies. Skulle vi lägga till en sådan tjänst framöver uppdaterar vi
+                den här sidan innan den aktiveras.
               </p>
             </section>
 
