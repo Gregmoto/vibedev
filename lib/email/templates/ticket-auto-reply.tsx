@@ -6,6 +6,7 @@ import {
   Heading,
   Hr,
   Html,
+  Link,
   Preview,
   Section,
   Text,
@@ -58,6 +59,15 @@ export function TicketAutoReplyEmail({
                 {t.followLinkLabel}
               </Button>
             </Section>
+
+            {/* Adressen skrivs ut i klartext också. Knappar är formaterade med
+                CSS som flera mejlklienter tvättar bort, och en kund som inte
+                ser knappen har annars ingen väg in till sitt ärende. */}
+            <Text style={urlBox}>
+              <Link href={portalUrl} style={urlLink}>
+                {portalUrl}
+              </Link>
+            </Text>
 
             <Text style={small}>{t.replyHint}</Text>
 
@@ -153,6 +163,20 @@ const small: React.CSSProperties = {
   fontSize: "13px",
   lineHeight: "1.6",
   margin: 0,
+};
+
+const urlBox: React.CSSProperties = {
+  backgroundColor: "#F9FAFB",
+  borderRadius: "6px",
+  fontSize: "12px",
+  margin: "0 0 16px",
+  padding: "10px 12px",
+  wordBreak: "break-all",
+};
+
+const urlLink: React.CSSProperties = {
+  color: "#4F6EF7",
+  textDecoration: "none",
 };
 
 const divider: React.CSSProperties = {

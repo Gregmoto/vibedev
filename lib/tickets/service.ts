@@ -254,9 +254,30 @@ async function sendAutoReply(
 ): Promise<void> {
   const copy = getTicketCopy(ticket.language);
   const baseUrl = await getPortalBaseUrl();
+  const portalUrl = buildPortalUrl(baseUrl, ticket.publicToken);
+
+  // Samma innehåll som mejlet, i klartext. Används både som textalternativ i
+  // utskicket och som det vi sparar i tråden — annars visar adminpanelen och
+  // kundportalen en kvittens utan länk, fast kunden fick en med.
+  const plainBody = [
+    copy.greeting(ticket.customerName),
+    "",
+    copy.received,
+    "",
+    `${copy.ticketNumberLabel}: #${ticket.number}`,
+    "",
+    copy.followLinkIntro,
+    portalUrl,
+    "",
+    copy.replyHint,
+    "",
+    copy.closing,
+    account.signature?.trim() || account.name,
+  ].join("\n");
 
   try {
     const { id } = await sendEmail({
+      text: plainBody,
       from: `${account.replyFromName} <${account.replyFromEmail}>`,
       to: [ticket.customerEmail],
       replyTo: buildReplyAddress(account.slug, ticket.replyKey),
@@ -265,7 +286,7 @@ async function sendAutoReply(
         language: ticket.language,
         ticketNumber: ticket.number,
         customerName: ticket.customerName,
-        portalUrl: buildPortalUrl(baseUrl, ticket.publicToken),
+        portalUrl,
         signature: account.signature,
         accountName: account.name,
       }),
@@ -284,7 +305,7 @@ async function sendAutoReply(
         direction: "OUTBOUND",
         fromEmail: account.replyFromEmail,
         fromName: account.replyFromName,
-        bodyText: `${copy.received}\n\n${copy.ticketNumberLabel}: #${ticket.number}`,
+        bodyText: plainBody,
         resendEmailId: id,
       },
     });
