@@ -138,7 +138,15 @@ export default async function TicketPortalPage({
         </section>
 
         <section className="mt-10 rounded-2xl border border-line bg-panel p-6">
-          <TicketPortalForm token={ticket.publicToken} copy={copy} />
+          <TicketPortalForm
+            token={ticket.publicToken}
+            labels={{
+              replyLabel: copy.portalReplyLabel,
+              replyPlaceholder: copy.portalReplyPlaceholder,
+              attachmentsLabel: copy.portalAttachmentsLabel,
+              submit: copy.portalSubmit,
+            }}
+          />
         </section>
       </div>
     </Container>

@@ -4,16 +4,24 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { replyFromPortalAction, type PortalReplyState } from "@/lib/actions/ticket-portal-actions";
-import type { TicketCopy } from "@/lib/tickets/copy";
 
+/**
+ * Bara de färdiga strängarna skickas in — hela TicketCopy innehåller funktioner,
+ * och funktioner kan inte serialiseras från en server- till en klientkomponent.
+ */
 type TicketPortalFormProps = {
   token: string;
-  copy: TicketCopy;
+  labels: {
+    replyLabel: string;
+    replyPlaceholder: string;
+    attachmentsLabel: string;
+    submit: string;
+  };
 };
 
 const initialState: PortalReplyState = {};
 
-export function TicketPortalForm({ token, copy }: TicketPortalFormProps) {
+export function TicketPortalForm({ token, labels }: TicketPortalFormProps) {
   const [state, formAction, isPending] = useActionState(replyFromPortalAction, initialState);
 
   return (
@@ -22,8 +30,8 @@ export function TicketPortalForm({ token, copy }: TicketPortalFormProps) {
 
       <Textarea
         name="bodyText"
-        label={copy.portalReplyLabel}
-        placeholder={copy.portalReplyPlaceholder}
+        label={labels.replyLabel}
+        placeholder={labels.replyPlaceholder}
         // Tvingar fram ett tomt fält efter lyckat svar, så samma text inte
         // råkar skickas två gånger.
         key={state.success ?? "draft"}
@@ -31,7 +39,7 @@ export function TicketPortalForm({ token, copy }: TicketPortalFormProps) {
       />
 
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-text">{copy.portalAttachmentsLabel}</span>
+        <span className="text-sm font-medium text-text">{labels.attachmentsLabel}</span>
         <input
           type="file"
           name="attachments"
@@ -45,7 +53,7 @@ export function TicketPortalForm({ token, copy }: TicketPortalFormProps) {
       {state.success ? <p className="text-sm text-success">{state.success}</p> : null}
 
       <Button type="submit" size="lg" disabled={isPending} aria-busy={isPending}>
-        {isPending ? "…" : copy.portalSubmit}
+        {isPending ? "…" : labels.submit}
       </Button>
     </form>
   );
