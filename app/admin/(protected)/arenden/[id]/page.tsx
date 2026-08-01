@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { TicketAutoReplyRetry } from "@/components/admin/ticket-auto-reply-retry";
 import { TicketReplyForm } from "@/components/admin/ticket-reply-form";
 import { Badge } from "@/components/ui/badge";
@@ -271,9 +272,11 @@ export default async function AdminTicketDetailPage({
         </p>
         <form action={deleteTicketAction} className="mt-4">
           <input type="hidden" name="id" value={ticket.id} />
-          <Button type="submit" variant="secondary" size="sm">
+          <ConfirmSubmitButton
+            message={`Ta bort ärende #${ticket.number} permanent? Hela tråden och alla bilagor försvinner, och kundens länk slutar fungera.`}
+          >
             Ta bort ärendet
-          </Button>
+          </ConfirmSubmitButton>
         </form>
       </section>
     </AdminShell>

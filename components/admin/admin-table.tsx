@@ -16,6 +16,9 @@ type AdminTableProps<T> = {
   actions?: ReactNode;
   emptyState?: ReactNode;
   rowKey?: (item: T, index: number) => string;
+  /** Tätare rader och smalare cellmarginaler. För tabeller med många kolumner,
+   *  där standardmåtten annars gör tabellen bredare än adminytan. */
+  dense?: boolean;
 };
 
 export function AdminTable<T>({
@@ -26,7 +29,13 @@ export function AdminTable<T>({
   actions,
   emptyState,
   rowKey,
+  dense = false,
 }: AdminTableProps<T>) {
+  const cellPadding = dense ? "px-4 py-3" : "px-6 py-4";
+  // table-fixed låter kolumnerna följa angivna procentbredder i stället för
+  // innehållets naturliga bredd. Då kan tabellen aldrig bli bredare än ytan,
+  // oavsett hur långa ämnesrader eller adresser som råkar dyka upp.
+  const tableWidth = dense ? "w-full table-fixed" : "min-w-full";
   return (
     <section className="surface-elevated overflow-hidden">
       <div className="flex flex-col gap-4 border-b border-white/5 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
@@ -48,13 +57,13 @@ export function AdminTable<T>({
             )}
           </div>
         ) : (
-        <table className="min-w-full border-collapse">
+        <table className={cn(tableWidth, "border-collapse")}>
           <thead>
             <tr className="border-b border-white/5">
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={cn("px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted", column.className)}
+                  className={cn(cellPadding, "text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted", column.className)}
                 >
                   {column.header}
                 </th>
@@ -65,7 +74,7 @@ export function AdminTable<T>({
             {rows.map((row, index) => (
               <tr key={rowKey ? rowKey(row, index) : index} className="border-b border-white/5 last:border-0">
                 {columns.map((column) => (
-                  <td key={column.key} className={cn("px-6 py-4 align-top text-sm text-text", column.className)}>
+                  <td key={column.key} className={cn(cellPadding, "align-top text-sm text-text", column.className)}>
                     {column.render(row)}
                   </td>
                 ))}

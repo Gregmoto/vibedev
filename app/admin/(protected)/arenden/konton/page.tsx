@@ -1,5 +1,6 @@
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminTable } from "@/components/admin/admin-table";
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { TicketAccountForm } from "@/components/admin/ticket-account-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -95,9 +96,15 @@ export default async function AdminTicketAccountsPage({
                 </a>
                 <form action={deleteTicketAccountAction}>
                   <input type="hidden" name="id" value={row.id} />
-                  <Button type="submit" variant="secondary" size="sm">
+                  <ConfirmSubmitButton
+                    message={
+                      row._count.tickets > 0
+                        ? `Ta bort kontot "${row.name}"? Det raderar även ${row._count.tickets} ärenden med alla meddelanden och bilagor. Vill du bara sluta ta emot mejl — avmarkera "Aktivt" i stället.`
+                        : `Ta bort kontot "${row.name}"? Adressen ${row.inboundEmail} slutar ta emot mejl.`
+                    }
+                  >
                     Ta bort
-                  </Button>
+                  </ConfirmSubmitButton>
                 </form>
               </div>
             ),

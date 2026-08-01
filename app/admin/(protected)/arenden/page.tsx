@@ -4,7 +4,12 @@ import { AdminTable } from "@/components/admin/admin-table";
 import { Badge } from "@/components/ui/badge";
 import { Button, LinkButton } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
-import { markTicketNotSpamAction, markTicketSpamAction } from "@/lib/admin-ticket-actions";
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import {
+  deleteTicketAction,
+  markTicketNotSpamAction,
+  markTicketSpamAction,
+} from "@/lib/admin-ticket-actions";
 import { db } from "@/lib/db";
 import { countTicketsByCustomer } from "@/lib/tickets/queries";
 import { toPreview } from "@/lib/tickets/text";
@@ -17,16 +22,28 @@ const STATUS_LABEL = {
   CLOSED: "Avslutat",
 } as const;
 
+/* Kort form i tabellen. "Väntar på kund" radbryter i badgen och gör
+   statuskolumnen bredare än vad tabellen har utrymme för. */
+const STATUS_LABEL_SHORT = {
+  OPEN: "Öppet",
+  PENDING: "Väntar",
+  CLOSED: "Avslutat",
+} as const;
+
 const STATUS_TONE = {
   OPEN: "brand",
   PENDING: "accent",
   CLOSED: "neutral",
 } as const;
 
+/* Kompakt datum ("1 aug 20:13"). Full ISO-form tog en oproportionerlig del av
+   tabellbredden; året är sällan det man behöver i en lista sorterad på tid. */
 function formatDate(value: Date): string {
   return new Intl.DateTimeFormat("sv-SE", {
-    dateStyle: "short",
-    timeStyle: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(value);
 }
 
@@ -155,6 +172,7 @@ export default async function AdminTicketsPage({
         }
         rows={tickets}
         rowKey={(row) => row.id}
+        dense
         actions={
           <LinkButton href="/admin/arenden/konton" size="sm">
             Konton
@@ -189,8 +207,12 @@ export default async function AdminTicketsPage({
           {
             key: "subject",
             header: "Ärende",
+            className: "w-[36%]",
+            // Texterna tillåts aldrig radbryta: en förhandsvisning som viker sig
+            // i en smal kolumn gör raderna orimligt höga och tvingar fram
+            // vågrät scroll i hela tabellen.
             render: (row) => (
-              <div className="space-y-1">
+              <div className="max-w-full space-y-0.5">
                 <div className="flex items-center gap-2">
                   {/* Olästa ärenden ska gå att hitta med ögat, inte bara via siffran i menyn. */}
                   {row.readAt ? null : (
@@ -202,17 +224,25 @@ export default async function AdminTicketsPage({
                   )}
                   <Link
                     href={`/admin/arenden/${row.id}`}
+                    title={row.subject}
+                    // min-w-0 krävs för att en flex-post ska få krympa under
+                    // sin innehållsbredd — utan den gör truncate ingenting.
                     className={
                       row.readAt
-                        ? "font-medium text-text transition hover:text-brand"
-                        : "font-bold text-text transition hover:text-brand"
+                        ? "min-w-0 truncate font-medium text-text transition hover:text-brand"
+                        : "min-w-0 truncate font-bold text-text transition hover:text-brand"
                     }
                   >
                     #{row.number} · {row.subject}
                   </Link>
                 </div>
-                <p className="max-w-md text-xs text-muted">
-                  {row.messages[0] ? toPreview(row.messages[0].bodyText) : "—"}
+                <p className="truncate text-xs text-muted">
+                  {row.messages[0] ? toPreview(row.messages[0].bodyText, 80) : "—"}
+                </p>
+                {/* Kontot hade tidigare en egen kolumn. Som liten rad här ryms
+                    tabellen inom adminytan utan vågrät scroll. */}
+                <p className="truncate text-xs text-muted/70">
+                  {row.account.name} · {row.language.toUpperCase()}
                 </p>
               </div>
             ),
@@ -220,21 +250,24 @@ export default async function AdminTicketsPage({
           {
             key: "customer",
             header: "Kund",
+            className: "w-[24%]",
             render: (row) => {
               const total = ticketsPerCustomer.get(row.customerEmail) ?? 1;
 
               return (
-                <div className="space-y-1">
-                  <p className="text-sm text-text">{row.customerName || row.customerEmail}</p>
+                <div className="max-w-full space-y-0.5">
+                  <p className="truncate text-sm text-text" title={row.customerEmail}>
+                    {row.customerName || row.customerEmail}
+                  </p>
                   {row.customerName ? (
-                    <p className="text-xs text-muted">{row.customerEmail}</p>
+                    <p className="truncate text-xs text-muted">{row.customerEmail}</p>
                   ) : null}
                   {total > 1 ? (
                     <Link
                       href={`/admin/arenden?kund=${encodeURIComponent(row.customerEmail)}`}
-                      className="inline-block text-xs text-brand transition hover:underline"
+                      className="block truncate text-xs text-brand transition hover:underline"
                     >
-                      {total} ärenden från denna kund
+                      {total} ärenden från kunden
                     </Link>
                   ) : null}
                 </div>
@@ -242,39 +275,53 @@ export default async function AdminTicketsPage({
             },
           },
           {
-            key: "account",
-            header: "Konto",
-            render: (row) => <span className="text-sm text-muted">{row.account.name}</span>,
-          },
-          {
-            key: "language",
-            header: "Språk",
-            render: (row) => (
-              <span className="text-xs uppercase tracking-[0.14em] text-muted">{row.language}</span>
-            ),
-          },
-          {
             key: "status",
             header: "Status",
-            render: (row) => <Badge tone={STATUS_TONE[row.status]}>{STATUS_LABEL[row.status]}</Badge>,
+            className: "w-[13%]",
+            render: (row) => (
+              <Badge tone={STATUS_TONE[row.status]} className="whitespace-nowrap">
+                {STATUS_LABEL_SHORT[row.status]}
+              </Badge>
+            ),
           },
           {
             key: "lastMessageAt",
             header: "Senaste",
+            className: "w-[12%]",
             render: (row) => (
-              <span className="text-sm text-muted">{formatDate(row.lastMessageAt)}</span>
+              <span className="whitespace-nowrap text-sm text-muted">
+                {formatDate(row.lastMessageAt)}
+              </span>
             ),
           },
           {
-            key: "spam",
+            key: "actions",
             header: "",
+            className: "w-[15%]",
+            // Textlänkar i stället för knappar: två knappar bredvid varandra
+            // sköt ut kolumnen utanför adminytan.
             render: (row) => (
-              <form action={showSpam ? markTicketNotSpamAction : markTicketSpamAction}>
-                <input type="hidden" name="id" value={row.id} />
-                <Button type="submit" variant="secondary" size="sm">
-                  {showSpam ? "Inte skräp" : "Skräp"}
-                </Button>
-              </form>
+              <div className="flex items-center justify-end gap-3">
+                <form action={showSpam ? markTicketNotSpamAction : markTicketSpamAction}>
+                  <input type="hidden" name="id" value={row.id} />
+                  <button
+                    type="submit"
+                    className="whitespace-nowrap text-sm text-muted transition hover:text-text"
+                  >
+                    {showSpam ? "Inte skräp" : "Skräp"}
+                  </button>
+                </form>
+
+                <form action={deleteTicketAction}>
+                  <input type="hidden" name="id" value={row.id} />
+                  <ConfirmSubmitButton
+                    plain
+                    message={`Ta bort ärende #${row.number} permanent? Hela tråden och alla bilagor försvinner, och kundens länk slutar fungera.`}
+                  >
+                    Ta bort
+                  </ConfirmSubmitButton>
+                </form>
+              </div>
             ),
           },
         ]}
