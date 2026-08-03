@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import type { HtmlBlock } from "@/lib/tickets/html-body";
 import { cn } from "@/lib/utils";
 
 type MessageBodyProps = {
+  /** Ren text. Används när mejlet saknar HTML, eller när HTML:en var tom. */
   text: string;
+  /**
+   * Mejlets HTML, redan nedbruten till en säker struktur på servern.
+   * Parsningen ligger kvar där med flit — htmlparser2 hör inte hemma i
+   * klientbundlen, och avsändarens HTML ska aldrig nå webbläsaren som HTML.
+   */
+  blocks?: HtmlBlock[] | null;
   /** Färger skiljer sig mellan adminpanelen och kundsidan. */
   fadeClassName?: string;
 };
@@ -13,20 +21,65 @@ type MessageBodyProps = {
    trycker ett enda sådant meddelande ner resten av tråden utom synhåll. */
 const LONG_MESSAGE_CHARS = 900;
 
-export function MessageBody({ text, fadeClassName }: MessageBodyProps) {
+function blocksLength(blocks: HtmlBlock[]): number {
+  return blocks.reduce(
+    (total, block) => total + block.runs.reduce((sum, run) => sum + run.text.length, 0),
+    0,
+  );
+}
+
+export function MessageBody({ text, blocks, fadeClassName }: MessageBodyProps) {
   const [expanded, setExpanded] = useState(false);
-  const isLong = text.length > LONG_MESSAGE_CHARS;
+
+  const useBlocks = Boolean(blocks && blocks.length > 0);
+  const length = useBlocks ? blocksLength(blocks!) : text.length;
+
+  const isLong = length > LONG_MESSAGE_CHARS;
   const collapsed = isLong && !expanded;
 
   return (
     <div className="mt-4">
       <div className={cn("relative", collapsed && "max-h-64 overflow-hidden")}>
-        {/*
-          break-words krävs: spårningslänkar i marknadsmejl kan vara flera
-          hundra tecken utan mellanslag, och ett sådant "ord" spränger annars
-          kortets bredd och tvingar fram vågrät scroll i hela vyn.
-        */}
-        <p className="whitespace-pre-wrap break-words text-sm leading-7 text-text">{text}</p>
+        {useBlocks ? (
+          <div className="space-y-2">
+            {blocks!.map((block, blockIndex) => (
+              <p
+                key={blockIndex}
+                className={cn(
+                  "break-words text-sm leading-7",
+                  block.heading ? "font-semibold text-text" : "text-text",
+                )}
+              >
+                {block.runs.map((run, runIndex) =>
+                  run.href ? (
+                    <a
+                      key={runIndex}
+                      href={run.href}
+                      target="_blank"
+                      // nofollow + noreferrer: adresser i inkommande mejl är
+                      // opålitliga och ska varken ärva vår sidas rykte eller
+                      // avslöja varifrån klicket kom.
+                      rel="noopener noreferrer nofollow"
+                      title={run.href}
+                      className="text-brand underline underline-offset-2 transition hover:no-underline"
+                    >
+                      {run.text}
+                    </a>
+                  ) : (
+                    <span key={runIndex}>{run.text}</span>
+                  ),
+                )}
+              </p>
+            ))}
+          </div>
+        ) : (
+          /*
+            break-words krävs: spårningslänkar i marknadsmejl kan vara flera
+            hundra tecken utan mellanslag, och ett sådant "ord" spränger annars
+            kortets bredd och tvingar fram vågrät scroll i hela vyn.
+          */
+          <p className="whitespace-pre-wrap break-words text-sm leading-7 text-text">{text}</p>
+        )}
 
         {collapsed ? (
           <div

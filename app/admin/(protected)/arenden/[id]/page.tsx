@@ -22,6 +22,7 @@ import { getOtherTicketsForCustomer } from "@/lib/tickets/queries";
 import { buildPortalUrl } from "@/lib/tickets/service";
 import { getResolvedSiteSettings } from "@/lib/site-settings";
 import { stripQuotedReply } from "@/lib/tickets/text";
+import { hasRenderableHtml, htmlToBlocks, type HtmlBlock } from "@/lib/tickets/html-body";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,17 @@ const STATUS_TONE = {
 
 function formatDateTime(value: Date): string {
   return new Intl.DateTimeFormat("sv-SE", { dateStyle: "medium", timeStyle: "short" }).format(value);
+}
+
+/* Mejlets HTML bryts ned på servern. Ger den inget läsbart tillbaka faller vi
+   tillbaka på textversionen — vissa mejl har en HTML-del som bara är en bild. */
+function renderHtml(html: string | null): HtmlBlock[] | null {
+  if (!html) {
+    return null;
+  }
+
+  const blocks = htmlToBlocks(html);
+  return hasRenderableHtml(blocks) ? blocks : null;
 }
 
 function formatBytes(bytes: number): string {
@@ -226,6 +238,7 @@ export default async function AdminTicketDetailPage({
 
               <MessageBody
                 text={stripQuotedReply(message.bodyText)}
+                blocks={renderHtml(message.bodyHtml)}
                 fadeClassName={outbound ? "from-panel" : "from-panelElevated"}
               />
 

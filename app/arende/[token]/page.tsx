@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { hasDatabase } from "@/lib/db";
 import { getTicketCopy } from "@/lib/tickets/copy";
 import { stripQuotedReply } from "@/lib/tickets/text";
+import { hasRenderableHtml, htmlToBlocks, type HtmlBlock } from "@/lib/tickets/html-body";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,15 @@ const STATUS_TONE = {
   PENDING: "accent",
   CLOSED: "neutral",
 } as const;
+
+function renderHtml(html: string | null): HtmlBlock[] | null {
+  if (!html) {
+    return null;
+  }
+
+  const blocks = htmlToBlocks(html);
+  return hasRenderableHtml(blocks) ? blocks : null;
+}
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -147,6 +157,7 @@ export default async function TicketPortalPage({
 
                   <MessageBody
                     text={stripQuotedReply(message.bodyText)}
+                    blocks={renderHtml(message.bodyHtml)}
                     fadeClassName={fromUs ? "from-bg" : "from-panel"}
                   />
 
