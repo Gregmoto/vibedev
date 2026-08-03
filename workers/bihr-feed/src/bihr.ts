@@ -1,21 +1,29 @@
 import { unzipSync } from "fflate";
 
 /**
- * Klient mot Bihrs eBihr Web API v3.
+ * Klient mot Bihrs eBihr Web API v2.1.
  *
- * Två saker styr utformningen:
- *  • API:et tillåter ett anrop per sekund. Överskrids det svarar det 429 utan
- *    att köa, så varje anrop går genom samma strypning.
- *  • Katalogerna genereras asynkront. Lager och produkter brukar vara färdiga
- *    direkt (Bihr bygger dem nattetid), men priser tar flera minuter.
+ * v2.1 och inte v3: det är v2.1 som har de tre kataloger portalen visar
+ * (Extended, HardPart, RiderGear). v3 har en enda sammanslagen produktkatalog
+ * med helt andra kolumnnamn, och den motsvarar ingenting Bihr själva erbjuder.
+ *
+ * Katalogerna returneras direkt som ZIP — ingen bestäl-och-vänta som i v3.
+ * Statusgränsen är ett anrop per sekund och gäller hela API:et.
  */
 
 const BASE = "https://api.bihr.net";
-
-/* En sekund plus marginal — nätverksjitter ska inte kunna trigga 429. */
 const MIN_CALL_INTERVAL_MS = 1200;
 
-export type CatalogType = "Products" | "Prices" | "Stocks" | "SalesCategories";
+export type EssentialCatalog = "EssentialHardPart" | "EssentialRiderGear" | "EssentialExtended";
+
+export type GenerationHistoryEntry = {
+  CreationDateTime: string;
+  CatalogType: string;
+  CatalogCompletion: string;
+  GenerationStatus: string;
+  TicketId: string;
+  DownloadId: string;
+};
 
 export class BihrClient {
   private token: string | null = null;
@@ -36,8 +44,8 @@ export class BihrClient {
   }
 
   private async getToken(): Promise<string> {
-    // 60 sekunders marginal: en token som går ut mitt i en nedladdning på
-    // hundratals MB skulle spränga hela körningen.
+    // 60 sekunders marginal — en token som går ut mitt i en nedladdning på
+    // tiotals MB skulle spränga hela körningen.
     if (this.token && Date.now() < this.tokenExpiresAt - 60_000) {
       return this.token;
     }
@@ -48,7 +56,7 @@ export class BihrClient {
     form.set("UserName", this.customerCode);
     form.set("PassWord", this.apiKey);
 
-    const response = await fetch(`${BASE}/api/v3/Authentication/Token`, {
+    const response = await fetch(`${BASE}/api/v2.1/Authentication/Token`, {
       method: "POST",
       body: form,
     });
@@ -67,7 +75,7 @@ export class BihrClient {
     return this.token;
   }
 
-  private async authed(path: string, init: RequestInit = {}): Promise<Response> {
+  private async call(path: string, init: RequestInit = {}): Promise<Response> {
     const token = await this.getToken();
     await this.throttle();
 
@@ -80,114 +88,47 @@ export class BihrClient {
     });
   }
 
-  /** Beställer en katalog och väntar tills Bihr byggt klart den. */
-  async requestCatalog(
-    catalogType: CatalogType,
-    { language = "en", timeoutMs = 10 * 60_000 } = {},
-  ): Promise<string> {
-    const response = await this.authed("/api/v3/Catalogs/Request", {
+  /** Hämtar katalogen som ZIP. Bihr svarar direkt med filen. */
+  async fetchCatalog(catalog: EssentialCatalog): Promise<Response> {
+    const response = await this.call(`/api/v2.1/Catalog/${catalog}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        catalogType,
-        compressionType: "ZIP",
-        language,
-        serializationType: "CSV",
-      }),
+      headers: { "Content-Length": "0" },
     });
 
-    if (!response.ok) {
-      throw new Error(`Katalogbeställning ${catalogType} misslyckades: HTTP ${response.status}`);
-    }
-
-    const created = (await response.json()) as {
-      id?: string;
-      status?: string;
-      catalogFileId?: string;
-      errorMessage?: string;
-    };
-
-    if (created.status === "Finished" && created.catalogFileId) {
-      return created.catalogFileId;
-    }
-    if (!created.id) {
-      throw new Error(`Bihr gav inget request-id för ${catalogType}.`);
-    }
-
-    return this.waitForCatalog(created.id, catalogType, timeoutMs);
-  }
-
-  private async waitForCatalog(
-    requestId: string,
-    catalogType: CatalogType,
-    timeoutMs: number,
-  ): Promise<string> {
-    const deadline = Date.now() + timeoutMs;
-
-    while (Date.now() < deadline) {
-      await new Promise((resolve) => setTimeout(resolve, 10_000));
-
-      const response = await this.authed(`/api/v3/Catalogs/Request/${requestId}`);
-      if (!response.ok) {
-        continue;
-      }
-
-      const status = (await response.json()) as {
-        status?: string;
-        catalogFileId?: string;
-        errorMessage?: string;
-      };
-
-      if (status.status === "Finished" && status.catalogFileId) {
-        return status.catalogFileId;
-      }
-      if (status.status === "Failed") {
-        throw new Error(`Bihr misslyckades med ${catalogType}: ${status.errorMessage ?? "okänt fel"}`);
-      }
-    }
-
-    throw new Error(`Bihr blev inte klar med ${catalogType} inom tidsgränsen.`);
-  }
-
-  /**
-   * Öppnar katalogfilen som en ström. Enda vägen för produktkatalogen, som är
-   * 273 MB uppackad och alltså aldrig får buffras i sin helhet.
-   */
-  async openCatalog(fileId: string): Promise<Response> {
-    const response = await this.authed(`/api/v3/Catalogs/File/${fileId}`);
-
     if (!response.ok || !response.body) {
-      throw new Error(`Kunde inte öppna katalogfilen: HTTP ${response.status}`);
+      throw new Error(`Hämtning av ${catalog} misslyckades: HTTP ${response.status}`);
     }
 
     return response;
   }
 
-  /** Hämtar katalogfilen som ZIP. Bara för de små katalogerna. */
-  async downloadCatalog(fileId: string): Promise<ArrayBuffer> {
-    const response = await this.authed(`/api/v3/Catalogs/File/${fileId}`);
+  /** Dagens genereringar hos Bihr, med nedladdnings-id för att hämta om en fil. */
+  async generationHistory(): Promise<GenerationHistoryEntry[]> {
+    const response = await this.call("/api/v2.1/Catalog/CatalogGenerationHistory");
 
     if (!response.ok) {
-      throw new Error(`Nedladdning av katalogfil misslyckades: HTTP ${response.status}`);
+      throw new Error(`Kunde inte hämta genereringshistoriken: HTTP ${response.status}`);
     }
 
-    return response.arrayBuffer();
+    return (await response.json()) as GenerationHistoryEntry[];
   }
 }
 
+/** Packar upp ett arkiv i minnet. Bara för filer vi vet är små nog. */
+export function unzipAll(zip: ArrayBuffer): Record<string, Uint8Array> {
+  return unzipSync(new Uint8Array(zip));
+}
+
 /**
- * Packar upp en ZIP och returnerar den enda CSV-filen i den.
- *
- * Används bara för lager och priser, som är några MB. Produktkatalogen är
- * 273 MB uppackad och måste strömmas — den får aldrig gå genom den här.
+ * Plockar märkesnamnet ur ett Extended-filnamn.
+ * "cat-extended-full-FR00-SE001-en-2026_08_02_00_15_01_ACOUSTA-FIL.zip"
+ * blir "acousta-fil". Tidsstämpeln följer ett fast mönster, så allt efter den
+ * är märket — inklusive bindestreck, som är en del av namnet.
  */
-export function unzipSingleCsv(zip: ArrayBuffer): { name: string; text: string } {
-  const files = unzipSync(new Uint8Array(zip));
-  const name = Object.keys(files).find((key) => key.toLowerCase().endsWith(".csv"));
+export function brandFromFileName(fileName: string): string {
+  const withoutExtension = fileName.replace(/\.[a-z0-9]+$/i, "");
+  const afterTimestamp = withoutExtension.match(/\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}_(.+)$/);
+  const brand = afterTimestamp?.[1] ?? withoutExtension;
 
-  if (!name) {
-    throw new Error("Ingen CSV hittades i katalogarkivet.");
-  }
-
-  return { name, text: new TextDecoder("utf-8").decode(files[name]) };
+  return brand.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "okant";
 }

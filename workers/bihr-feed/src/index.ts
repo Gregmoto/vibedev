@@ -1,58 +1,46 @@
 import { Unzip, UnzipInflate } from "fflate";
-import { BihrClient, unzipSingleCsv } from "./bihr";
-import { RecordSplitter, parseFields, quoteField, toLookup } from "./csv";
+import { BihrClient, brandFromFileName, unzipAll, type EssentialCatalog } from "./bihr";
+import { RecordSplitter, parseFields, quoteField } from "./csv";
 
 /**
- * Nattligt jobb som hämtar Bihrs katalog och lägger en sammanslagen CSV i R2.
+ * Hämtar Bihrs kataloger och lägger dem i R2.
  *
- * Produktkatalogen är 273 MB uppackad — den ryms varken i Workerns minne
- * (128 MB) eller i en vanlig R2-put. Därför strömmas den hela vägen: ZIP:en
- * packas upp i bitar, varje post får sina lager- och priskolumner påklistrade,
- * och resultatet skickas vidare som delar i en R2-multipartuppladdning.
+ * Nattligt: HardPart och RiderGear, nedbantade till tre kolumner. Hela
+ * HardPart-filen är 52 MB uppackad — med bara artikelnummer, streckkod och
+ * lagervärde blir den några MB, och den strömmas ändå igenom eftersom 52 MB
+ * som avkodad sträng inte ryms i Workerns 128 MB.
  *
- * Lager och priser är små nog att hållas i minnet som uppslagstabeller.
+ * På begäran: Extended, som är en ZIP med 245 ZIP-filer inuti — en per märke.
+ * Varje inre arkiv packas upp till en egen CSV med samtliga fält.
  */
 
 export type Env = {
   FEEDS: R2Bucket;
   BIHR_CUSTOMER_CODE: string;
   BIHR_API_KEY: string;
-  /** Skyddar den manuella körningen. Utan den kan vem som helst trigga jobbet. */
   BIHR_TRIGGER_SECRET: string;
 };
 
-const FEED_KEY = "feeds/bihr.csv";
+/** Kolumnerna som sparas för de nattliga filerna. Väljs på namn, inte position. */
+const NIGHTLY_COLUMNS = ["NewPartNumber", "BarCode", "StockValue"];
+
+const EXTENDED_PREFIX = "feeds/extended/";
+const MAX_EXTENDED_AGE_MS = 24 * 60 * 60 * 1000;
 const PART_SIZE = 8 * 1024 * 1024;
 
-/** Kolumnen med artikelnummer i produktkatalogen (nionde fältet). */
-const PART_NUMBER_INDEX = 8;
+export type RunResult = { rows: number; bytes: number; files: number };
 
-type Lookup = { header: string[]; rows: Map<string, string[]> };
-
-/** Bygger de extra kolumnerna för en artikel, i samma ordning som rubrikraden. */
-function extraFields(lookup: Lookup, partNumber: string): string[] {
-  const row = lookup.rows.get(partNumber);
-  // Hoppa över nyckelkolumnen — artikelnumret står redan i produktposten.
-  return lookup.header.slice(1).map((_, index) => quoteField(row?.[index + 1] ?? ""));
-}
-
-export async function buildFeed(env: Env): Promise<{ rows: number; bytes: number }> {
-  const client = new BihrClient(env.BIHR_CUSTOMER_CODE, env.BIHR_API_KEY);
-
-  // Små kataloger först: de behövs som uppslagstabeller innan produkterna
-  // kan strömmas, och de är klara på sekunder.
-  const stocksId = await client.requestCatalog("Stocks");
-  const stocks = toLookup(unzipSingleCsv(await client.downloadCatalog(stocksId)).text);
-
-  const pricesId = await client.requestCatalog("Prices");
-  const prices = toLookup(unzipSingleCsv(await client.downloadCatalog(pricesId)).text);
-
-  const productsId = await client.requestCatalog("Products");
-
-  const response = await client.openCatalog(productsId);
-  const body = response.body!; // openCatalog kastar redan om strömmen saknas
-
-  const upload = await env.FEEDS.createMultipartUpload(FEED_KEY, {
+/**
+ * Strömmar en katalog-ZIP och skriver en nedbantad CSV till R2.
+ * Bara de namngivna kolumnerna följer med.
+ */
+async function streamProjected(
+  response: Response,
+  bucket: R2Bucket,
+  key: string,
+  columns: string[],
+): Promise<RunResult> {
+  const upload = await bucket.createMultipartUpload(key, {
     httpMetadata: { contentType: "text/csv; charset=utf-8" },
   });
 
@@ -65,7 +53,7 @@ export async function buildFeed(env: Env): Promise<{ rows: number; bytes: number
   let pendingBytes = 0;
   let totalBytes = 0;
   let rows = 0;
-  let wroteHeader = false;
+  let indexes: number[] | null = null;
 
   const queue = (text: string) => {
     const bytes = encoder.encode(text);
@@ -75,9 +63,8 @@ export async function buildFeed(env: Env): Promise<{ rows: number; bytes: number
   };
 
   const flush = async (final: boolean) => {
-    if (pendingBytes === 0 || (!final && pendingBytes < PART_SIZE)) {
-      return;
-    }
+    if (pendingBytes === 0 || (!final && pendingBytes < PART_SIZE)) return;
+
     const blob = new Uint8Array(pendingBytes);
     let offset = 0;
     for (const chunk of pending) {
@@ -86,32 +73,26 @@ export async function buildFeed(env: Env): Promise<{ rows: number; bytes: number
     }
     pending = [];
     pendingBytes = 0;
-
     parts.push(await upload.uploadPart(parts.length + 1, blob));
   };
 
-  const handleRecords = (records: string[]) => {
+  const handle = (records: string[]) => {
     for (const record of records) {
-      if (!wroteHeader) {
-        const header = parseFields(record);
-        queue(
-          [...header, ...stocks.header.slice(1), ...prices.header.slice(1)].join(",") + "\n",
-        );
-        wroteHeader = true;
+      const fields = parseFields(record);
+
+      if (indexes === null) {
+        // Kolumnerna väljs på namn. Byter Bihr ordning eller lägger till fält
+        // fortsätter filen att innehålla rätt data.
+        indexes = columns.map((name) => fields.indexOf(name));
+        const missing = columns.filter((_, i) => indexes![i] === -1);
+        if (missing.length > 0) {
+          throw new Error(`Katalogen saknar kolumnerna: ${missing.join(", ")}`);
+        }
+        queue(columns.join(",") + "\n");
         continue;
       }
 
-      const partNumber = parseFields(record, PART_NUMBER_INDEX + 1)[PART_NUMBER_INDEX] ?? "";
-      // Posten skrivs oförändrad och får de nya kolumnerna påklistrade. Att
-      // inte serialisera om fälten bevarar Bihrs egen citering exakt.
-      queue(
-        record +
-          "," +
-          extraFields(stocks, partNumber).join(",") +
-          "," +
-          extraFields(prices, partNumber).join(",") +
-          "\n",
-      );
+      queue(indexes.map((i) => quoteField(fields[i] ?? "")).join(",") + "\n");
       rows++;
     }
   };
@@ -119,89 +100,166 @@ export async function buildFeed(env: Env): Promise<{ rows: number; bytes: number
   try {
     const unzip = new Unzip();
     unzip.register(UnzipInflate);
-
-    let inflateError: Error | null = null;
+    let failure: Error | null = null;
 
     unzip.onfile = (file) => {
-      if (!file.name.toLowerCase().endsWith(".csv")) {
-        return;
-      }
+      if (!file.name.toLowerCase().endsWith(".csv")) return;
       file.ondata = (err, chunk, final) => {
         if (err) {
-          inflateError = err as Error;
+          failure = err as Error;
           return;
         }
-        if (chunk?.length) {
-          handleRecords(splitter.push(decoder.decode(chunk, { stream: true })));
-        }
-        if (final) {
-          handleRecords(splitter.end());
+        try {
+          if (chunk?.length) handle(splitter.push(decoder.decode(chunk, { stream: true })));
+          if (final) handle(splitter.end());
+        } catch (error) {
+          failure = error as Error;
         }
       };
       file.start();
     };
 
-    const reader = body.getReader();
+    const reader = response.body!.getReader();
     for (;;) {
       const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
+      if (done) break;
       unzip.push(value, false);
-      if (inflateError) {
-        throw inflateError;
-      }
-      // Uppackningen sker synkront ovan; här släpper vi ifrån oss det som
-      // hunnit bli en full uppladdningsdel innan nästa bit läses.
+      if (failure) throw failure;
       await flush(false);
     }
     unzip.push(new Uint8Array(0), true);
-    if (inflateError) {
-      throw inflateError;
-    }
+    if (failure) throw failure;
 
     await flush(true);
     await upload.complete(parts);
   } catch (error) {
-    // En halvskriven fil är värre än en gammal: utan abort ligger delarna kvar
-    // och kostar lagring, och nästa körning kan inte återanvända nyckeln.
+    // Utan abort ligger de uppladdade delarna kvar och kostar lagring, och
+    // nyckeln går inte att återanvända vid nästa körning.
     await upload.abort().catch(() => undefined);
     throw error;
   }
 
-  return { rows, bytes: totalBytes };
+  return { rows, bytes: totalBytes, files: 1 };
+}
+
+/** Nattjobbet: de två små katalogerna med utvalda fält. */
+export async function runNightly(env: Env): Promise<Record<string, RunResult>> {
+  const client = new BihrClient(env.BIHR_CUSTOMER_CODE, env.BIHR_API_KEY);
+  const targets: [EssentialCatalog, string][] = [
+    ["EssentialHardPart", "feeds/bihr-hardparts.csv"],
+    ["EssentialRiderGear", "feeds/bihr-ridergear.csv"],
+  ];
+
+  const results: Record<string, RunResult> = {};
+
+  for (const [catalog, key] of targets) {
+    const response = await client.fetchCatalog(catalog);
+    results[catalog] = await streamProjected(response, env.FEEDS, key, NIGHTLY_COLUMNS);
+  }
+
+  return results;
+}
+
+/**
+ * Extended på begäran: en ZIP med 245 inre ZIP-filer, en per märke.
+ * Varje märke får en egen CSV med samtliga fält.
+ */
+export async function runExtended(env: Env): Promise<RunResult> {
+  const client = new BihrClient(env.BIHR_CUSTOMER_CODE, env.BIHR_API_KEY);
+  const response = await client.fetchCatalog("EssentialExtended");
+
+  const outer = unzipAll(await response.arrayBuffer());
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "");
+
+  let files = 0;
+  let bytes = 0;
+
+  for (const [name, data] of Object.entries(outer)) {
+    if (!name.toLowerCase().endsWith(".zip")) continue;
+
+    const brand = brandFromFileName(name);
+    // Varje inre arkiv är litet, så det kan packas upp i sin helhet.
+    const inner = unzipAll(data.buffer as ArrayBuffer);
+    const csvName = Object.keys(inner).find((key) => key.toLowerCase().endsWith(".csv"));
+    if (!csvName) continue;
+
+    const body = inner[csvName];
+    await env.FEEDS.put(`${EXTENDED_PREFIX}${stamp}/${brand}.csv`, body, {
+      httpMetadata: { contentType: "text/csv; charset=utf-8" },
+    });
+
+    files++;
+    bytes += body.byteLength;
+  }
+
+  return { rows: 0, bytes, files };
+}
+
+/**
+ * Extended-filer är bara intressanta i stunden och tar annars plats i onödan.
+ * Allt äldre än ett dygn städas bort vid varje nattkörning.
+ */
+export async function cleanupExtended(env: Env): Promise<number> {
+  const cutoff = Date.now() - MAX_EXTENDED_AGE_MS;
+  let removed = 0;
+  let cursor: string | undefined;
+
+  do {
+    const listing = await env.FEEDS.list({ prefix: EXTENDED_PREFIX, cursor, limit: 500 });
+    const stale = listing.objects
+      .filter((object) => object.uploaded.getTime() < cutoff)
+      .map((object) => object.key);
+
+    if (stale.length > 0) {
+      await env.FEEDS.delete(stale);
+      removed += stale.length;
+    }
+
+    cursor = listing.truncated ? listing.cursor : undefined;
+  } while (cursor);
+
+  return removed;
 }
 
 export default {
   async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(
-      buildFeed(env).then(
-        (result) =>
-          console.log(`[bihr] Klar: ${result.rows} artiklar, ${result.bytes} byte skrivna.`),
-        (error) => console.error("[bihr] Nattjobbet misslyckades:", error),
-      ),
+      (async () => {
+        try {
+          const results = await runNightly(env);
+          const removed = await cleanupExtended(env);
+          console.log(`[bihr] Nattkörning klar: ${JSON.stringify(results)}, städade ${removed} filer.`);
+        } catch (error) {
+          console.error("[bihr] Nattkörningen misslyckades:", error);
+        }
+      })(),
     );
   },
 
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     const url = new URL(request.url);
 
-    if (url.pathname !== "/run") {
-      return new Response("Not found", { status: 404 });
-    }
-    // Jobbet drar hundratals MB från Bihr. Utan nyckel kan vem som helst
-    // starta det hur ofta som helst.
+    // Jobben drar tiotals MB från Bihr. Utan nyckel kan vem som helst starta dem.
     if (url.searchParams.get("key") !== env.BIHR_TRIGGER_SECRET) {
       return new Response("Not found", { status: 404 });
     }
 
-    ctx.waitUntil(
-      buildFeed(env).then(
-        (result) => console.log(`[bihr] Manuell körning klar: ${result.rows} artiklar.`),
-        (error) => console.error("[bihr] Manuell körning misslyckades:", error),
-      ),
-    );
+    if (url.pathname === "/run-nightly") {
+      ctx.waitUntil(runNightly(env).then(
+        (r) => console.log("[bihr] Manuell nattkörning klar:", JSON.stringify(r)),
+        (e) => console.error("[bihr] Manuell nattkörning misslyckades:", e),
+      ));
+      return new Response("Nattkörningen startad.\n");
+    }
 
-    return new Response("Bygget startat. Följ loggen med wrangler tail.\n");
+    if (url.pathname === "/run-extended") {
+      ctx.waitUntil(runExtended(env).then(
+        (r) => console.log(`[bihr] Extended klar: ${r.files} märkesfiler.`),
+        (e) => console.error("[bihr] Extended misslyckades:", e),
+      ));
+      return new Response("Extended-hämtningen startad.\n");
+    }
+
+    return new Response("Not found", { status: 404 });
   },
 };
