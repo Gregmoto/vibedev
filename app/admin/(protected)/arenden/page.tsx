@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminTable } from "@/components/admin/admin-table";
 import { Badge } from "@/components/ui/badge";
-import { Button, LinkButton } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import {

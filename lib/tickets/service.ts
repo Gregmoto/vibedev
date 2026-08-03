@@ -57,10 +57,32 @@ function isAutomatedMessage(headers: Record<string, string>, fromEmail: string):
     return true;
   }
 
+  // Massutskick: nyhetsbrev och kampanjmejl. Dessa headers sätts bara av
+  // utskicksplattformar — en kund som skriver från sin vanliga mejl har dem
+  // aldrig — så de är säkra att lita på. Utan kontrollen skickar vi en artig
+  // kvittens tillbaka till varje nyhetsbrev som råkar nå en kontoadress.
+  const bulkMarkers = [
+    "list-unsubscribe",
+    "list-id",
+    "list", // Resend slår ihop List-*-headers under den här nyckeln
+    "feedback-id",
+    "x-csa-complaints",
+    "x-campaign",
+    "x-campaignid",
+    "x-mailer-lid",
+  ];
+
+  if (bulkMarkers.some((marker) => headers[marker])) {
+    return true;
+  }
+
   // Studsar kommer från en tom eller teknisk avsändare.
   const localPart = fromEmail.split("@")[0];
   return ["mailer-daemon", "postmaster", "no-reply", "noreply", "bounce", "bounces"].includes(localPart);
 }
+
+/** Exponerad enbart för scripts/verify-tickets.ts. */
+export const __testables = { isAutomatedMessage };
 
 /**
  * Tar emot ett `email.received`-event och skapar eller uppdaterar ett ärende.

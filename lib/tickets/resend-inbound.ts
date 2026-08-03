@@ -68,10 +68,15 @@ function normalizeHeaders(value: unknown): Record<string, string> {
 
   const out: Record<string, string> = {};
   for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
-    if (typeof raw === "string") {
-      // Headers är skiftlägesokänsliga; vi normaliserar för att slippa gissa.
-      out[key.toLowerCase()] = raw;
+    if (raw === null || raw === undefined) {
+      continue;
     }
+
+    // Headers är skiftlägesokänsliga; vi normaliserar för att slippa gissa.
+    // Resend returnerar vissa headers som objekt (List-Unsubscribe blir t.ex.
+    // en struktur med url och post). De måste behållas — annars försvinner
+    // just de markörer som avslöjar massutskick.
+    out[key.toLowerCase()] = typeof raw === "string" ? raw : JSON.stringify(raw);
   }
   return out;
 }

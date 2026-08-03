@@ -4,6 +4,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { TicketAutoReplyRetry } from "@/components/admin/ticket-auto-reply-retry";
 import { TicketReplyForm } from "@/components/admin/ticket-reply-form";
+import { MessageBody } from "@/components/tickets/message-body";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
@@ -223,9 +224,10 @@ export default async function AdminTicketDetailPage({
                 <p className="text-xs text-muted">{formatDateTime(message.createdAt)}</p>
               </header>
 
-              <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text">
-                {stripQuotedReply(message.bodyText)}
-              </p>
+              <MessageBody
+                text={stripQuotedReply(message.bodyText)}
+                fadeClassName={outbound ? "from-panel" : "from-panelElevated"}
+              />
 
               {message.attachments.length > 0 ? (
                 <ul className="mt-4 flex flex-wrap gap-2">

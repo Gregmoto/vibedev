@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TicketPortalForm } from "@/components/forms/ticket-portal-form";
+import { MessageBody } from "@/components/tickets/message-body";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { db } from "@/lib/db";
@@ -144,9 +145,10 @@ export default async function TicketPortalPage({
                     </p>
                   </header>
 
-                  <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-text">
-                    {stripQuotedReply(message.bodyText)}
-                  </p>
+                  <MessageBody
+                    text={stripQuotedReply(message.bodyText)}
+                    fadeClassName={fromUs ? "from-bg" : "from-panel"}
+                  />
 
                   {message.attachments.length > 0 ? (
                     <ul className="mt-4 flex flex-wrap gap-2">

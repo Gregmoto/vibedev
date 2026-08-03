@@ -36,5 +36,15 @@ eq(normalizeSubject("Re: SV: [#42] Offert"), "Offert", "rensar prefix");
 eq(extractDisplayName("test@sending.vibedev.se"), null, "bar adress ger inget namn");
 eq(extractDisplayName("\"Test Testsson\" <test@sending.vibedev.se>"), "Test Testsson", "namn ur r\u00e5 From-header");
 
+// Massutskicksmarkörer ska stoppa autosvar.
+import { __testables } from "../lib/tickets/service";
+const auto = __testables.isAutomatedMessage;
+eq(auto({ "list": '{"unsubscribe":{"url":"https://x"}}' }, "info@addrevenue.io"), true, "List-Unsubscribe = massutskick");
+eq(auto({ "x-csa-complaints": "csa-complaints@eco.de" }, "info@x.se"), true, "x-csa-complaints = massutskick");
+eq(auto({ "feedback-id": "1:2:Sendinblue" }, "info@x.se"), true, "feedback-id = massutskick");
+eq(auto({ "auto-submitted": "auto-replied" }, "a@b.se"), true, "auto-submitted");
+eq(auto({}, "mailer-daemon@b.se"), true, "studs");
+eq(auto({ "from": "Anna <anna@example.com>" }, "anna@example.com"), false, "vanligt kundmejl slinker igenom");
+
 console.log(fail === 0 ? "\nALLA TESTER OK" : `\n${fail} TESTER MISSLYCKADES`);
 process.exit(fail === 0 ? 0 : 1);
