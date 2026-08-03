@@ -208,7 +208,10 @@ export async function runNightly(env: Env): Promise<Record<string, RunResult>> {
 export async function runExtended(env: Env): Promise<RunResult> {
   const client = new BihrClient(env.BIHR_CUSTOMER_CODE, env.BIHR_API_KEY);
   const response = await client.fetchCatalog("EssentialExtended");
-  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "");
+
+  // Rensa först. Varje körning ska ersätta föregående, inte lägga sig bredvid —
+  // och ett märke som utgått ur sortimentet ska inte bli kvar som en gammal fil.
+  await clearExtended(env);
 
   let files = 0;
   let bytes = 0;
@@ -276,7 +279,7 @@ export async function runExtended(env: Env): Promise<RunResult> {
 
     const brand = brandFromFileName(file.name);
     current = {
-      key: `${EXTENDED_PREFIX}${stamp}/${brand}.csv`,
+      key: `${EXTENDED_PREFIX}${brand}.csv`,
       chunks: [],
       buffered: 0,
       upload: null,
@@ -320,6 +323,24 @@ export async function runExtended(env: Env): Promise<RunResult> {
   await finish();
 
   return { rows: 0, bytes, files };
+}
+
+/** Tar bort samtliga Extended-filer. */
+export async function clearExtended(env: Env): Promise<number> {
+  let removed = 0;
+  let cursor: string | undefined;
+
+  do {
+    const listing = await env.FEEDS.list({ prefix: EXTENDED_PREFIX, cursor, limit: 500 });
+    const keys = listing.objects.map((object) => object.key);
+    if (keys.length > 0) {
+      await env.FEEDS.delete(keys);
+      removed += keys.length;
+    }
+    cursor = listing.truncated ? listing.cursor : undefined;
+  } while (cursor);
+
+  return removed;
 }
 
 /**
@@ -383,6 +404,11 @@ export default {
         }),
       );
       return new Response("Nattkörningen startad.\n");
+    }
+
+    if (url.pathname === "/clear-extended") {
+      const removed = await clearExtended(env);
+      return new Response(`Rensade ${removed} Extended-filer.\n`);
     }
 
     if (url.pathname === "/run-extended") {
