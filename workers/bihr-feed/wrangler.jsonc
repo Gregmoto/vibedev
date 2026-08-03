@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "vibedev-bihr-feed",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "observability": { "enabled": true },
+  // Jobbet packar upp och skriver om 273 MB. Standardgränsen på 30 s CPU
+  // räcker inte; 5 minuter är taket på Workers Paid.
+  "limits": { "cpu_ms": 300000 },
+  "triggers": {
+    // 02:15 UTC = 03:15 svensk sommartid. Bihr bygger sin produktkatalog runt
+    // 00:15 och lagerfilen 09:00, så vi hämtar en färsk produktkatalog.
+    "crons": ["15 2 * * *"]
+  },
+  "r2_buckets": [
+    {
+      "binding": "FEEDS",
+      "bucket_name": "vibedev-ticket-attachments" /* delas tills en egen feeds-bucket finns */
+    }
+  ]
+}
