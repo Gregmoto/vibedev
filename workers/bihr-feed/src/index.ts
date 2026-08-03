@@ -19,7 +19,45 @@ export type Env = {
   BIHR_CUSTOMER_CODE: string;
   BIHR_API_KEY: string;
   BIHR_TRIGGER_SECRET: string;
+  /** Dit körningsresultatet rapporteras. Workern har ingen databasanslutning. */
+  SITE_URL: string;
 };
+
+/** Rapporterar resultatet till sajten, som skriver det till loggen i admin. */
+async function report(
+  env: Env,
+  entry: { kind: "nightly" | "extended"; success: boolean; rows?: number; files?: number; bytes?: number; durationMs: number; error?: string; manual?: boolean },
+): Promise<void> {
+  try {
+    await fetch(`${env.SITE_URL.replace(/\/$/, "")}/api/bihr/log`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-bihr-secret": env.BIHR_TRIGGER_SECRET },
+      body: JSON.stringify(entry),
+    });
+  } catch (error) {
+    // Loggen är sekundär — en misslyckad rapport får inte fälla en lyckad körning.
+    console.error("[bihr] Kunde inte rapportera körningen:", error);
+  }
+}
+
+/** Kör ett jobb, mät tiden och logga utfallet oavsett hur det går. */
+async function withLog(
+  env: Env,
+  kind: "nightly" | "extended",
+  manual: boolean,
+  job: () => Promise<{ rows: number; files: number; bytes: number }>,
+): Promise<void> {
+  const started = Date.now();
+  try {
+    const result = await job();
+    await report(env, { kind, success: true, ...result, durationMs: Date.now() - started, manual });
+    console.log(`[bihr] ${kind} klar:`, JSON.stringify(result));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await report(env, { kind, success: false, durationMs: Date.now() - started, error: message, manual });
+    console.error(`[bihr] ${kind} misslyckades:`, error);
+  }
+}
 
 /** Kolumnerna som sparas för de nattliga filerna. Väljs på namn, inte position. */
 const NIGHTLY_COLUMNS = ["NewPartNumber", "BarCode", "StockValue"];
@@ -161,36 +199,125 @@ export async function runNightly(env: Env): Promise<Record<string, RunResult>> {
 }
 
 /**
- * Extended på begäran: en ZIP med 245 inre ZIP-filer, en per märke.
- * Varje märke får en egen CSV med samtliga fält.
+ * Extended på begäran: en ZIP med 245 CSV-filer inuti, en per märke.
+ *
+ * Arkivet är 36 MB men innehåller 261 MB data, och enskilda märken är upp till
+ * 74 MB. Ingenting av det ryms i Workerns 128 MB, så varje fil strömmas rakt
+ * igenom till R2 utan att någonsin ligga hel i minnet.
  */
 export async function runExtended(env: Env): Promise<RunResult> {
   const client = new BihrClient(env.BIHR_CUSTOMER_CODE, env.BIHR_API_KEY);
   const response = await client.fetchCatalog("EssentialExtended");
-
-  const outer = unzipAll(await response.arrayBuffer());
   const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "");
 
   let files = 0;
   let bytes = 0;
+  let failure: Error | null = null;
 
-  for (const [name, data] of Object.entries(outer)) {
-    if (!name.toLowerCase().endsWith(".zip")) continue;
+  /* En fil i taget: fflate levererar arkivet sekventiellt, så det räcker med
+     ett öppet upload-tillstånd. Små märken skrivs som en vanlig put — R2:s
+     multipart kräver minst 5 MB per del utom den sista. */
+  let current: {
+    key: string;
+    chunks: Uint8Array[];
+    buffered: number;
+    upload: R2MultipartUpload | null;
+    parts: R2UploadedPart[];
+  } | null = null;
 
-    const brand = brandFromFileName(name);
-    // Varje inre arkiv är litet, så det kan packas upp i sin helhet.
-    const inner = unzipAll(data.buffer as ArrayBuffer);
-    const csvName = Object.keys(inner).find((key) => key.toLowerCase().endsWith(".csv"));
-    if (!csvName) continue;
+  const takeBuffered = (state: NonNullable<typeof current>) => {
+    const blob = new Uint8Array(state.buffered);
+    let offset = 0;
+    for (const chunk of state.chunks) {
+      blob.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    state.chunks = [];
+    state.buffered = 0;
+    return blob;
+  };
 
-    const body = inner[csvName];
-    await env.FEEDS.put(`${EXTENDED_PREFIX}${stamp}/${brand}.csv`, body, {
-      httpMetadata: { contentType: "text/csv; charset=utf-8" },
-    });
+  const drain = async () => {
+    if (!current || current.buffered < PART_SIZE) return;
+    if (!current.upload) {
+      current.upload = await env.FEEDS.createMultipartUpload(current.key, {
+        httpMetadata: { contentType: "text/csv; charset=utf-8" },
+      });
+    }
+    const blob = takeBuffered(current);
+    current.parts.push(await current.upload.uploadPart(current.parts.length + 1, blob));
+  };
 
+  const finish = async () => {
+    if (!current) return;
+    const state = current;
+    current = null;
+
+    if (!state.upload) {
+      await env.FEEDS.put(state.key, takeBuffered(state), {
+        httpMetadata: { contentType: "text/csv; charset=utf-8" },
+      });
+    } else {
+      if (state.buffered > 0) {
+        state.parts.push(await state.upload.uploadPart(state.parts.length + 1, takeBuffered(state)));
+      }
+      await state.upload.complete(state.parts);
+    }
     files++;
-    bytes += body.byteLength;
+  };
+
+  const unzip = new Unzip();
+  unzip.register(UnzipInflate);
+
+  const pendingFinishes: (() => Promise<void>)[] = [];
+
+  unzip.onfile = (file) => {
+    if (!file.name.toLowerCase().endsWith(".csv")) return;
+
+    const brand = brandFromFileName(file.name);
+    current = {
+      key: `${EXTENDED_PREFIX}${stamp}/${brand}.csv`,
+      chunks: [],
+      buffered: 0,
+      upload: null,
+      parts: [],
+    };
+
+    const state = current;
+    file.ondata = (err, chunk, final) => {
+      if (err) {
+        failure = err as Error;
+        return;
+      }
+      if (chunk?.length) {
+        state.chunks.push(chunk.slice());
+        state.buffered += chunk.byteLength;
+        bytes += chunk.byteLength;
+      }
+      if (final) {
+        pendingFinishes.push(finish);
+      }
+    };
+    file.start();
+  };
+
+  const reader = response.body!.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    unzip.push(value, false);
+    if (failure) throw failure;
+    await drain();
+    while (pendingFinishes.length > 0) {
+      await pendingFinishes.shift()!();
+    }
   }
+  unzip.push(new Uint8Array(0), true);
+  if (failure) throw failure;
+  while (pendingFinishes.length > 0) {
+    await pendingFinishes.shift()!();
+  }
+  await finish();
 
   return { rows: 0, bytes, files };
 }
@@ -224,15 +351,15 @@ export async function cleanupExtended(env: Env): Promise<number> {
 export default {
   async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(
-      (async () => {
-        try {
-          const results = await runNightly(env);
-          const removed = await cleanupExtended(env);
-          console.log(`[bihr] Nattkörning klar: ${JSON.stringify(results)}, städade ${removed} filer.`);
-        } catch (error) {
-          console.error("[bihr] Nattkörningen misslyckades:", error);
-        }
-      })(),
+      withLog(env, "nightly", false, async () => {
+        const results = await runNightly(env);
+        const removed = await cleanupExtended(env);
+        console.log(`[bihr] Städade ${removed} gamla Extended-filer.`);
+        return Object.values(results).reduce(
+          (sum, r) => ({ rows: sum.rows + r.rows, files: sum.files + r.files, bytes: sum.bytes + r.bytes }),
+          { rows: 0, files: 0, bytes: 0 },
+        );
+      }),
     );
   },
 
@@ -245,18 +372,21 @@ export default {
     }
 
     if (url.pathname === "/run-nightly") {
-      ctx.waitUntil(runNightly(env).then(
-        (r) => console.log("[bihr] Manuell nattkörning klar:", JSON.stringify(r)),
-        (e) => console.error("[bihr] Manuell nattkörning misslyckades:", e),
-      ));
+      ctx.waitUntil(
+        withLog(env, "nightly", true, async () => {
+          const results = await runNightly(env);
+          await cleanupExtended(env);
+          return Object.values(results).reduce(
+            (sum, r) => ({ rows: sum.rows + r.rows, files: sum.files + r.files, bytes: sum.bytes + r.bytes }),
+            { rows: 0, files: 0, bytes: 0 },
+          );
+        }),
+      );
       return new Response("Nattkörningen startad.\n");
     }
 
     if (url.pathname === "/run-extended") {
-      ctx.waitUntil(runExtended(env).then(
-        (r) => console.log(`[bihr] Extended klar: ${r.files} märkesfiler.`),
-        (e) => console.error("[bihr] Extended misslyckades:", e),
-      ));
+      ctx.waitUntil(withLog(env, "extended", true, () => runExtended(env)));
       return new Response("Extended-hämtningen startad.\n");
     }
 

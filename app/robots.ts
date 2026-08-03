@@ -11,7 +11,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         allow: "/",
         // /arende/ nås med en hemlig token i länken — den ska varken följas
         // eller indexeras, oavsett hur någon råkar dela länken vidare.
-        disallow: ["/admin", "/admin/", "/api/", "/arende/"],
+        disallow: ["/admin", "/admin/", "/api/", "/arende/", "/bihr-hardparts.csv", "/bihr-ridergear.csv"],
       },
     ],
     host: settings.siteUrl,

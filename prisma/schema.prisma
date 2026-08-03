@@ -338,3 +338,28 @@ model TicketAttachment {
 
   @@index([messageId])
 }
+
+// ── Bihr-katalog ─────────────────────────────────────────────────────────────
+
+/// Logg över hämtningar från Bihr. Bara de 50 senaste sparas — äldre rader
+/// säger inget som inte redan syns i filen som ligger i R2.
+model BihrRun {
+  id        String   @id @default(cuid())
+  /// "nightly" eller "extended"
+  kind      String
+  /// true = lyckades
+  success   Boolean
+  /// Antal rader respektive antal märkesfiler, beroende på körningstyp
+  rows      Int      @default(0)
+  files     Int      @default(0)
+  bytes     Int      @default(0)
+  /// Hur lång tid körningen tog
+  durationMs Int     @default(0)
+  /// Felmeddelandet när körningen misslyckades
+  error     String?
+  /// Sattes körningen igång manuellt från adminpanelen?
+  manual    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

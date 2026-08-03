@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-03-25",
   "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": false,
+  "workers_dev": true,
   "observability": { "enabled": true },
   // Jobbet packar upp och skriver om 273 MB. Standardgränsen på 30 s CPU
   // räcker inte; 5 minuter är taket på Workers Paid.

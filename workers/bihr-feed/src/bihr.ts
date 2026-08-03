@@ -115,8 +115,8 @@ export class BihrClient {
 }
 
 /** Packar upp ett arkiv i minnet. Bara för filer vi vet är små nog. */
-export function unzipAll(zip: ArrayBuffer): Record<string, Uint8Array> {
-  return unzipSync(new Uint8Array(zip));
+export function unzipAll(zip: ArrayBuffer | Uint8Array): Record<string, Uint8Array> {
+  return unzipSync(zip instanceof Uint8Array ? zip : new Uint8Array(zip));
 }
 
 /**
