@@ -12,7 +12,12 @@
   "triggers": {
     // 02:15 UTC = 03:15 svensk sommartid. Bihr bygger sin produktkatalog runt
     // 00:15 och lagerfilen 09:00, så vi hämtar en färsk produktkatalog.
-    "crons": ["15 2 * * *"]
+    "crons": [
+      "15 2 * * *",
+      // Avsöker beställningar av Extended. Cron-körningar får 15 minuter,
+      // mot 30 sekunder för en HTTP-triggad körning.
+      "*/5 * * * *"
+    ]
   },
   "r2_buckets": [
     {

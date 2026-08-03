@@ -66,6 +66,13 @@ const EXTENDED_PREFIX = "feeds/extended/";
 const MAX_EXTENDED_AGE_MS = 24 * 60 * 60 * 1000;
 const PART_SIZE = 8 * 1024 * 1024;
 
+/* Beställningsflagga i R2. Workern har varken databas eller KV, och en
+   markörfil är tillräckligt — det finns bara ett tillstånd att hålla reda på. */
+const EXTENDED_REQUEST_KEY = "feeds/extended-requested";
+
+/* Nattkörningen. Övriga scheman är avsökningen efter beställningar. */
+const NIGHTLY_CRON = "15 2 * * *";
+
 export type RunResult = { rows: number; bytes: number; files: number };
 
 /**
@@ -228,33 +235,60 @@ export async function runExtended(env: Env): Promise<RunResult> {
     parts: R2UploadedPart[];
   } | null = null;
 
-  const takeBuffered = (state: NonNullable<typeof current>) => {
-    const blob = new Uint8Array(state.buffered);
+  /**
+   * Plockar ut `size` byte ur bufferten, eller allt om size utelämnas.
+   *
+   * R2 kräver att alla delar utom den sista är exakt lika stora. Att bara
+   * tömma bufferten när den passerat gränsen ger delar av olika längd, och
+   * completeMultipartUpload avvisar hela uppladdningen.
+   */
+  const takeBuffered = (state: NonNullable<typeof current>, size?: number) => {
+    const total = size ?? state.buffered;
+    const blob = new Uint8Array(total);
     let offset = 0;
-    for (const chunk of state.chunks) {
-      blob.set(chunk, offset);
-      offset += chunk.byteLength;
+
+    while (offset < total && state.chunks.length > 0) {
+      const chunk = state.chunks[0];
+      const remaining = total - offset;
+
+      if (chunk.byteLength <= remaining) {
+        blob.set(chunk, offset);
+        offset += chunk.byteLength;
+        state.chunks.shift();
+      } else {
+        blob.set(chunk.subarray(0, remaining), offset);
+        state.chunks[0] = chunk.subarray(remaining);
+        offset += remaining;
+      }
     }
-    state.chunks = [];
-    state.buffered = 0;
+
+    state.buffered -= total;
     return blob;
   };
 
   const drain = async () => {
-    if (!current || current.buffered < PART_SIZE) return;
-    if (!current.upload) {
-      current.upload = await env.FEEDS.createMultipartUpload(current.key, {
+    while (current && current.buffered >= PART_SIZE) {
+      await uploadOnePart(current);
+    }
+  };
+
+  const uploadOnePart = async (state: NonNullable<typeof current>) => {
+    if (!state.upload) {
+      state.upload = await env.FEEDS.createMultipartUpload(state.key, {
         httpMetadata: { contentType: "text/csv; charset=utf-8" },
       });
     }
-    const blob = takeBuffered(current);
-    current.parts.push(await current.upload.uploadPart(current.parts.length + 1, blob));
+    // Exakt PART_SIZE per del — resten ligger kvar till nästa varv.
+    const blob = takeBuffered(state, PART_SIZE);
+    state.parts.push(await state.upload.uploadPart(state.parts.length + 1, blob));
   };
 
-  const finish = async () => {
-    if (!current) return;
-    const state = current;
-    current = null;
+  /* Tillståndet skickas in i stället för att läsas från `current`. fflate kan
+     hinna börja på nästa fil innan den föregående skrivits klart, och då pekar
+     `current` redan på fel fil — vilket tappade 32 av 245 filer. */
+  const finish = async (state: NonNullable<typeof current> | null) => {
+    if (!state) return;
+    if (current === state) current = null;
 
     if (!state.upload) {
       await env.FEEDS.put(state.key, takeBuffered(state), {
@@ -298,7 +332,7 @@ export async function runExtended(env: Env): Promise<RunResult> {
         bytes += chunk.byteLength;
       }
       if (final) {
-        pendingFinishes.push(finish);
+        pendingFinishes.push(() => finish(state));
       }
     };
     file.start();
@@ -320,7 +354,7 @@ export async function runExtended(env: Env): Promise<RunResult> {
   while (pendingFinishes.length > 0) {
     await pendingFinishes.shift()!();
   }
-  await finish();
+  await finish(current);
 
   return { rows: 0, bytes, files };
 }
@@ -369,8 +403,35 @@ export async function cleanupExtended(env: Env): Promise<number> {
   return removed;
 }
 
+/** Lägger en beställning som nästa avsökning plockar upp. */
+export async function requestExtended(env: Env): Promise<void> {
+  await env.FEEDS.put(EXTENDED_REQUEST_KEY, new Date().toISOString());
+}
+
+/**
+ * Kör Extended om någon beställt den.
+ *
+ * Beställningen tas bort innan jobbet startar, inte efter. Annars skulle nästa
+ * avsökning starta en andra körning medan den första fortfarande skriver.
+ */
+async function runIfRequested(env: Env): Promise<void> {
+  const marker = await env.FEEDS.head(EXTENDED_REQUEST_KEY);
+  if (!marker) return;
+
+  await env.FEEDS.delete(EXTENDED_REQUEST_KEY);
+  await withLog(env, "extended", true, () => runExtended(env));
+}
+
 export default {
-  async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext) {
+  async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
+    // Cron-triggade körningar har 15 minuter på sig. En som startas av en
+    // HTTP-förfrågan kapas vid 30 sekunder väggklocka oavsett hur lite
+    // processortid den använder — och Extended behöver flera minuter.
+    if (event.cron !== NIGHTLY_CRON) {
+      ctx.waitUntil(runIfRequested(env));
+      return;
+    }
+
     ctx.waitUntil(
       withLog(env, "nightly", false, async () => {
         const results = await runNightly(env);
@@ -412,8 +473,8 @@ export default {
     }
 
     if (url.pathname === "/run-extended") {
-      ctx.waitUntil(withLog(env, "extended", true, () => runExtended(env)));
-      return new Response("Extended-hämtningen startad.\n");
+      await requestExtended(env);
+      return new Response("Extended är beställd och startar inom fem minuter.\n");
     }
 
     return new Response("Not found", { status: 404 });
