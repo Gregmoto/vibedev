@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminTable } from "@/components/admin/admin-table";
 import { BihrRunButtons } from "@/components/admin/bihr-run-buttons";
+import { CopyLinkButton } from "@/components/admin/copy-link-button";
 import { Badge } from "@/components/ui/badge";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { hasDatabaseUrl } from "@/lib/admin-action-utils";
@@ -98,9 +99,12 @@ export default async function AdminBihrPage() {
               const name = file.key.replace("feeds/", "");
               return (
                 <li key={file.key} className="flex flex-wrap items-center justify-between gap-3 py-3">
-                  <a href={`/${name}`} className="text-sm text-brand transition hover:underline">
-                    /{name}
-                  </a>
+                  <span className="flex items-center gap-2">
+                    <a href={`/${name}`} className="text-sm text-brand transition hover:underline">
+                      /{name}
+                    </a>
+                    <CopyLinkButton path={`/${name}`} />
+                  </span>
                   <span className="text-xs text-muted">
                     {formatBytes(file.size)} · uppdaterad {formatDateTime(file.uploaded)}
                   </span>
@@ -126,14 +130,17 @@ export default async function AdminBihrPage() {
             {extended.map((file) => {
               const name = file.key.replace("feeds/extended/", "");
               return (
-                <li key={file.key} className="flex items-baseline justify-between gap-2 py-1">
-                  <a
-                    href={`/api/bihr/extended/${name}`}
-                    className="truncate text-sm text-brand transition hover:underline"
-                    title={name}
-                  >
-                    {name.split("/").pop()}
-                  </a>
+                <li key={file.key} className="flex items-center justify-between gap-2 py-1">
+                  <span className="flex min-w-0 items-center gap-1">
+                    <a
+                      href={`/api/bihr/extended/${name}`}
+                      className="truncate text-sm text-brand transition hover:underline"
+                      title={name}
+                    >
+                      {name.split("/").pop()}
+                    </a>
+                    <CopyLinkButton path={`/api/bihr/extended/${name}`} />
+                  </span>
                   <span className="shrink-0 text-xs text-muted">{formatBytes(file.size)}</span>
                 </li>
               );
