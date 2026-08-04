@@ -17,6 +17,8 @@ export type InlineRun = {
   text: string;
   /** Satt bara för säkra http(s)-länkar. */
   href?: string;
+  /** Bildadress. Laddas först när mottagaren valt att visa bilder. */
+  image?: string;
 };
 
 export type HtmlBlock = {
@@ -87,15 +89,15 @@ function mergeRuns(runs: InlineRun[]): InlineRun[] {
 
   for (const run of runs) {
     const text = run.text.replace(/\s+/g, " ");
-    if (!text.trim() && !run.href) {
+    if (!text.trim() && !run.href && !run.image) {
       continue;
     }
 
     const previous = out[out.length - 1];
-    if (previous && previous.href === run.href) {
+    if (previous && previous.href === run.href && !previous.image && !run.image) {
       previous.text += text;
     } else {
-      out.push({ text, href: run.href });
+      out.push({ text, href: run.href, image: run.image });
     }
   }
 
@@ -105,7 +107,7 @@ function mergeRuns(runs: InlineRun[]): InlineRun[] {
     out[out.length - 1].text = out[out.length - 1].text.replace(/\s+$/, "");
   }
 
-  return out.filter((run) => run.text.trim().length > 0);
+  return out.filter((run) => run.text.trim().length > 0 || Boolean(run.image));
 }
 
 export function htmlToBlocks(html: string): HtmlBlock[] {
@@ -155,10 +157,14 @@ export function htmlToBlocks(html: string): HtmlBlock[] {
           hrefStack.push(isSafeHttpUrl(href) ? href : "");
         }
         if (tag === "img") {
-          // Bilder laddas inte. Fjärrbilder i mejl är spårpixlar lika ofta som
-          // innehåll, och att hämta dem talar om för avsändaren att vi läst.
+          // Adressen sparas men hämtas inte automatiskt. Fjärrbilder i mejl är
+          // spårpixlar lika ofta som innehåll, och att ladda dem talar om för
+          // avsändaren att mejlet lästs. Mottagaren får välja själv.
+          const src = (attribs.src ?? "").trim();
           const alt = (attribs.alt ?? "").trim();
-          if (alt) {
+          if (isSafeHttpUrl(src)) {
+            runs.push({ text: alt || "bild", image: src });
+          } else if (alt) {
             runs.push({ text: ` [${alt}] ` });
           }
         }
@@ -205,7 +211,7 @@ export function htmlToBlocks(html: string): HtmlBlock[] {
   return blocks.map((block) => ({
     heading: block.heading,
     runs: block.runs.map((run) =>
-      run.href ? { text: linkLabel(run.text, run.href), href: run.href } : run,
+      run.href && !run.image ? { text: linkLabel(run.text, run.href), href: run.href } : run,
     ),
   }));
 }

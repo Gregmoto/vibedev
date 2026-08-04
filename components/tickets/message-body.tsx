@@ -30,6 +30,12 @@ function blocksLength(blocks: HtmlBlock[]): number {
 
 export function MessageBody({ text, blocks, fadeClassName }: MessageBodyProps) {
   const [expanded, setExpanded] = useState(false);
+  /* Bilder laddas först på begäran. En fjärrbild i ett mejl är lika ofta en
+     spårpixel som innehåll — hämtar vi den automatiskt avslöjar vi att
+     meddelandet lästs, när, och ungefär varifrån. */
+  const [showImages, setShowImages] = useState(false);
+
+  const hasImages = Boolean(blocks?.some((block) => block.runs.some((run) => run.image)));
 
   const useBlocks = Boolean(blocks && blocks.length > 0);
   const length = useBlocks ? blocksLength(blocks!) : text.length;
@@ -51,7 +57,23 @@ export function MessageBody({ text, blocks, fadeClassName }: MessageBodyProps) {
                 )}
               >
                 {block.runs.map((run, runIndex) =>
-                  run.href ? (
+                  run.image ? (
+                    showImages ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={runIndex}
+                        src={run.image}
+                        alt={run.text}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        className="my-1 inline-block max-h-64 max-w-full rounded-lg border border-white/10"
+                      />
+                    ) : (
+                      <span key={runIndex} className="text-muted">
+                        [{run.text}]{" "}
+                      </span>
+                    )
+                  ) : run.href ? (
                     <a
                       key={runIndex}
                       href={run.href}
@@ -92,15 +114,32 @@ export function MessageBody({ text, blocks, fadeClassName }: MessageBodyProps) {
         ) : null}
       </div>
 
-      {isLong ? (
-        <button
-          type="button"
-          onClick={() => setExpanded((value) => !value)}
-          className="mt-2 text-xs font-medium text-brand transition hover:underline"
-        >
-          {expanded ? "Visa mindre" : "Visa hela meddelandet"}
-        </button>
-      ) : null}
+      <div className="mt-2 flex flex-wrap items-center gap-4">
+        {isLong ? (
+          <button
+            type="button"
+            onClick={() => setExpanded((value) => !value)}
+            className="text-xs font-medium text-brand transition hover:underline"
+          >
+            {expanded ? "Visa mindre" : "Visa hela meddelandet"}
+          </button>
+        ) : null}
+
+        {hasImages ? (
+          <button
+            type="button"
+            onClick={() => setShowImages((value) => !value)}
+            title={
+              showImages
+                ? undefined
+                : "Bilder hämtas från avsändaren först när du visar dem."
+            }
+            className="text-xs font-medium text-brand transition hover:underline"
+          >
+            {showImages ? "Dölj bilder" : "Visa bilder"}
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }
