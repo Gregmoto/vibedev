@@ -1,0 +1,7 @@
+import { serveFeed } from "@/lib/bihr/serve";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  return serveFeed("feeds/partseurope.csv", "partseurope.csv");
+}

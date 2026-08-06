@@ -36,3 +36,27 @@ export async function savePartsEuropeCredentialsAction(
   revalidatePath("/admin/partseurope");
   return { success: "Uppgifterna sparades krypterat." };
 }
+
+/** Startar en hämtning i feed-workern. Workern svarar direkt och jobbar vidare. */
+export async function runPartsEuropeAction(): Promise<CredentialState> {
+  await requireAdminAction();
+
+  const base = process.env.BIHR_WORKER_URL?.replace(/\/$/, "");
+  const secret = process.env.BIHR_TRIGGER_SECRET;
+
+  if (!base || !secret) {
+    return { error: "BIHR_WORKER_URL eller BIHR_TRIGGER_SECRET saknas i miljön." };
+  }
+
+  try {
+    const response = await fetch(`${base}/run-partseurope?key=${encodeURIComponent(secret)}`);
+    if (!response.ok) {
+      return { error: `Workern svarade HTTP ${response.status}.` };
+    }
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Kunde inte nå workern." };
+  }
+
+  revalidatePath("/admin/partseurope");
+  return { success: "Hämtningen är beställd och startar inom fem minuter." };
+}

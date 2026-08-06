@@ -16,7 +16,9 @@
       "15 2 * * *",
       // Avsöker beställningar av Extended. Cron-körningar får 15 minuter,
       // mot 30 sekunder för en HTTP-triggad körning.
-      "*/5 * * * *"
+      "*/5 * * * *",
+      // Parts Europes prisfil, en gång per dygn.
+      "10 2 * * *"
     ]
   },
   "r2_buckets": [

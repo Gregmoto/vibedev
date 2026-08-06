@@ -26,7 +26,7 @@ export type Env = {
 /** Rapporterar resultatet till sajten, som skriver det till loggen i admin. */
 async function report(
   env: Env,
-  entry: { kind: "nightly" | "extended"; success: boolean; rows?: number; files?: number; bytes?: number; durationMs: number; error?: string; manual?: boolean },
+  entry: { kind: "nightly" | "extended" | "partseurope"; success: boolean; rows?: number; files?: number; bytes?: number; durationMs: number; error?: string; manual?: boolean },
 ): Promise<void> {
   try {
     await fetch(`${env.SITE_URL.replace(/\/$/, "")}/api/bihr/log`, {
@@ -43,7 +43,7 @@ async function report(
 /** Kör ett jobb, mät tiden och logga utfallet oavsett hur det går. */
 async function withLog(
   env: Env,
-  kind: "nightly" | "extended",
+  kind: "nightly" | "extended" | "partseurope",
   manual: boolean,
   job: () => Promise<{ rows: number; files: number; bytes: number }>,
 ): Promise<void> {
@@ -69,11 +69,108 @@ const PART_SIZE = 8 * 1024 * 1024;
 /* Beställningsflagga i R2. Workern har varken databas eller KV, och en
    markörfil är tillräckligt — det finns bara ett tillstånd att hålla reda på. */
 const EXTENDED_REQUEST_KEY = "feeds/extended-requested";
+const PARTSEUROPE_REQUEST_KEY = "feeds/partseurope-requested";
 
 /* Nattkörningen. Övriga scheman är avsökningen efter beställningar. */
 const NIGHTLY_CRON = "15 2 * * *";
 
+/* Parts Europe hämtas en gång per dygn, 04:10 svensk sommartid. */
+const PARTSEUROPE_CRON = "10 2 * * *";
+const PARTSEUROPE_KEY = "feeds/partseurope.csv";
+const PARTSEUROPE_FILE_URL =
+  "https://dataex.partseurope.eu/en/account/customer/file-share/download-file?files%5B%5D=/Lists/Pricefiles/PE_All_Parts_v7.csv";
+
 export type RunResult = { rows: number; bytes: number; files: number };
+
+/**
+ * Hämtar Parts Europes prisfil.
+ *
+ * Sajten sköter inloggningen och lämnar tillbaka en sessionscookie — den har
+ * databasen och krypteringsnyckeln, workern har varken eller. Lösenordet lämnar
+ * alltså aldrig sajten; workern får bara en cookie som går ut av sig själv.
+ */
+export async function runPartsEurope(env: Env): Promise<RunResult> {
+  const site = env.SITE_URL.replace(/\/$/, "");
+
+  const session = await fetch(`${site}/api/partseurope/session`, {
+    method: "POST",
+    headers: { "x-bihr-secret": env.BIHR_TRIGGER_SECRET },
+  });
+
+  if (!session.ok) {
+    const detail = (await session.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(detail?.error ?? `Inloggningen misslyckades: HTTP ${session.status}`);
+  }
+
+  const { cookie } = (await session.json()) as { cookie: string };
+
+  const download = await fetch(PARTSEUROPE_FILE_URL, { headers: { Cookie: cookie } });
+  if (!download.ok || !download.body) {
+    throw new Error(`Nedladdningen misslyckades: HTTP ${download.status}`);
+  }
+
+  // En utgången session ger en html-sida i stället för filen. Utan den här
+  // kontrollen skulle inloggningssidan sparas som prisfil.
+  const type = download.headers.get("content-type") ?? "";
+  if (type.includes("text/html")) {
+    throw new Error("Parts Europe svarade med en webbsida i stället för filen — sessionen nekades.");
+  }
+
+  const upload = await env.FEEDS.createMultipartUpload(PARTSEUROPE_KEY, {
+    httpMetadata: { contentType: "text/csv; charset=utf-8" },
+  });
+
+  const parts: R2UploadedPart[] = [];
+  let chunks: Uint8Array[] = [];
+  let buffered = 0;
+  let total = 0;
+
+  const take = (size: number) => {
+    const blob = new Uint8Array(size);
+    let offset = 0;
+    while (offset < size && chunks.length > 0) {
+      const chunk = chunks[0];
+      const remaining = size - offset;
+      if (chunk.byteLength <= remaining) {
+        blob.set(chunk, offset);
+        offset += chunk.byteLength;
+        chunks.shift();
+      } else {
+        blob.set(chunk.subarray(0, remaining), offset);
+        chunks[0] = chunk.subarray(remaining);
+        offset += remaining;
+      }
+    }
+    buffered -= size;
+    return blob;
+  };
+
+  try {
+    const reader = download.body.getReader();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      buffered += value.byteLength;
+      total += value.byteLength;
+
+      // R2 kräver att alla delar utom den sista är exakt lika stora.
+      while (buffered >= PART_SIZE) {
+        parts.push(await upload.uploadPart(parts.length + 1, take(PART_SIZE)));
+      }
+    }
+
+    if (buffered > 0) {
+      parts.push(await upload.uploadPart(parts.length + 1, take(buffered)));
+    }
+    await upload.complete(parts);
+  } catch (error) {
+    await upload.abort().catch(() => undefined);
+    throw error;
+  }
+
+  return { rows: 0, bytes: total, files: 1 };
+}
 
 /**
  * Strömmar en katalog-ZIP och skriver en nedbantad CSV till R2.
@@ -422,13 +519,32 @@ async function runIfRequested(env: Env): Promise<void> {
   await withLog(env, "extended", true, () => runExtended(env));
 }
 
+/** Samma sak för Parts Europe — nedladdningen tar längre tid än 30 sekunder. */
+async function runPartsEuropeIfRequested(env: Env): Promise<void> {
+  const marker = await env.FEEDS.head(PARTSEUROPE_REQUEST_KEY);
+  if (!marker) return;
+
+  await env.FEEDS.delete(PARTSEUROPE_REQUEST_KEY);
+  await withLog(env, "partseurope", true, () => runPartsEurope(env));
+}
+
 export default {
   async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
     // Cron-triggade körningar har 15 minuter på sig. En som startas av en
     // HTTP-förfrågan kapas vid 30 sekunder väggklocka oavsett hur lite
     // processortid den använder — och Extended behöver flera minuter.
+    if (event.cron === PARTSEUROPE_CRON) {
+      ctx.waitUntil(withLog(env, "partseurope", false, () => runPartsEurope(env)));
+      return;
+    }
+
     if (event.cron !== NIGHTLY_CRON) {
-      ctx.waitUntil(runIfRequested(env));
+      ctx.waitUntil(
+        (async () => {
+          await runIfRequested(env);
+          await runPartsEuropeIfRequested(env);
+        })(),
+      );
       return;
     }
 
@@ -470,6 +586,13 @@ export default {
     if (url.pathname === "/clear-extended") {
       const removed = await clearExtended(env);
       return new Response(`Rensade ${removed} Extended-filer.\n`);
+    }
+
+    if (url.pathname === "/run-partseurope") {
+      // Beställning i stället för direktkörning: en HTTP-triggad Worker kapas
+      // vid 30 sekunder väggklocka, och nedladdningen tar längre än så.
+      await env.FEEDS.put(PARTSEUROPE_REQUEST_KEY, new Date().toISOString());
+      return new Response("Parts Europe är beställd och startar inom fem minuter.\n");
     }
 
     if (url.pathname === "/run-extended") {
