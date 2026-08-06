@@ -1,6 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            // Talar om för webbläsaren att aldrig ens försöka http igen.
+            // Ett år, inklusive underdomäner.
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+        ],
+      },
+    ];
+  },
+
   reactStrictMode: true,
   // @prisma/client + .prisma/client måste vara externa så att OpenNext kan patcha den
   // genererade klienten för workerd. pg/adaptern använder Node-built-ins (net/dns/fs)
