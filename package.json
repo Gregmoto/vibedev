@@ -14,7 +14,8 @@
     "preview:cf": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:cf": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv",
-    "verify:tickets": "tsx scripts/verify-tickets.ts"
+    "verify:tickets": "tsx scripts/verify-tickets.ts",
+    "verify:crypto": "tsx scripts/verify-crypto.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

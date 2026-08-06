@@ -385,3 +385,21 @@ model CsvFile {
 
   @@index([updatedAt])
 }
+
+// ── Inloggningsuppgifter till externa tjänster ───────────────────────────────
+
+/// Uppgifter som anges i adminpanelen och används av bakgrundsjobb.
+/// Lösenordet lagras alltid krypterat och skickas aldrig tillbaka till
+/// webbläsaren — en läckt databasdump ska inte ge åtkomst till kundportaler.
+model IntegrationCredential {
+  id       String @id @default(cuid())
+  /// "partseurope" osv.
+  provider String @unique
+  username String
+  /// AES-GCM-krypterat lösenord, base64.
+  secretCipher String
+  /// Initieringsvektorn för krypteringen, base64. Unik per sparning.
+  secretIv     String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}

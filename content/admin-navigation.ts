@@ -7,6 +7,7 @@ export const adminNavigation = [
   { href: "/admin/arenden", label: "Ärenden" },
   { href: "/admin/bihr", label: "API - Bihr" },
   { href: "/admin/csv", label: "CSV-fil" },
+  { href: "/admin/partseurope", label: "Parts Europe" },
   { href: "/admin/settings", label: "Webbplatsinställningar" },
   { href: "/admin/analytics", label: "Analytics" },
 ];
