@@ -363,3 +363,25 @@ model BihrRun {
 
   @@index([createdAt])
 }
+
+// ── Uppladdade CSV-filer ─────────────────────────────────────────────────────
+
+/// Fil som laddats upp i adminpanelen och delas via en fast länk.
+/// Länken bygger på slug, som aldrig ändras — därför fortsätter den fungera
+/// hos mottagaren även när filen byts ut mot en ny version.
+model CsvFile {
+  id          String   @id @default(cuid())
+  /// Adressdelen. Sätts vid första uppladdningen och ändras aldrig.
+  slug        String   @unique
+  /// Visningsnamn, från filnamnet.
+  name        String
+  storageKey  String
+  sizeBytes   Int      @default(0)
+  contentType String   @default("text/csv")
+  /// Antal gånger filen bytts ut.
+  versions    Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([updatedAt])
+}
