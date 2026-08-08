@@ -85,35 +85,87 @@ export type RunResult = { rows: number; bytes: number; files: number };
 /**
  * Hämtar Parts Europes prisfil.
  *
- * Sajten sköter inloggningen och lämnar tillbaka en sessionscookie — den har
- * databasen och krypteringsnyckeln, workern har varken eller. Lösenordet lämnar
- * alltså aldrig sajten; workern får bara en cookie som går ut av sig själv.
+ * Både inloggning och nedladdning sker här, från samma utgående adress. Tidigare
+ * loggade sajten in och skickade cookien vidare, vilket gav 403: Parts Europe
+ * binder PHP-sessionen till IP-adressen, och sajten och workern har olika.
  */
 export async function runPartsEurope(env: Env): Promise<RunResult> {
   const site = env.SITE_URL.replace(/\/$/, "");
 
-  const session = await fetch(`${site}/api/partseurope/session`, {
+  const response = await fetch(`${site}/api/partseurope/session`, {
     method: "POST",
     headers: { "x-bihr-secret": env.BIHR_TRIGGER_SECRET },
   });
 
-  if (!session.ok) {
-    const detail = (await session.json().catch(() => null)) as { error?: string } | null;
-    throw new Error(detail?.error ?? `Inloggningen misslyckades: HTTP ${session.status}`);
+  if (!response.ok) {
+    const detail = (await response.json().catch(() => null)) as { error?: string } | null;
+    throw new Error(detail?.error ?? `Kunde inte hämta uppgifterna: HTTP ${response.status}`);
   }
 
-  const { cookie } = (await session.json()) as { cookie: string };
+  const { username, password } = (await response.json()) as {
+    username: string;
+    password: string;
+  };
 
-  const download = await fetch(PARTSEUROPE_FILE_URL, { headers: { Cookie: cookie } });
+  const BASE = "https://dataex.partseurope.eu";
+  const jar = new Map<string, string>();
+
+  /* Webbläsarlika headers. Utan dem serverar Parts Europe något annat än
+     formuläret till workern — csrf_token saknades helt, medan samma anrop från
+     en vanlig klient fungerar. */
+  const browserHeaders = {
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9,sv;q=0.8",
+  };
+
+  const collect = (res: Response) => {
+    for (const raw of res.headers.getSetCookie?.() ?? []) {
+      const [pair] = raw.split(";");
+      const index = pair.indexOf("=");
+      if (index > 0) jar.set(pair.slice(0, index).trim(), pair.slice(index + 1).trim());
+    }
+  };
+  const cookie = () => [...jar].map(([k, v]) => `${k}=${v}`).join("; ");
+
+  const loginPage = await fetch(`${BASE}/en/login`, { redirect: "manual", headers: browserHeaders });
+  collect(loginPage);
+
+  const html = await loginPage.text();
+  const csrf =
+    html.match(/name=["']csrf_token["'][^>]*value=["']([^"']+)/)?.[1] ??
+    html.match(/value=["']([^"']+)["'][^>]*name=["']csrf_token/)?.[1];
+
+  if (!csrf) {
+    throw new Error("Hittade ingen csrf_token — inloggningsformuläret kan ha ändrats.");
+  }
+
+  const login = await fetch(`${BASE}/en/login`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { ...browserHeaders, "Content-Type": "application/x-www-form-urlencoded", Cookie: cookie(), Origin: BASE, Referer: `${BASE}/en/login` },
+    body: new URLSearchParams({ _email: username, _password: password, csrf_token: csrf, go_to: "" }),
+  });
+  collect(login);
+
+  const location = login.headers.get("location") ?? "";
+  if (login.status !== 302 || location.includes("/login")) {
+    throw new Error("Parts Europe avvisade inloggningen. Kontrollera e-post och lösenord.");
+  }
+
+  const download = await fetch(PARTSEUROPE_FILE_URL, {
+    headers: { ...browserHeaders, Cookie: cookie(), Referer: `${BASE}/en/account/customer/` },
+  });
+
   if (!download.ok || !download.body) {
     throw new Error(`Nedladdningen misslyckades: HTTP ${download.status}`);
   }
 
-  // En utgången session ger en html-sida i stället för filen. Utan den här
-  // kontrollen skulle inloggningssidan sparas som prisfil.
-  const type = download.headers.get("content-type") ?? "";
-  if (type.includes("text/html")) {
-    throw new Error("Parts Europe svarade med en webbsida i stället för filen — sessionen nekades.");
+  // En nekad session ger en html-sida i stället för filen. Utan kontrollen
+  // skulle inloggningssidan sparas som prisfil.
+  if ((download.headers.get("content-type") ?? "").includes("text/html")) {
+    throw new Error("Parts Europe svarade med en webbsida i stället för filen.");
   }
 
   const upload = await env.FEEDS.createMultipartUpload(PARTSEUROPE_KEY, {
@@ -121,7 +173,7 @@ export async function runPartsEurope(env: Env): Promise<RunResult> {
   });
 
   const parts: R2UploadedPart[] = [];
-  let chunks: Uint8Array[] = [];
+  const chunks: Uint8Array[] = [];
   let buffered = 0;
   let total = 0;
 

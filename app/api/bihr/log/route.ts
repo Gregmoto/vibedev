@@ -34,7 +34,12 @@ export async function POST(request: Request) {
 
   await db.bihrRun.create({
     data: {
-      kind: payload.kind === "extended" ? "extended" : "nightly",
+      // Måste räkna upp alla typer. Tidigare föll allt utom "extended" tillbaka
+      // på "nightly", så Parts Europe-körningar loggades under fel typ och syntes
+      // aldrig på sin egen sida.
+      kind: ["extended", "partseurope", "nightly"].includes(payload.kind ?? "")
+        ? (payload.kind as string)
+        : "nightly",
       success: Boolean(payload.success),
       rows: Math.trunc(payload.rows ?? 0),
       files: Math.trunc(payload.files ?? 0),

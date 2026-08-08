@@ -1,11 +1,15 @@
-import { loginToPartsEurope } from "@/lib/partseurope";
+import { getPartsEuropeCredentials } from "@/lib/partseurope";
 
 /**
- * Loggar in hos Parts Europe och lämnar tillbaka sessionscookien.
+ * Lämnar ut inloggningsuppgifterna till feed-workern.
  *
- * Anropas av feed-workern, som saknar databasanslutning och därför varken kan
- * läsa eller dekryptera lösenordet. Den får en färskvara som går ut av sig
- * själv i stället.
+ * Workern saknar databasanslutning och krypteringsnyckel och kan därför varken
+ * läsa eller dekryptera dem själv.
+ *
+ * Tidigare loggade sajten in och skickade bara sessionscookien vidare. Det gav
+ * 403 vid nedladdningen: Parts Europe binder PHP-sessionen till IP-adressen,
+ * och sajten och workern har olika utgående adresser. Nu gör workern båda
+ * stegen från samma adress.
  */
 export const dynamic = "force-dynamic";
 
@@ -17,10 +21,10 @@ export async function POST(request: Request) {
   }
 
   try {
-    return Response.json({ cookie: await loginToPartsEurope() });
+    return Response.json(await getPartsEuropeCredentials());
   } catch (error) {
     return Response.json(
-      { error: error instanceof Error ? error.message : "Inloggningen misslyckades." },
+      { error: error instanceof Error ? error.message : "Uppgifterna kunde inte läsas." },
       { status: 502 },
     );
   }

@@ -28,7 +28,8 @@ function collectCookies(response: Response, jar: Map<string, string>): void {
   }
 }
 
-export async function loginToPartsEurope(): Promise<string> {
+/** Läser och dekrypterar uppgifterna. Används av endpointen som workern anropar. */
+export async function getPartsEuropeCredentials(): Promise<{ username: string; password: string }> {
   const credential = await db.integrationCredential.findUnique({
     where: { provider: "partseurope" },
   });
@@ -42,43 +43,8 @@ export async function loginToPartsEurope(): Promise<string> {
     throw new Error("INTEGRATION_SECRET saknas — lösenordet kan inte dekrypteras.");
   }
 
-  const password = await decryptSecret(credential.secretCipher, credential.secretIv, key);
-  const jar = new Map<string, string>();
-
-  const loginPage = await fetch(`${BASE}/en/login`, { redirect: "manual" });
-  collectCookies(loginPage, jar);
-
-  const html = await loginPage.text();
-  const csrf =
-    html.match(/name=["']csrf_token["'][^>]*value=["']([^"']+)/)?.[1] ??
-    html.match(/value=["']([^"']+)["'][^>]*name=["']csrf_token/)?.[1];
-
-  if (!csrf) {
-    throw new Error("Hittade ingen csrf_token på inloggningssidan — formuläret kan ha ändrats.");
-  }
-
-  const cookieHeader = () => [...jar].map(([k, v]) => `${k}=${v}`).join("; ");
-
-  const result = await fetch(`${BASE}/en/login`, {
-    method: "POST",
-    redirect: "manual",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: cookieHeader() },
-    body: new URLSearchParams({
-      _email: credential.username,
-      _password: password,
-      csrf_token: csrf,
-      go_to: "",
-    }),
-  });
-  collectCookies(result, jar);
-
-  // En lyckad inloggning skickar vidare in i kontot. Stannar vi kvar på /login
-  // är uppgifterna fel — och då ska felet sägas rakt ut, inte visa sig som en
-  // tom fil senare.
-  const location = result.headers.get("location") ?? "";
-  if (result.status !== 302 || location.includes("/login")) {
-    throw new Error("Parts Europe avvisade inloggningen. Kontrollera e-post och lösenord.");
-  }
-
-  return cookieHeader();
+  return {
+    username: credential.username,
+    password: await decryptSecret(credential.secretCipher, credential.secretIv, key),
+  };
 }
